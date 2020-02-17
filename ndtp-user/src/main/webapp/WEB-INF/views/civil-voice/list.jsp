@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<script src="/externlib/cesium/Cesium.js" type="text/javascript"></script>
+<link href="/externlib/cesium/Widgets/widgets.css" rel="stylesheet" type="text/css" />
+
 <div id="civilVoiceListContent" class="contents mar0 pad0 border-none" style="display:block;">
 	<div class="button-group-align marB10">
 		<h3 class="h3-heading">시민참여</h3>
@@ -36,9 +39,14 @@
 <button type="button" id="testFly" class="btnTextF" style="margin-top:10px;">Fly Test</button>
 <button type="button" id="testingPicking" class="btnTextF" style="margin-top:10px;">testingPicking</button>
 
-
+<button type="button" id="testBuild" class="btnTextF" style="margin-top:10px;">testBuild</button>
 
 <script>
+	$("#testBuild").on('click', function() {
+		console.log("testBuild");
+		genBuild(127.786754, 36.643957, 0.9);
+	});
+
 	var testingPickingDialog = $( "#testingPickingDialog" ).dialog({
 		autoOpen: false,
 		width: 1100,
@@ -96,10 +104,44 @@
 				console.log("err=", request, status, error);
 			}
 		});
-
-
 	});
 
+	function getStructPermList() {
+		$.ajax({
+			url: "/data/simulation-rest/getPermRequest",
+			type: "POST",
+			headers: {"X-Requested-With": "XMLHttpRequest"},
+			// data: "",
+			// dataType: "json",
+			success: function(msg){
+				console.log("msg  =", msg);
+			},
+			error:function(request,status,error) {
+				console.log("err=", request, status, error);
+			}
+		});
+	}
+
+	function genBuild(lon, lat, scale) {
+		// debugger;
+		var position = Cesium.Cartesian3.fromDegrees(lon, lat, 0);
+		var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(position);
+		// fromGltf 함수를 사용하여 key : value 값으로 요소를 지정
+		var name = '슬퍼하지마NONONO';
+		var model = whole_viewer.scene.primitives.add(Cesium.Model.fromGltf({
+			url : 'http://localhost/data/simulation-rest/cityPlanModelSelect',
+			modelMatrix : modelMatrix,
+			scale : scale,
+			shadows : 1,
+			name : name,
+			show: false
+		}));
+		viewer.scene.primitives.add(model);
+		Cesium.when(model.readyPromise).then(function(model) {
+		}).otherwise(function(error){
+			window.alert(error);
+		});
+	}
 
 </script>
 

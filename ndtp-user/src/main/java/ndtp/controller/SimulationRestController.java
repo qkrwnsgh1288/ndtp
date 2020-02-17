@@ -225,18 +225,32 @@ public class SimulationRestController {
 
 //		Base64.Encoder encoder = Base64.getEncoder();
 		if (Files.exists(target, new LinkOption[] {})) { // 파일이 정상적으로 생성이 되었다면
-			// System.out.println("File Copied");
-//			String a = encoder.encodeToString(fileName.getBytes());
-//			return encoder.encodeToString(fileName.getBytes());
 			return fileName;
 		} else {
 			System.out.println("File Copy Failed");
-//			return encoder.encodeToString("false".getBytes());
 			return "false";
 		}
-
 	}
 
+	@RequestMapping(value = "/cityPlanModelSelect", method = RequestMethod.GET)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public Object cityPlanModelSelect() {
+		String resultFullPath = "C:\\data\\Apartment_Building_26_obj\\Apartment_Building_26_obj.gltf";
+		String os = System.getProperty("os.name").toLowerCase();
+		if (os.contains("mac")) {
+			resultFullPath = "/Users/junho/data/mago3d/building_obj/Apartment_Building_26_obj.gltf";
+		}
+
+		File fi = new File(resultFullPath.trim());
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			InputStream targetStream = new FileInputStream(fi);
+			return mapper.readValue(targetStream, Object.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 
 
