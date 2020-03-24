@@ -200,7 +200,7 @@ var Simulation = function(magoInstance, viewer, $) {
     var stdFairRate = 0;
     var locationList = {
 		"sejong": [127.2739454, 36.5268601],
-		"pusan": [129.0015885, 35.1645701],
+		"pusan": [128.917388, 35.1434585],
 	};
 /*
 	setTimeout(() => {
@@ -679,13 +679,29 @@ var Simulation = function(magoInstance, viewer, $) {
 		}
 		switch (val) {
 			case "disable":
-				if (allObject[pickedName].terrain.show === true) {
-					allObject[pickedName].terrain.show = !allObject[pickedName].terrain.show;
+				if (pickedName === "ecodelta_district") {
+					allObject[pickedName].terrains.forEach(val => {
+						if (val.show === true) {
+							val.show = !val.show;
+						}
+					});
+				} else {
+					if (allObject[pickedName].terrain.show === true) {
+						allObject[pickedName].terrain.show = !allObject[pickedName].terrain.show;
+					}
 				}
 				break;
 			case "enable":
-				if (allObject[pickedName].terrain.show === false) {
-					allObject[pickedName].terrain.show = !allObject[pickedName].terrain.show;
+				if (pickedName === "ecodelta_district") {
+					allObject[pickedName].terrains.forEach(val => {
+						if (val.show === false) {
+							val.show = !val.show;
+						}
+					});
+				} else {
+					if (allObject[pickedName].terrain.show === false) {
+						allObject[pickedName].terrain.show = !allObject[pickedName].terrain.show;
+					}
 				}
 				break;
 			default:
@@ -704,17 +720,19 @@ var Simulation = function(magoInstance, viewer, $) {
 		let val = value.target.value;
 		switch (val) {
 			case "sejong6_4":
-				var layers = viewer.scene.imageryLayers;
+				let layers = viewer.scene.imageryLayers;
 
 				layers.addImageryProvider(new Cesium.SingleTileImageryProvider({
 					url : '/images/mapgeoref.png',
-					// rectangle : Cesium.Rectangle.fromDegrees(127.2603901, 36.5187878, 127.2875007, 36.5349324)
 					rectangle : Cesium.Rectangle.fromDegrees(127.26024, 36.5189, 127.288, 36.5349)
 				}));
-
-				// _viewer.scene.camera.flyTo({
-				// 	destination : Cesium.Cartesian3.fromDegrees(127.2739454, 36.5268601, 600.0)
-				// });
+				break;
+			case "ecoDelta":
+				let eco_layer = viewer.scene.imageryLayers;
+				eco_layer.addImageryProvider(new Cesium.SingleTileImageryProvider({
+					url : '/images/ecoDelta.png',
+					rectangle : Cesium.Rectangle.fromDegrees(128.902068642, 35.113207854, 128.949046811, 35.164342720)
+				}));
 				break;
 			default:
 				console.log("val is empty or undefined");
@@ -839,6 +857,66 @@ var Simulation = function(magoInstance, viewer, $) {
 			}, function(err) {
 				console.log(err);
 			});
+		}
+		else if(val === "ecodelta_district") {
+			if (allObject[val] !== undefined) {
+				buildingToLandRatioCalc();
+				floorAreaRatioCalc();
+				settingDistrictDisplay();
+				settingBuildingShadow();
+				_viewer.selectedEntity = allObject[pickedName].terrain;
+				return;
+			}
+			allObject[val] = {
+				terrain: "",   		// single entity
+				terrains: [],
+				buildings: [], 		// [] entity
+				plottage: 0, 		// 대지 면적
+				totalFloorArea: 0, 	// 빌딩들의 총 건축면적
+				shadowView: false	// building shadow
+			};
+
+			// const fileName = "schoolphill.geojson";
+			const fileName = "eco_district.geojson";
+			const obj = {
+				width : 5,
+				leadTime : 0,
+				trailTime : 100,
+				resolution : 5,
+				strokeWidth: 0,
+				stroke: Cesium.Color.AQUA.withAlpha(0.0),
+				fill: Cesium.Color.AQUA.withAlpha(0.8),
+				clampToGround: true
+			};
+			let url = "/data/simulation-rest/drawGeojson?fileName=" + fileName;
+
+			Cesium.GeoJsonDataSource.load(url, obj).then(function(dataSource) {
+				let entitis = dataSource.entities._entities._array;
+
+				for(let index in entitis) {
+					let entitiyObj = entitis[index];
+					let registeredEntity = _viewer.entities.add(entitiyObj);
+					registeredEntity.name = "ecodelta_district";
+
+					// registeredEntity.polygon.extrudedHeightReference = 1;
+					registeredEntity.polygon.heightReference = 2;
+
+					Cesium.knockout.getObservable(viewModel, 'standardFloorCount').subscribe(
+						function(newValue) {
+							registeredEntity.polygon.extrudedHeight = newValue * 4;
+						}
+					);
+					allObject[val].terrain = registeredEntity;
+					allObject[val].terrains.push(registeredEntity);
+				}
+				settingDistrictDisplay();
+				settingBuildingShadow();
+				// setTimeout(()=>{
+				_viewer.selectedEntity = allObject[pickedName].terrain;
+				// }, 500);
+			}, function(err) {
+				console.log(err);
+			});
 		} else {
 			console.log("val is empty or undefined");
 		}
@@ -852,28 +930,24 @@ var Simulation = function(magoInstance, viewer, $) {
 		}
 		switch (val){
 			case "dType1":
-				// allObject[pickedName].terrain.polygon.extrudedHeightReference = Cesium.HeightReference.CLAMP_TO_GROUND ;
 				allObject[pickedName].terrain.polygon.material.color=Cesium.Color.YELLOW.withAlpha(0.6);
 				$("#standardFloorAreaRatio").val(180).trigger("change");
 				$("#standardBuildingToLandRatio").val(50).trigger("change");
 				$("#standardFloorCount").val(20).trigger("change");
 				break;
 			case "dType2":
-				// allObject[pickedName].terrain.polygon.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND ;
 				allObject[pickedName].terrain.polygon.material.color=Cesium.Color.ORANGERED.withAlpha(0.6);
 				$("#standardFloorAreaRatio").val(120).trigger("change");
 				$("#standardBuildingToLandRatio").val(40).trigger("change");
 				$("#standardFloorCount").val(15).trigger("change");
 				break;
 			case "dType3":
-				// allObject[pickedName].terrain.polygon.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND ;
 				allObject[pickedName].terrain.polygon.material.color=Cesium.Color.MEDIUMTURQUOISE.withAlpha(0.6);
 				$("#standardFloorAreaRatio").val(80).trigger("change");
 				$("#standardBuildingToLandRatio").val(20).trigger("change");
 				$("#standardFloorCount").val(10).trigger("change");
 				break;
 			case "dType4":
-				// allObject[pickedName].terrain.polygon.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND ;
 				allObject[pickedName].terrain.polygon.material.color=Cesium.Color.YELLOWGREEN.withAlpha(0.6);
 				$("#standardFloorAreaRatio").val(200).trigger("change");
 				$("#standardBuildingToLandRatio").val(40).trigger("change");
@@ -885,12 +959,30 @@ var Simulation = function(magoInstance, viewer, $) {
 	});
 
 	$("#deleteDistrict").click(() => {
-		// let imgLayer = "";
-		_viewer.scene.imageryLayers._layers.forEach((obj, idx) => {
-			if (obj.imageryProvider.url.includes("mapgeoref.png")) {
-				_viewer.scene.imageryLayers.remove(obj);
-			}
-		});
+		let field = $("#selectPiece").val();
+		if (field === "") {
+			alert("필지를 먼저 선택해 주시기 바랍니다.");
+			return;
+		}
+		switch (field) {
+			case "sejong6_4":
+				_viewer.scene.imageryLayers._layers.forEach((obj, idx) => {
+					if (obj.imageryProvider.url.includes("mapgeoref.png")) {
+						_viewer.scene.imageryLayers.remove(obj);
+					}
+				});
+				break;
+			case "ecoDelta":
+				_viewer.scene.imageryLayers._layers.forEach((obj, idx) => {
+					if (obj.imageryProvider.url.includes("ecoDelta.png")) {
+						_viewer.scene.imageryLayers.remove(obj);
+					}
+				});
+				break;
+			default:
+				console.log("일치하는 필지가 없습니다.");
+		}
+
 	});
 
 	$("#delete3dModel").click(()=> {
@@ -899,8 +991,8 @@ var Simulation = function(magoInstance, viewer, $) {
 			alert("지역을 먼저 선택해 주시기 바랍니다.");
 			return;
 		}
-		if (pickedName !== "sejong_apartmentComplex1") {
-			alert("현재는 세종시 아파트만 지원됩니다.");
+		if (pickedName !== "sejong_apartmentComplex1" && pickedName !== "ecodelta_district") {
+			alert("현재는 세종시, 부산시 아파트만 지원됩니다.");
 			return;
 		}
 
@@ -920,8 +1012,8 @@ var Simulation = function(magoInstance, viewer, $) {
 			alert("지역을 먼저 선택해 주시기 바랍니다.");
 			return;
 		}
-		if (pickedName !== "sejong_apartmentComplex1") {
-			alert("현재는 세종시 아파트만 지원됩니다.");
+		if (pickedName !== "sejong_apartmentComplex1" && pickedName !== "ecodelta_district") {
+			alert("현재는 세종시, 부산시 아파트만 지원됩니다.");
 			return;
 		}
 
@@ -930,98 +1022,193 @@ var Simulation = function(magoInstance, viewer, $) {
 			return;
 		}
 
-		// const fileName = "Parcel6-4-Buidling.geojson";
-		const fileName = "6-4_buildings.geojson";
-		const obj = {
-			width : 5,
-			leadTime : 0,
-			trailTime : 100,
-			resolution : 5,
-			stroke: Cesium.Color.BLUEVIOLET,
-			fill: Cesium.Color.BLUEVIOLET,
-			clampToGround: true
-		};
-		let url = "/data/simulation-rest/drawGeojson?fileName=" + fileName;
+		if (val === "sejong_apartmentComplex1") {
+			const fileName = "6-4_buildings.geojson";
+			const obj = {
+				width : 5,
+				leadTime : 0,
+				trailTime : 100,
+				resolution : 5,
+				stroke: Cesium.Color.BLUEVIOLET,
+				fill: Cesium.Color.BLUEVIOLET,
+				clampToGround: true
+			};
+			let url = "/data/simulation-rest/drawGeojson?fileName=" + fileName;
 
-		Cesium.GeoJsonDataSource.load(url, obj).then(function(dataSource) {
-			let entitis = dataSource.entities._entities._array;
-			let sumFloorArea = 0;
+			Cesium.GeoJsonDataSource.load(url, obj).then(function(dataSource) {
+				let entitis = dataSource.entities._entities._array;
+				let sumFloorArea = 0;
 
-			for(let index in entitis) {
-				let entitiyObj = entitis[index];
-				let registeredEntity = _viewer.entities.add(entitiyObj);
-				registeredEntity.name = "아파트_" + index;
-				registeredEntity.polygon.heightReference = 1;
-				// registeredEntity.polygon.extrudedHeightReference = 1;
-				registeredEntity.polygon.extrudedHeight = parseInt(viewModel.buildingHeight) * 3;
+				for(let index in entitis) {
+					let entitiyObj = entitis[index];
+					let registeredEntity = _viewer.entities.add(entitiyObj);
+					registeredEntity.name = "아파트_" + index;
+					registeredEntity.polygon.heightReference = 1;
+					// registeredEntity.polygon.extrudedHeightReference = 1;
+					registeredEntity.polygon.extrudedHeight = parseInt(viewModel.buildingHeight) * 3;
 
-				let buildingFloorArea = parseFloat(getArea(registeredEntity.polygon._hierarchy._value.positions));	// 건축면적
-				let totalBuildingFloorArea = buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;  // 건축면적 * 층수 = 연면적
-				registeredEntity.buildingFloorArea = buildingFloorArea; // 건축면적
-				registeredEntity.totalBuildingFloorArea = totalBuildingFloorArea; // 연면적
-				sumFloorArea += buildingFloorArea;
+					let buildingFloorArea = parseFloat(getArea(registeredEntity.polygon._hierarchy._value.positions));	// 건축면적
+					let totalBuildingFloorArea = buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;  // 건축면적 * 층수 = 연면적
+					registeredEntity.buildingFloorArea = buildingFloorArea; // 건축면적
+					registeredEntity.totalBuildingFloorArea = totalBuildingFloorArea; // 연면적
+					sumFloorArea += buildingFloorArea;
 
-				// todo: 임시
-				allObject[pickedName].buildings.push(registeredEntity);
+					// todo: 임시
+					allObject[pickedName].buildings.push(registeredEntity);
 
-				let intIndex = parseInt(index);
-				if (intIndex % 2 === 0) {
-					Cesium.knockout.getObservable(viewModel, 'buildingHeight').subscribe(
-						function(newValue) {
-							// let curHeight = parseInt(registeredEntity.polygon.extrudedHeight.getValue());
-							let newVal = parseInt(newValue) * 3;
-							let customizing = parseInt($("#inputCustomizing").val());
+					let intIndex = parseInt(index);
+					if (intIndex % 2 === 0) {
+						Cesium.knockout.getObservable(viewModel, 'buildingHeight').subscribe(
+							function(newValue) {
+								// let curHeight = parseInt(registeredEntity.polygon.extrudedHeight.getValue());
+								let newVal = parseInt(newValue) * 3;
+								let customizing = parseInt($("#inputCustomizing").val()) * 3;
 
-							registeredEntity.polygon.extrudedHeight = newVal + customizing;
+								registeredEntity.polygon.extrudedHeight = newVal + customizing;
 
-							// 변경된 연면적 계산
-							registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
-							standardHeight = parseInt(newValue);
-						}
-					);
-					Cesium.knockout.getObservable(viewModel, 'buildingAdjust').subscribe(
-						function(newValue) {
-							let newVal = parseInt(newValue) * 3;
-							registeredEntity.polygon.extrudedHeight = standardHeight + newVal;
+								// 변경된 연면적 계산
+								registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
+								standardHeight = parseInt(newValue) * 3;
+							}
+						);
+						Cesium.knockout.getObservable(viewModel, 'buildingAdjust').subscribe(
+							function(newValue) {
+								let newVal = parseInt(newValue) * 3;
+								registeredEntity.polygon.extrudedHeight = standardHeight + newVal;
 
-							// 변경된 연면적 계산
-							registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
-						}
-					);
-				} else {
-					Cesium.knockout.getObservable(viewModel, 'buildingHeight').subscribe(
-						function(newValue) {
-							// let curHeight = parseInt(registeredEntity.polygon.extrudedHeight.getValue());
-							let newVal = parseInt(newValue) * 3;
-							let customizing = parseInt($("#inputCustomizing").val());
+								// 변경된 연면적 계산
+								registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
+							}
+						);
+					} else {
+						Cesium.knockout.getObservable(viewModel, 'buildingHeight').subscribe(
+							function(newValue) {
+								// let curHeight = parseInt(registeredEntity.polygon.extrudedHeight.getValue());
+								let newVal = parseInt(newValue) * 3;
+								let customizing = parseInt($("#inputCustomizing").val()) * 3;
 
-							registeredEntity.polygon.extrudedHeight = newVal - customizing;
+								registeredEntity.polygon.extrudedHeight = newVal - customizing;
 
-							// 변경된 연면적 계산
-							registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
-							standardHeight = parseInt(newValue);
-						}
-					);
-					Cesium.knockout.getObservable(viewModel, 'buildingAdjust').subscribe(
-						function(newValue) {
-							let newVal = parseInt(newValue) * 3;
-							registeredEntity.polygon.extrudedHeight = standardHeight - newVal;
+								// 변경된 연면적 계산
+								registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
+								standardHeight = parseInt(newValue) * 3;
+							}
+						);
+						Cesium.knockout.getObservable(viewModel, 'buildingAdjust').subscribe(
+							function(newValue) {
+								let newVal = parseInt(newValue) * 3;
+								registeredEntity.polygon.extrudedHeight = standardHeight - newVal;
 
-							// 변경된 연면적 계산
-							registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
-						}
-					);
+								// 변경된 연면적 계산
+								registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
+							}
+						);
+					}
 				}
-			}
-			// $("#inputBuildingHeight").trigger("change");
-			allObject[pickedName].totalFloorArea = sumFloorArea;
-			allObject[pickedName].plottage = getArea(allObject[pickedName].terrain.polygon._hierarchy._value.positions);
+				// $("#inputBuildingHeight").trigger("change");
+				allObject[pickedName].totalFloorArea = sumFloorArea;
+				allObject[pickedName].plottage = getArea(allObject[pickedName].terrain.polygon._hierarchy._value.positions);
 
-			buildingToLandRatioCalc();
-			floorAreaRatioCalc();
-		}, function(err) {
-			console.log(err);
-		});
+				buildingToLandRatioCalc();
+				floorAreaRatioCalc();
+			}, function(err) {
+				console.log(err);
+			});
+		}
+		else if (val === "ecodelta_district") {
+			const fileName = "eco_aparts.geojson";
+			const obj = {
+				width : 5,
+				leadTime : 0,
+				trailTime : 100,
+				resolution : 5,
+				stroke: Cesium.Color.BLUEVIOLET,
+				fill: Cesium.Color.BLUEVIOLET,
+				clampToGround: true
+			};
+			let url = "/data/simulation-rest/drawGeojson?fileName=" + fileName;
+
+			Cesium.GeoJsonDataSource.load(url, obj).then(function(dataSource) {
+				let entitis = dataSource.entities._entities._array;
+				let sumFloorArea = 0;
+
+				for(let index in entitis) {
+					let entitiyObj = entitis[index];
+					let registeredEntity = _viewer.entities.add(entitiyObj);
+					registeredEntity.name = "아파트_" + index;
+					registeredEntity.polygon.heightReference = 1;
+					// registeredEntity.polygon.extrudedHeightReference = 1;
+					registeredEntity.polygon.extrudedHeight = parseInt(viewModel.buildingHeight) * 3;
+
+					let buildingFloorArea = parseFloat(getArea(registeredEntity.polygon._hierarchy._value.positions));	// 건축면적
+					let totalBuildingFloorArea = buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;  // 건축면적 * 층수 = 연면적
+					registeredEntity.buildingFloorArea = buildingFloorArea; // 건축면적
+					registeredEntity.totalBuildingFloorArea = totalBuildingFloorArea; // 연면적
+					sumFloorArea += buildingFloorArea;
+
+					// todo: 임시
+					allObject[pickedName].buildings.push(registeredEntity);
+
+					let intIndex = parseInt(index);
+					if (intIndex % 2 === 0) {
+						Cesium.knockout.getObservable(viewModel, 'buildingHeight').subscribe(
+							function(newValue) {
+								// let curHeight = parseInt(registeredEntity.polygon.extrudedHeight.getValue());
+								let newVal = parseInt(newValue) * 3;
+								let customizing = parseInt($("#inputCustomizing").val()) * 3;
+
+								registeredEntity.polygon.extrudedHeight = newVal + customizing;
+
+								// 변경된 연면적 계산
+								registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
+								standardHeight = parseInt(newValue) * 3;
+							}
+						);
+						Cesium.knockout.getObservable(viewModel, 'buildingAdjust').subscribe(
+							function(newValue) {
+								let newVal = parseInt(newValue) * 3;
+								registeredEntity.polygon.extrudedHeight = standardHeight + newVal;
+
+								// 변경된 연면적 계산
+								registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
+							}
+						);
+					} else {
+						Cesium.knockout.getObservable(viewModel, 'buildingHeight').subscribe(
+							function(newValue) {
+								// let curHeight = parseInt(registeredEntity.polygon.extrudedHeight.getValue());
+								let newVal = parseInt(newValue) * 3;
+								let customizing = parseInt($("#inputCustomizing").val()) * 3;
+
+								registeredEntity.polygon.extrudedHeight = newVal - customizing;
+
+								// 변경된 연면적 계산
+								registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
+								standardHeight = parseInt(newValue) * 3;
+							}
+						);
+						Cesium.knockout.getObservable(viewModel, 'buildingAdjust').subscribe(
+							function(newValue) {
+								let newVal = parseInt(newValue) * 3;
+								registeredEntity.polygon.extrudedHeight = standardHeight - newVal;
+
+								// 변경된 연면적 계산
+								registeredEntity.totalBuildingFloorArea = registeredEntity.buildingFloorArea * registeredEntity.polygon.extrudedHeight / 6;
+							}
+						);
+					}
+				}
+				// $("#inputBuildingHeight").trigger("change");
+				allObject[pickedName].totalFloorArea = sumFloorArea;
+				allObject[pickedName].plottage = getArea(allObject[pickedName].terrain.polygon._hierarchy._value.positions);
+
+				buildingToLandRatioCalc();
+				floorAreaRatioCalc();
+			}, function(err) {
+				console.log(err);
+			});
+		}
+
 	});
 
 	$("#inputBuildingHeight").change(()=> {
@@ -1044,6 +1231,9 @@ var Simulation = function(magoInstance, viewer, $) {
 			return;
 		}
 		let result = (totalFloorArea / plottage) * 100.0;
+		if ($("#selectDistrict").val() === "ecodelta_district") {
+			result /= 4;
+		}
 		$("#curBuildingToLandRatio").val(result.toFixed(2));
 	}
 	// 용적율 계산 및 view (연면적 / 대지면적)
@@ -1059,6 +1249,9 @@ var Simulation = function(magoInstance, viewer, $) {
 			return;
 		}
 		let result = (totalArea / plottage) * 100.0;
+		if ($("#selectDistrict").val() === "ecodelta_district") {
+			result /= 10;
+		}
 		$("#curFloorAreaRatio").val(result.toFixed(2));
 	}
 	// 모든 빌딩들의 연면적 합
