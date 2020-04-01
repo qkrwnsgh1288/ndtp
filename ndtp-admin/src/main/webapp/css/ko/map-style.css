@@ -16,7 +16,7 @@ header {
 display: flex;
 min-width: 1420px;
 height: 50px;
-background-color: #287be4;
+background-color: #5a5a5a;
 }
 #wrap {
 position: relative;
@@ -183,7 +183,7 @@ background-image: url(/images/ko/ico.png);
 background-repeat: no-repeat;
 }
 ul.nav li.on {
-background-color: #287be4;
+background-color: #5a5a5a;
 }
 ul.nav li.search {
 background-position: -445px 10px;
@@ -409,10 +409,10 @@ font-weight: bold;
 .dataGroupSum li.total > label {
 color: #fff;
 border: 1px solid #1e6ed3;
-background-color: #287be4;
+background-color: #5a5a5a;
 }
 .dataGroupSum li.total > span {
-color: #287be4;
+color: #5a5a5a;
 }
 
 /* /// 데이터 그룹 summary /// */
@@ -502,7 +502,7 @@ flex: auto;
 margin-top: 8px;
 }
 .bothSide > div:first-child > span {
-color: #287be4
+color: #5a5a5a
 }
 .bothSide > div:last-child {
 text-align: right;
@@ -587,7 +587,7 @@ background: url(/images/ko/ico.png) no-repeat 0 -495px;
 margin: 7px 0;
 }
 .agreeCount > span {
-color: #287be4;
+color: #5a5a5a;
 }
 .agreeNew {
 margin: 20px 0;
@@ -619,7 +619,7 @@ color: #777;
 text-align: right;
 }
 .commentNew li p.info > span {
-color: #287be4
+color: #5a5a5a
 }
 
 /* 목록검색 */
@@ -780,7 +780,7 @@ display: none;
 ul.listDrop li.on > p {
 color: #fff;
 border-bottom: 3px solid #eaeaea;
-background-color: #287be4;
+background-color: #5a5a5a;
 background-image: url(/images/ko/ico.png);
 background-repeat: no-repeat;
 background-position: 320px -688px;
@@ -1171,8 +1171,8 @@ text-align: center;
 }
 .tab li.on {
 color: #fff;
-border: 1px solid #006bd2;
-background-color: #0073e2;
+border: 1px solid #909090;
+background-color: #636363;
 } 
 .input-set {
 margin: 10px 20px 10px 10px;
@@ -1376,12 +1376,12 @@ padding: 8px;
 border-radius: 3px;
 color: #fff;
 font-size: 14px;
-border: 1px solid #0073e2;
-background-color: #0073e2;
+border: 1px solid #636363;
+background-color: #636363;
 }
 button.textBtn:hover {
-color: #0073e2;
-border: 1px solid #0073e2;
+color: #636363;
+border: 1px solid #636363;
 background-color: #fff;
 
 }
@@ -1503,7 +1503,7 @@ background-position: -266px -197px;
 border-radius: 10px;
 }
 .layerDiv li > button:active {
-border: 1px solid #287be4;
+border: 1px solid #5a5a5a;
 background-color: #ccc;
 }
 button.up:active {
@@ -1519,7 +1519,7 @@ button.rangeNext:active {
 background-position: -266px -247px;
 }
 .layerDiv li > button:hover {
-border: 1px solid #287be4;
+border: 1px solid #5a5a5a;
 background-color: #eee;
 }
 button.up:hover {

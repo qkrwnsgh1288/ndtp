@@ -100,7 +100,7 @@ function CivilVoiceControll(magoInstance, viewer) {
 						imgSize = [32,32];
 						pixel = 30;
 					}
-					groupOption.imageFilePath = sb.getPng(imgSize,'#287be4',{text:'...', pixel:pixel});
+					groupOption.imageFilePath = sb.getPng(imgSize,'#5a5a5a',{text:'...', pixel:pixel});
 					var om = magoManager.objMarkerManager.newObjectMarker(groupOption, magoManager);
 					om.tree = tree;
 				}

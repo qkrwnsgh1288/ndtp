@@ -2588,8 +2588,8 @@ text-align: center;
 }
 .tab li.on {
 color: #fff;
-border: 1px solid #006bd2;
-background-color: #0073e2;
+border: 1px solid #909090;
+background-color: #636363;
 }
 .tab li > a {
 display: inline-block;
@@ -2601,7 +2601,7 @@ padding: 5px 0px;
 color: #fff;
 }
 .tab li:not(.on) > a:hover {
-color: #006bd2;
+color: #909090;
 }
 .input-set {
 margin: 10px 20px 10px 10px;

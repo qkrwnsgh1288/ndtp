@@ -6,7 +6,7 @@
 <%@page import="java.util.HashMap"%>
 
 <header>
-	<h1>국가 디지털트윈 플랫폼 시범 서비스</h1>
+	<h1>디지털트윈 기본 서비스</h1>
 
 	<div class="gnb">
 		<%
@@ -17,7 +17,7 @@
 		<ul>
 			<li class="user"><span><%=userSession.getUserName()%> 님</span>
 				<!-- <button type="button" class="magoSet" id="magoHelp">API도움말</button> -->
-				<a href="/guide/help" title="API도움말" onclick="goMagoAPIGuide(this.href);return false;">API도움말</a>
+				<%--<a href="/guide/help" title="API도움말" onclick="goMagoAPIGuide(this.href);return false;">API도움말</a>--%>
 				<a href="/sign/signout" title="Sign out">Sign out</a></li>
 		</ul>
 
@@ -28,7 +28,7 @@
 		<ul>
 			<li>
 				<!-- <button type="button" class="magoSet" id="magoHelp">API도움말</button> -->
-				<a href="#" title="API도움말" onclick="goMagoAPIGuide();return false;">API도움말</a>
+				<%--<a href="#" title="API도움말" onclick="goMagoAPIGuide();return false;">API도움말</a>--%>
 			</li>
 			<li class="user"><a href="/sign/signin">Sign in</a></li>
 		</ul>

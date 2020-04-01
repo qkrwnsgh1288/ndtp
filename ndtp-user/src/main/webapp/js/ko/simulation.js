@@ -48,22 +48,22 @@ var Simulation = function(magoInstance, viewer, $) {
     var _polygons = [];
     var _camera_scene = [];
 	_camera_scene.push({
-		position: new Cesium.Cartesian3(-3107345.027821688, 4083739.5239106035, 3775320.287267596),
-		direction: new Cesium.Cartesian3(0.8466982690724006, 0.525809087065172, -0.08140543660893416),
-		up: new Cesium.Cartesian3(-0.38560682428610626, 0.7118195365554574, 0.5870437159547471),
-		right: new Cesium.Cartesian3(0.3666189005135779, -0.4656584062783194, 0.805451941737402)
+		position: new Cesium.Cartesian3(-3267175.408121697, 4072002.7281271275, 3653566.522919914),
+		direction: new Cesium.Cartesian3(0.47120333455050656, 0.5177254835564906, -0.7140922497721716),
+		up: new Cesium.Cartesian3(-0.3819617685098077, 0.8495289182639849, 0.36387611137595144),
+		right: new Cesium.Cartesian3(0.7950299522064181, 0.10129630155850611, 0.5980522003849069)
 	});
 	_camera_scene.push({
-		position: new Cesium.Cartesian3(-3280627.778688929, 4062537.6806924795, 3650266.004010676),
-		direction: new Cesium.Cartesian3(0.5356198313576546, -0.6225088213202119, 0.5706085905723101),
-		up: new Cesium.Cartesian3(-0.3513729530836468, 0.45014645898935396, 0.8209172999155416),
-		right: new Cesium.Cartesian3(-0.7678856972868262, -0.6401960112636337, 0.02237460758222004)
+		position: new Cesium.Cartesian3(-3263823.227720458, 4074801.4782351768, 3653514.7854325036),
+		direction: new Cesium.Cartesian3(-0.13159383887582027, 0.12008869189034671, -0.9840029307120941),
+		up: new Cesium.Cartesian3(-0.6252863356811184, 0.7601980973410288, 0.1763968571419561),
+		right: new Cesium.Cartesian3(0.7692204235330757, 0.6384963264413863, -0.024947567826346738)
 	});
 	_camera_scene.push({
-		position: new Cesium.Cartesian3(-3280626.779031388, 4062552.2818159657, 3650218.004230461),
-		direction: new Cesium.Cartesian3(0.398749006838372, -0.5183446964191867, 0.7565170224386978),
-		up: new Cesium.Cartesian3(-0.47659122165829726, 0.5876566876099041, 0.6538504606908275),
-		right: new Cesium.Cartesian3(-0.783492206077165, -0.6212715937506359, -0.012711011560142732)
+		position: new Cesium.Cartesian3(-3263592.1549995285, 4075846.799156361, 3651950.175188042),
+		direction: new Cesium.Cartesian3(-0.10834557922552054, 0.05386917763367133, -0.9926526820410846),
+		up: new Cesium.Cartesian3(-0.6425921047139787, 0.7580849641646135, 0.11127701499768833),
+		right: new Cesium.Cartesian3(0.7585094741804782, 0.6499271488471678, -0.047519246309740984)
 	});
 	buildingMetaData = getBuildingMetaData();
 
@@ -93,16 +93,20 @@ var Simulation = function(magoInstance, viewer, $) {
 	let deltaRadians = Cesium.Math.toRadians(3.0);
 	let autoRemoteCenter = new Cesium.Cartesian3();
 	let controller = _scene.screenSpaceCameraController;
-	let autoRemotePosition = Cesium.Cartesian3.fromDegrees( 126.92266407202047, 37.5244176043923,  81.69295321520829);
+	let autoRemotePosition = Cesium.Cartesian3.fromDegrees(  128.6842177683109, 35.1470528006441,  60.08976932797917);
 	//let autoRemotePosition = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, 5000.0);
 	let speedVector = new Cesium.Cartesian3();
-	let fixedFrameTransform = Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west');
+	let fixedFrameTransform = Cesium.Transforms.localFrameToFixedFrameGenerator('south', 'west');
 	let planePrimitive;
 	let planePrimitiveReady = false;
 	let pathPosition = new Cesium.SampledPositionProperty();
 	let r = 0;
-	let speed = 10;
+	let speed = 1;
 	const autoRemoteCanvas = _viewer.canvas;
+
+	$('#dataMenu').hide();
+	$('#converterMenu').hide();
+	$('#civilVoiceMenu').hide();
 
 	initDeltaBillboard(128.9219740546607, 35.13631787332174, 3,0, 3, 30);
 	function initDeltaBillboard(lon, lat, alt, near, far, ratio) {
@@ -2906,6 +2910,13 @@ var Simulation = function(magoInstance, viewer, $) {
 		});
 		autoRemoteCanvas.focus();
 
+		$('#droneLeftMotState').html('정상').css('color','rgb(23, 23, 255)');
+		$('#droneRightMotState').html('정상').css('color','rgb(23, 23, 255)');
+		$('#windInfo').html('남동(&nwarr;)\n').css('color','rgb(23, 23, 255)');
+		$('#droneBattery').html('30%').css('color','rgb(241, 50, 50)');
+		$('#droneWorkTime').html('40분').css('color','rgb(23, 23, 255)');
+		$('#droneSpeed').html('10 m/s').css('color','rgb(23, 23, 255)');
+
 		var entityPath = _viewer.entities.add({
 			position : pathPosition,
 			name : 'autoRemotePath',
@@ -2916,9 +2927,9 @@ var Simulation = function(magoInstance, viewer, $) {
 				width : 10,
 				resolution : 1,
 				material : new Cesium.PolylineGlowMaterialProperty({
-					glowPower : 0.3,
-					taperPower : 0.3,
-					color : Cesium.Color.PALEGOLDENROD
+					glowPower : 15,
+					taperPower : 0.005,
+					color : Cesium.Color.fromBytes(349, 66, 68, 255)
 				})
 			}
 		});
@@ -2928,12 +2939,15 @@ var Simulation = function(magoInstance, viewer, $) {
 
 		const _model = Cesium.Model.fromGltf({
 			url : '/data/simulation-rest/cityPlanModelSelect?FileName='+fileName+'&preDir='+preDir,
-			scale : 100,
 			modelMatrix : Cesium.Transforms.headingPitchRollToFixedFrame(autoRemotePosition, hpRoll, Cesium.Ellipsoid.WGS84, fixedFrameTransform),
-			minimumPixelSize : 10,
-			maximumPixelSize : 100
+			minimumPixelSize : 0.1,
+			maximumScale : 100
 		});
-
+		remoteControlDroneDialog.dialog("open");
+		$.growl.notice({
+			message: "cbaa8384-73d1-11ea-022ac1303와 연결되었습니다",
+			duration: 2000
+		});
 		planePrimitive = viewer.scene.primitives.add(_model);
 
 		planePrimitive.readyPromise.then(function(model) {
@@ -2959,14 +2973,27 @@ var Simulation = function(magoInstance, viewer, $) {
 	_viewer.scene.preUpdate.addEventListener(function(scene, time) {
 		if(planePrimitive !== undefined && planePrimitiveReady === true) {
 			MAGO3D_INSTANCE.getViewer().clock.currentTime = Cesium.JulianDate.now();
-			speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, speed / 5, speedVector);
+			speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, speed / 20, speedVector);
 			autoRemotePosition = Cesium.Matrix4.multiplyByPoint(planePrimitive.modelMatrix, speedVector, autoRemotePosition);
 			pathPosition.addSample(Cesium.JulianDate.now(), autoRemotePosition);
+			debugger;
+			const ellipsoid = _viewer.scene.globe.ellipsoid;
+			const cartographic = ellipsoid.cartesianToCartographic(autoRemotePosition);
+			const lonString = Cesium.Math.toDegrees(cartographic.longitude);
+			const latString = Cesium.Math.toDegrees(cartographic.latitude);
+			const altString = cartographic.height;
+
+			$('#dronePositionLon').html('위도 : ' + lonString);
+			$('#dronePositionLat').html('경도 : ' + latString);
+			$('#dronePositionAlt').html('고도 : ' + altString);
+			$('#droneHeading').html(hpRoll.heading + '°');
+			$('#dronePitch').html(hpRoll.pitch + '°');
+			$('#droneRoll').html(hpRoll.roll + '°');
 			Cesium.Transforms.headingPitchRollToFixedFrame(autoRemotePosition, hpRoll, Cesium.Ellipsoid.WGS84, fixedFrameTransform, planePrimitive.modelMatrix);
 			if ($("#fromBehind").is(":checked") === true) {
 				Cesium.Matrix4.multiplyByPoint(planePrimitive.modelMatrix, planePrimitive.boundingSphere.center, autoRemoteCenter);
-				hpRange.heading = hpRoll.heading;
-				hpRange.pitch = hpRoll.pitch;
+				hpRange.heading = (hpRoll.heading * -1);
+				hpRange.pitch = (hpRoll.pitch * -1);
 				_camera.lookAt(autoRemoteCenter, hpRange);
 			} else {
 				_camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
@@ -3012,7 +3039,7 @@ var Simulation = function(magoInstance, viewer, $) {
 
 	document.addEventListener('keydown', function(e) {
 		switch (e.keyCode) {
-			case 40:
+			case 85:
 				if (e.shiftKey) {
 					// speed down
 					speed = Math.max(--speed, 1);
@@ -3024,7 +3051,7 @@ var Simulation = function(magoInstance, viewer, $) {
 					}
 				}
 				break;
-			case 38:
+			case 74:
 				if (e.shiftKey) {
 					// speed up
 					speed = Math.min(++speed, 100);
@@ -3036,7 +3063,7 @@ var Simulation = function(magoInstance, viewer, $) {
 					}
 				}
 				break;
-			case 39:
+			case 72:
 				if (e.shiftKey) {
 					// roll right
 					hpRoll.roll += deltaRadians;
@@ -3051,7 +3078,7 @@ var Simulation = function(magoInstance, viewer, $) {
 					}
 				}
 				break;
-			case 37:
+			case 75:
 				if (e.shiftKey) {
 					// roll left until
 					hpRoll.roll -= deltaRadians;
@@ -3069,7 +3096,6 @@ var Simulation = function(magoInstance, viewer, $) {
 			default:
 		}
 	});
-
 
 	function getBuildingMetaData() {
 		let data = {

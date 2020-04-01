@@ -289,6 +289,20 @@
 			},
 		],
 	});
+
+
+	var remoteControlDroneDialog = $("#remoteControlObjDialog").dialog({
+		autoOpen: false,
+		width: 500,
+		modal: false,
+		overflow : "auto",
+		resizable: false,
+		position: {
+			my: "right top",
+			at: "right-5 top+105",
+			of: "body"
+		}
+	});
 	var blueprintDialog = $("#blueprintDialog").dialog({
 		autoOpen: false,
 		width: 364,

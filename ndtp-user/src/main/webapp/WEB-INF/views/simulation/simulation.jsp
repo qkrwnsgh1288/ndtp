@@ -64,7 +64,7 @@
 		</div>
 	</li>
 	<li>
-		<p>경관 분석(일조분석)<span class="collapse-icon">icon</span></p>
+		<p>경관 분석(일조분석) 시뮬레이션<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="solarAnalysis">
 			<ul class="analysisGroup">
 				<li style="display:none;">
@@ -93,16 +93,16 @@
 					<label for="">경관 리스트</label>
 					<select id="camera_scene_list" name="searchDataStatus">
 						<option value="none">선택안함</option>
-						<option value=0>통경축 반영구간</option>
-						<option value=1>에코델타 전망대</option>
-						<option value=2>에코델타 1층</option>
+						<option value=0>부산 전망 - 1</option>
+						<option value=1>부산 전망 - 2</option>
+						<option value=2>부산 전망 - 3</option>
 					</select>
 					<button id="cameraLocaMove" type="button" class="btnText">이동</button>
 				</li>
 			</ul>
 		</div>
 	</li>
-	<li>
+	<li style="display: none;">
 		<p>건설 공정<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="constructionProcess">
 			<ul class="analysisGroup">
@@ -201,7 +201,7 @@
 			</ul>
 		</div>
 	</li>
-	<li>
+	<li style="display: none;">
 		<p>도시 계획<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="">
 			<ul class="analysisGroup">
@@ -318,7 +318,7 @@
 			</ul>
 		</div>
 	</li>
-	<li>
+	<li style="display: none;">
 		<p id="forEvent">건축인 허가 신청<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="">
 			<ul class="analysisGroup">
@@ -359,7 +359,7 @@
 		</div>
 	</li>
 	<li>
-		<p id="forEvent">자율주행 시뮬레이션<span class="collapse-icon">icon</span></p>
+		<p id="forEvent">IoT 기반 자율주행 시뮬레이션<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="">
 			<ul class="analysisGroup">
 				<li>
@@ -383,24 +383,27 @@
 		</div>
 	</li>
 	<li>
-		<p id="forEvent">원격조종 시뮬레이션<span class="collapse-icon">icon</span></p>
+		<p id="forEvent">IoT 기반 원격제어 시뮬레이션<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="">
 			<ul class="analysisGroup">
 				<li>
 					<div>
 						<label for="">선택</label>
 						<div style="display: flex; align-items: center; justify-content: space-between;">
-							<select id="iotAutoRemoteList" name="iotDataStatus" style="width:150px; ">
+							<select id="iotAutoRemoteList" name="iotDataStatus" style="width:100%; ">
 								<option value="">선택없음</option>
-								<option value="drone">드론</option>
+								<option value="drone">드론-1(cbaa8384-73d1-11ea-022ac1303)</option>
+								<option value="drone">드론-2(e52377a8-73d1-bc55-0242ac103)</option>
+								<option value="drone">드론-3(e5237d2a-73d1-11ea-D2ac130003)</option>
+								<option value="drone">드론-4(e5238540-11ea-bc55-0sac130003)</option>
 							</select>
 						</div>
 						<div>
-							<label for="fromBehind">카메라 트래킹</label>
+							<label for="fromBehind">드론 추적</label>
 							<input id="fromBehind" type="checkbox">
 						</div>
 						<div style = "margin:5px">
-							<button type="button" id="iotAutoRemote" title="Iot시뮬레이션" class="btnTextF" style="">확인</button>
+							<button type="button" id="iotAutoRemote" title="Iot시뮬레이션" class="btnTextF" style="">연결</button>
 						</div>
 					</div>
 				</li>

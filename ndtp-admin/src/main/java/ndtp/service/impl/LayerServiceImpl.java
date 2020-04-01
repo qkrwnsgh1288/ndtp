@@ -286,7 +286,7 @@ public class LayerServiceImpl implements LayerService {
         String osType = propertiesConfig.getOsType().toUpperCase();
         String dbName = Crypt.decrypt(url);
         dbName = dbName.substring(dbName.lastIndexOf("/") + 1);
-        String driver = "PG:host=localhost dbname=" + dbName + " user=" + Crypt.decrypt(username) + " password=" + Crypt.decrypt(password);
+        String driver = "PG:host=192.168.200.10 dbname=" + dbName + " user=" + Crypt.decrypt(username) + " password=" + Crypt.decrypt(password);
         //Layer dbLayer = layerMapper.getLayer(layer.getLayerId());
 
         String updateOption = null;
@@ -321,7 +321,7 @@ public class LayerServiceImpl implements LayerService {
         String osType = propertiesConfig.getOsType().toUpperCase();
         String dbName = Crypt.decrypt(url);
         dbName = dbName.substring(dbName.lastIndexOf("/") + 1);
-        String driver = "PG:host=localhost dbname=" + dbName + " user=" + Crypt.decrypt(username) + " password=" + Crypt.decrypt(password);
+        String driver = "PG:host=192.168.200.10 dbname=" + dbName + " user=" + Crypt.decrypt(username) + " password=" + Crypt.decrypt(password);
         GeoPolicy geoPolicy = geoPolicyService.getGeoPolicy();
         String layerSourceCoordinate = geoPolicy.getLayerSourceCoordinate();
         String layerTargetCoordinate = geoPolicy.getLayerTargetCoordinate();

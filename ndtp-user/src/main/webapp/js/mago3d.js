@@ -18654,7 +18654,19 @@ CesiumViewerInit.prototype.init = function()
 			url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
 		});
 	}
-	
+    var extent = Cesium.Rectangle.fromDegrees(127.19931049066805,36.44941898280123,127.32576852118987,36.55053669535394);
+
+    Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
+    Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
+
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxODQ0NTUxYi1mODg3LTQxZTEtYmU2Zi00NzQ0ODI3YjI1ZDIiLCJpZCI6MTUxODYsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1Njc0MDU5MDJ9.gqA_lEtPeiKI_Tn6WbBKfcaSaiHmj0f1GmcD0VBtmPc';
+    Cesium.Ion.defaultAccessToken = token;
+    this.options.semakeEchoGltflectionIndicator = false;
+
+    this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
+        url: Cesium.IonResource.fromAssetId(85676)
+    })
+
 	this.options.shouldAnimate = false;
 	this.viewer = new Cesium.Viewer(this.targetId, this.options);
 

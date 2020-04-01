@@ -23,7 +23,115 @@
             <div id="innerStructureIsGood" style="font-weight: bold; display: inline-block; margin-left: 10px;"></div>
         </li>
     </ul>
-
+</div>
+<style>
+    .layerDiv2 label {
+        display: inline-block;
+        width: 40%;
+    }
+    .layerDiv2 li {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    .layerDiv2 {
+        color: '#565656;
+    }
+</style>
+<!-- 건축인허가 신청 Modal -->
+<div id="remoteControlObjDialog" title="연동 정보" class="basicTable" style="display: none;">
+    <h4 class="category" style="margin-top: 5px; margin-bottom: 6px; font-size: 15px;">🔸상세 정보</h4>
+    <ul class="layerDiv2">
+        <li>
+            <div style="display: flex;">
+                <label >식별 코드 : </label>
+                <div id="drondId">cbaa8384-73d1-11ea-022ac1303</div>
+            </div>
+        </li>
+        <li>
+            <div>
+                <label>설명 : </label><span id="droneDiscription">2020년 4월 1일에 다음소프트에서 구입한 드론</span>
+            </div>
+        </li>
+        <li>
+            <div>
+                <label>무게 : </label><span id="">20kg</span>
+            </div>
+        </li>
+        <li>
+            <div style="display: flex;">
+                <label>우측 모터 상태 : </label>
+                <div id="droneLeftMotState">수신 대기중</div>
+            </div>
+        </li>
+        <li>
+            <div style="display: flex;">
+                <label>좌측 모터 상태 : </label>
+                <div id="droneRightMotState">수신 대기중</div>
+            </div>
+        </li>
+        <li>
+            <div style="display: flex;">
+                <label>바람 정보 : </label>
+                <div id="windInfo">수신 대기중</div>
+            </div>
+        </li>
+        <li>
+            <div>
+                <label>배터리 잔량 : </label><span id="droneBattery">수신 대기중</span>
+            </div>
+        </li>
+        <li>
+            <div>
+                <label>작동시간 : </label><span id="droneWorkTime">수신 대기중</span>
+            </div>
+        </li>
+        <li>
+            <div style="display: flex;">
+                <label>좌표 정보 : </label>
+                <span>
+                    <div>
+                        <span id="dronePositionLon">위도 : 수신 대기중</span>
+                    </div>
+                    <div>
+                        <span id="dronePositionLat">경도 : 수신 대기중</span>
+                    </div>
+                    <div>
+                        <span id="dronePositionAlt">고도 : 수신 대기중</span>
+                    </div>
+                </span>
+            </div>
+        </li>
+        <li>
+            <div style="display: flex;">
+                <label>자세 정보 : </label>
+                <span>
+                    <div>
+                        <label>헤딩 : </label><span id="droneHeading">0°</span>
+                    </div>
+                    <div style="font-size: 11px; color: #777">← to left/→ to right</div>
+                    <div>
+                        <label>피치 : </label>
+                        <span id="dronePitch">0°</span>
+                    </div>
+                    <div style="font-size: 11px; color: #777">↑ to up/↓ to down</div>
+                    <div>
+                        <label>롤 : </label>
+                        <span id="droneRoll">0°</span>
+                    </div>
+                    <div style="font-size: 11px; color: #777">← + ⇧ left/→ + ⇧ right</div>
+                </span>
+            </div>
+        </li>
+        <li>
+            <div style="display: flex;">
+                <label>속도 : </label>
+                <div>
+                    <span id="droneSpeed">수신 대기중</span>
+                    <div style="font-size: 11px; color: #777">↑ + ⇧ to speed up/↓ + ⇧ to speed down</div>
+                </div>
+            </div>
+        </li>
+    </ul>
 </div>
 
 

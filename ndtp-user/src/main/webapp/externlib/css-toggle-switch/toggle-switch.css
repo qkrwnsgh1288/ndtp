@@ -310,7 +310,7 @@
     border-radius: 30px;
     box-shadow: inset rgba(0, 0, 0, 0.1) 0 1px 0; }
     .switch-ios.switch-toggle a {
-      background-color: #287be4;
+      background-color: #5a5a5a;
       border: 0.125em solid #ddd;
       border-radius: 1.75em;
       transition: all 0.12s ease-out; }

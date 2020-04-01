@@ -15,7 +15,7 @@ button { cursor:pointer; font-family:'Malgun Gothic','돋움'; }
 header {
 display: flex;
 height: 50px;
-background-color: #287be4;
+background-color: #5a5a5a;
 }
 #wrap {
 position: relative;
@@ -176,7 +176,7 @@ background-image: url(/images/ko/ico.png);
 background-repeat: no-repeat;
 }
 ul.nav li.on {
-background-color: #287be4;
+background-color: #5a5a5a;
 }
 ul.nav li.search {
 background-position: -445px 10px;
@@ -263,7 +263,7 @@ font-size: 16px;
 background: url(/images/ko/ico.png) no-repeat 3px -592px;
 }
 h3 > span {
-color: #287be4;
+color: #5a5a5a;
 border-bottom: 1px solid;
 }
 
@@ -394,10 +394,10 @@ font-weight: bold;
 .dataGroupSum li.total > label {
 color: #fff;
 border: 1px solid #1e6ed3;
-background-color: #287be4;
+background-color: #5a5a5a;
 }
 .dataGroupSum li.total > span {
-color: #287be4;
+color: #5a5a5a;
 }
 
 /* /// 데이터 게시판 목록 /// */
@@ -453,7 +453,7 @@ flex: auto;
 margin-top: 8px;
 }
 .bothSide > div:first-child > span {
-color: #287be4
+color: #5a5a5a
 }
 .bothSide > div:last-child {
 text-align: right;
@@ -538,7 +538,7 @@ background: url(../images//images/ko/ico.png) no-repeat 0 -495px;
 margin: 7px 0;
 }
 .agreeCount > span {
-color: #287be4;
+color: #5a5a5a;
 }
 .agreeNew {
 margin: 20px 0;
@@ -570,7 +570,7 @@ color: #777;
 text-align: right;
 }
 .commentNew li p.info > span {
-color: #287be4
+color: #5a5a5a
 }
 
 /* 목록검색 */
@@ -745,7 +745,7 @@ button.rangeNext {
 background-position: -262px -193px;
 }
 .layerDiv li > button:active {
-border: 1px solid #287be4;
+border: 1px solid #5a5a5a;
 background-color: #ccc;
 }
 button.up:active {
@@ -761,7 +761,7 @@ button.rangeNext:active {
 background-position: -262px -243px;
 }
 .layerDiv li > button:hover {
-border: 1px solid #287be4;
+border: 1px solid #5a5a5a;
 background-color: #eee;
 }
 button.up:hover {
@@ -809,7 +809,7 @@ box-sizing: border-box;
 .onoffswitch-inner:before {
 content: "ON";
 padding-left: 5px;
-background-color: #287be4; color: #FFFFFF;
+background-color: #5a5a5a; color: #FFFFFF;
 }
 .onoffswitch-inner:after {
 content: "OFF";
@@ -880,13 +880,13 @@ border-bottom: 1px dotted #ccc;
 background-color: #fff;
 }
 .popupSub > ul li.on a {
-color: #287be4;
+color: #5a5a5a;
 }
 .popupSub > ul li:hover {
 background-color: #fff;
 }
 .popupSub > ul li a:hover {
-color: #287be4;
+color: #5a5a5a;
 }
 .descript {
 height: calc(100% - 50px);
@@ -908,7 +908,7 @@ cursor: pointer;
 .descript > ul li.on {
 color: #fff;
 border: 1px solid #284ba4;
-background-color: #287be4;
+background-color: #5a5a5a;
 }
 .descript div > h4  {
 margin: 10px 0;
