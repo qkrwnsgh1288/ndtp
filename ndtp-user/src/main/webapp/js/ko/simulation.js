@@ -1,6 +1,5 @@
 
 const consBuildBillboard = [];
-const aaaa = [];
 const arrIotLonlat = {
 	drone: [],
 	car: []
@@ -41,8 +40,9 @@ var Simulation = function(magoInstance, viewer, $) {
 	var CAMERA_MOVE_NEED_DISTANCE = 5000;
 	console.log(viewer);
 
-	var _viewer = viewer;
-    var _scene = viewer.scene;
+	const _viewer = viewer;
+    const _scene = viewer.scene;
+	const _camera = viewer.camera;
     var _polylines = [];
     var _labels = [];   
     var _polygons = [];
@@ -87,6 +87,22 @@ var Simulation = function(magoInstance, viewer, $) {
 	const htmlBillboard = new HtmlBillboardCollection(viewer.scene);
 	var magoManager = magoInstance.getMagoManager();
 	var f4dController = magoInstance.getF4dController();
+
+	let hpRoll = new Cesium.HeadingPitchRoll();
+	let hpRange = new Cesium.HeadingPitchRange();
+	let deltaRadians = Cesium.Math.toRadians(3.0);
+	let autoRemoteCenter = new Cesium.Cartesian3();
+	let controller = _scene.screenSpaceCameraController;
+	let autoRemotePosition = Cesium.Cartesian3.fromDegrees( 126.92266407202047, 37.5244176043923,  81.69295321520829);
+	//let autoRemotePosition = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, 5000.0);
+	let speedVector = new Cesium.Cartesian3();
+	let fixedFrameTransform = Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west');
+	let planePrimitive;
+	let planePrimitiveReady = false;
+	let pathPosition = new Cesium.SampledPositionProperty();
+	let r = 0;
+	let speed = 10;
+	const autoRemoteCanvas = _viewer.canvas;
 
 	initDeltaBillboard(128.9219740546607, 35.13631787332174, 3,0, 3, 30);
 	function initDeltaBillboard(lon, lat, alt, near, far, ratio) {
@@ -2845,7 +2861,6 @@ var Simulation = function(magoInstance, viewer, $) {
 		});
 	}
 
-	// 진행
 	$('#permCompleteView').click(function() {
 		let acbl = $('#acceptCompleteBuildList').val();
 		if (acbl === undefined || acbl === "") {
@@ -2884,6 +2899,81 @@ var Simulation = function(magoInstance, viewer, $) {
 		});
 	});
 
+	$('#iotAutoRemote').click(function(evt) {
+		autoRemoteCanvas.setAttribute('tabindex', '0'); // needed to put focus on the canvas
+		autoRemoteCanvas.addEventListener('click', function() {
+			autoRemoteCanvas.focus();
+		});
+		autoRemoteCanvas.focus();
+
+		var entityPath = _viewer.entities.add({
+			position : pathPosition,
+			name : 'autoRemotePath',
+			path : {
+				show : true,
+				leadTime : 0,
+				trailTime : 60,
+				width : 10,
+				resolution : 1,
+				material : new Cesium.PolylineGlowMaterialProperty({
+					glowPower : 0.3,
+					taperPower : 0.3,
+					color : Cesium.Color.PALEGOLDENROD
+				})
+			}
+		});
+
+		fileName = 'drone.gltf';
+		preDir = 'buses';
+
+		const _model = Cesium.Model.fromGltf({
+			url : '/data/simulation-rest/cityPlanModelSelect?FileName='+fileName+'&preDir='+preDir,
+			scale : 100,
+			modelMatrix : Cesium.Transforms.headingPitchRollToFixedFrame(autoRemotePosition, hpRoll, Cesium.Ellipsoid.WGS84, fixedFrameTransform),
+			minimumPixelSize : 10,
+			maximumPixelSize : 100
+		});
+
+		planePrimitive = viewer.scene.primitives.add(_model);
+
+		planePrimitive.readyPromise.then(function(model) {
+			model.activeAnimations.addAll({
+				multiplier : 0.5,
+				loop : Cesium.ModelAnimationLoop.REPEAT
+			});
+			debugger;
+			planePrimitiveReady = true;
+			// Zoom to model
+			r = 2.0 * Math.max(model.boundingSphere.radius, _camera.frustum.near);
+			controller.minimumZoomDistance = r * 0.005;
+			Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, autoRemoteCenter);
+			let heading = Cesium.Math.toRadians(230.0);
+			let pitch = Cesium.Math.toRadians(-20.0);
+			hpRange.heading = heading;
+			hpRange.pitch = pitch;
+			hpRange.range = r * 2.0;
+			// _camera.lookAt(autoRemoteCenter, hpRange);
+		});
+	});
+
+	_viewer.scene.preUpdate.addEventListener(function(scene, time) {
+		if(planePrimitive !== undefined && planePrimitiveReady === true) {
+			MAGO3D_INSTANCE.getViewer().clock.currentTime = Cesium.JulianDate.now();
+			speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, speed / 5, speedVector);
+			autoRemotePosition = Cesium.Matrix4.multiplyByPoint(planePrimitive.modelMatrix, speedVector, autoRemotePosition);
+			pathPosition.addSample(Cesium.JulianDate.now(), autoRemotePosition);
+			Cesium.Transforms.headingPitchRollToFixedFrame(autoRemotePosition, hpRoll, Cesium.Ellipsoid.WGS84, fixedFrameTransform, planePrimitive.modelMatrix);
+			if ($("#fromBehind").is(":checked") === true) {
+				Cesium.Matrix4.multiplyByPoint(planePrimitive.modelMatrix, planePrimitive.boundingSphere.center, autoRemoteCenter);
+				hpRange.heading = hpRoll.heading;
+				hpRange.pitch = hpRoll.pitch;
+				_camera.lookAt(autoRemoteCenter, hpRange);
+			} else {
+				_camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+			}
+		}
+	});
+
 	$('#permSend').click(function(event) {
 		const notSuitableReason = $('#notSuitableReason').text();
 		const suitable = $('#suitableCheck').val();
@@ -2913,10 +3003,73 @@ var Simulation = function(magoInstance, viewer, $) {
 			}
 		});
 	});
+
 	$("#processStatusCheck").click(()=> {
 		console.log("processStatusCheck");
 		processStatusCheckDialog.dialog("open");
 	});
+
+
+	document.addEventListener('keydown', function(e) {
+		switch (e.keyCode) {
+			case 40:
+				if (e.shiftKey) {
+					// speed down
+					speed = Math.max(--speed, 1);
+				} else {
+					// pitch down
+					hpRoll.pitch -= deltaRadians;
+					if (hpRoll.pitch < -Cesium.Math.TWO_PI) {
+						hpRoll.pitch += Cesium.Math.TWO_PI;
+					}
+				}
+				break;
+			case 38:
+				if (e.shiftKey) {
+					// speed up
+					speed = Math.min(++speed, 100);
+				} else {
+					// pitch up
+					hpRoll.pitch += deltaRadians;
+					if (hpRoll.pitch > Cesium.Math.TWO_PI) {
+						hpRoll.pitch -= Cesium.Math.TWO_PI;
+					}
+				}
+				break;
+			case 39:
+				if (e.shiftKey) {
+					// roll right
+					hpRoll.roll += deltaRadians;
+					if (hpRoll.roll > Cesium.Math.TWO_PI) {
+						hpRoll.roll -= Cesium.Math.TWO_PI;
+					}
+				} else {
+					// turn right
+					hpRoll.heading += deltaRadians;
+					if (hpRoll.heading > Cesium.Math.TWO_PI) {
+						hpRoll.heading -= Cesium.Math.TWO_PI;
+					}
+				}
+				break;
+			case 37:
+				if (e.shiftKey) {
+					// roll left until
+					hpRoll.roll -= deltaRadians;
+					if (hpRoll.roll < 0.0) {
+						hpRoll.roll += Cesium.Math.TWO_PI;
+					}
+				} else {
+					// turn left
+					hpRoll.heading -= deltaRadians;
+					if (hpRoll.heading < 0.0) {
+						hpRoll.heading += Cesium.Math.TWO_PI;
+					}
+				}
+				break;
+			default:
+		}
+	});
+
 
 	function getBuildingMetaData() {
 		let data = {

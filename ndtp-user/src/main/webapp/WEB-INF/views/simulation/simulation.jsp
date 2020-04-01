@@ -359,7 +359,7 @@
 		</div>
 	</li>
 	<li>
-		<p id="forEvent">IoT 시뮬레이션<span class="collapse-icon">icon</span></p>
+		<p id="forEvent">자율주행 시뮬레이션<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="">
 			<ul class="analysisGroup">
 				<li>
@@ -376,6 +376,31 @@
 							<button type="button" id="iotSimReq" title="Iot시뮬레이션" class="btnTextF" style="">등록</button>
 							<button type="button" id="iotSimTrack" title="Iot시뮬레이션" class="btnTextF" style="">트랙킹</button>
 				            <button type="button" id="iotsiminterval" title="Iot시뮬레이션" class="btnTextF" style="">실행</button>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</li>
+	<li>
+		<p id="forEvent">원격조종 시뮬레이션<span class="collapse-icon">icon</span></p>
+		<div class="listContents" id="">
+			<ul class="analysisGroup">
+				<li>
+					<div>
+						<label for="">선택</label>
+						<div style="display: flex; align-items: center; justify-content: space-between;">
+							<select id="iotAutoRemoteList" name="iotDataStatus" style="width:150px; ">
+								<option value="">선택없음</option>
+								<option value="drone">드론</option>
+							</select>
+						</div>
+						<div>
+							<label for="fromBehind">카메라 트래킹</label>
+							<input id="fromBehind" type="checkbox">
+						</div>
+						<div style = "margin:5px">
+							<button type="button" id="iotAutoRemote" title="Iot시뮬레이션" class="btnTextF" style="">확인</button>
 						</div>
 					</div>
 				</li>
