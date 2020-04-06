@@ -65,6 +65,12 @@ var Simulation = function(magoInstance, viewer, $) {
 		up: new Cesium.Cartesian3(-0.6425921047139787, 0.7580849641646135, 0.11127701499768833),
 		right: new Cesium.Cartesian3(0.7585094741804782, 0.6499271488471678, -0.047519246309740984)
 	});
+	_camera_scene.push({
+		position: new Cesium.Cartesian3(1334361.7076837712, -4650235.910441897, 4143917.350820853),
+		direction: new Cesium.Cartesian3(0.6934552588794106, 0.6573077447012288, -0.29507004708759216),
+		up: new Cesium.Cartesian3(0.6758858932599086, -0.45159070556152797, 0.5824466447175201),
+		right: new Cesium.Cartesian3(0.24959579969371193, -0.6033343711460725, -0.757422981806751)
+	});
 	buildingMetaData = getBuildingMetaData();
 
 	var _cityPlanModels = [];
@@ -107,7 +113,6 @@ var Simulation = function(magoInstance, viewer, $) {
 	$('#dataMenu').hide();
 	$('#converterMenu').hide();
 	$('#civilVoiceMenu').hide();
-
 	initDeltaBillboard(128.9219740546607, 35.13631787332174, 3,0, 3, 30);
 	function initDeltaBillboard(lon, lat, alt, near, far, ratio) {
 		const cart3 = Cesium.Cartesian3.fromDegrees(lon, lat, alt);
@@ -545,7 +550,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			whole_viewer.scene.camera.flyTo({
 				destination : Cesium.Cartesian3.fromDegrees(127.2857722,  36.48363827, 1000)
 			});
-		} else if(targetArea === 'b') {
+		} else if (targetArea === 'b') {
 			_viewer.camera.flyTo({
 				destination : new Cesium.Cartesian3(-3280477.6459669196, 4063234.453090485, 3649702.017245765),
 				orientation : {
@@ -566,6 +571,122 @@ var Simulation = function(magoInstance, viewer, $) {
 	$('#solarAnalysis .drawObserverPoint').click(function(){
 		notyetAlram();
 	});
+
+	$('#newyork_lod2_buildings').click(function() {
+		var tileset = viewer.scene.primitives.add(
+			new Cesium.Cesium3DTileset({
+				url: Cesium.IonResource.fromAssetId(75343)
+			})
+		);
+
+		viewer.zoomTo(tileset)
+			.otherwise(function (error) {
+				console.log(error);
+			});
+/*
+		Sandcastle.addToolbarMenu([{
+			text : 'Color By Height',
+			onselect : function() {
+				colorByHeight();
+			}
+		}, {
+			text : 'Color By Latitude',
+			onselect : function() {
+				colorByLatitude();
+			}
+		}, {
+			text : 'Color By Distance',
+			onselect : function() {
+				colorByDistance();
+			}
+		}, {
+			text : 'Color By Name Regex',
+			onselect : function() {
+				colorByStringRegex();
+			}
+		}, {
+			text : 'Hide By Height',
+			onselect : function() {
+				hideByHeight();
+			}
+		}]);*/
+
+		colorByDistance(tileset);
+	});
+
+	// Color buildings based on their height.
+	function colorByHeight(tileset) {
+		tileset.style = new Cesium.Cesium3DTileStyle({
+			color: {
+				conditions: [
+					['${Height} >= 300', 'rgba(45, 0, 75, 0.5)'],
+					['${Height} >= 200', 'rgb(102, 71, 151)'],
+					['${Height} >= 100', 'rgb(170, 162, 204)'],
+					['${Height} >= 50', 'rgb(224, 226, 238)'],
+					['${Height} >= 25', 'rgb(252, 230, 200)'],
+					['${Height} >= 10', 'rgb(248, 176, 87)'],
+					['${Height} >= 5', 'rgb(198, 106, 11)'],
+					['true', 'rgb(127, 59, 8)']
+				]
+			}
+		});
+	}
+
+	// Color buildings by their latitude coordinate.
+	function colorByLatitude(tileset) {
+		tileset.style = new Cesium.Cesium3DTileStyle({
+			defines: {
+				latitudeRadians: 'radians(${Latitude})'
+			},
+			color: {
+				conditions: [
+					['${latitudeRadians} >= 0.7125', "color('purple')"],
+					['${latitudeRadians} >= 0.712', "color('red')"],
+					['${latitudeRadians} >= 0.7115', "color('orange')"],
+					['${latitudeRadians} >= 0.711', "color('yellow')"],
+					['${latitudeRadians} >= 0.7105', "color('lime')"],
+					['${latitudeRadians} >= 0.710', "color('cyan')"],
+					['true', "color('blue')"]
+				]
+			}
+		});
+	}
+
+	// Color buildings by distance from a landmark.
+	function colorByDistance(tileset) {
+		// 1. -73.94966467559402, 40.79670034992095
+		// 2. -73.9730287908529, 40.76445512636958
+		// 3. -73.9813479771143, 40.76815401354375
+		// 4. -73.95783959549503, 40.800457858592836
+		tileset.style = new Cesium.Cesium3DTileStyle({
+			defines : {
+				distance : 'distance(vec2(radians(${Longitude}), radians(${Latitude})), vec2(-1.291777521, 0.7105706624))'
+			},
+			color : {
+				conditions : [
+					['${distance} > 0.00024',"color('gray')"],
+					['${distance} > 0.00016', "mix(color('yellow'), color('red'), (${distance} - 0.0016) / 0.00008)"],
+					['${distance} > 0.00008', "mix(color('green'), color('yellow'), (${distance} - 0.00008) / 0.00008)"],
+					['${distance} < 0.000002', "color('white')"],
+					['true', "mix(color('blue'), color('green'), ${distance} / 0.00008)"]
+				]
+			}
+		});
+	}
+
+	// Color buildings with a '3' in their BIN property.
+	function colorByStringRegex(tileset) {
+		tileset.style = new Cesium.Cesium3DTileStyle({
+			color : "(regExp('3').test(String(${BIN}))) ? color('cyan', 0.9) : color('purple', 0.1)"
+		});
+	}
+
+	// Show only buildings greater than 200 meters in height.
+	function hideByHeight(tileset) {
+		tileset.style = new Cesium.Cesium3DTileStyle({
+			show : '${Height} > 200'
+		});
+	}
 
 	// 업로드
 	$('#upload_cityplan').click(function() {

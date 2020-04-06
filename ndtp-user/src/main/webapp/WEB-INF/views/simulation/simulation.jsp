@@ -96,14 +96,15 @@
 						<option value=0>부산 전망 - 1</option>
 						<option value=1>부산 전망 - 2</option>
 						<option value=2>부산 전망 - 3</option>
+						<option value=3>센트럴 파크</option>
 					</select>
 					<button id="cameraLocaMove" type="button" class="btnText">이동</button>
 				</li>
 			</ul>
 		</div>
 	</li>
-	<li style="display: none;">
-		<p>건설 공정<span class="collapse-icon">icon</span></p>
+	<li>
+		<p>공정 단계 표출 시뮬레이션<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="constructionProcess">
 			<ul class="analysisGroup">
 				<li>
@@ -201,8 +202,8 @@
 			</ul>
 		</div>
 	</li>
-	<li style="display: none;">
-		<p>도시 계획<span class="collapse-icon">icon</span></p>
+	<li>
+		<p>도시 계획 시뮬레이션<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="">
 			<ul class="analysisGroup">
 				<li >
@@ -313,6 +314,7 @@
 				</li>
 				<li style="text-align: right;">
 					<button id="sejong_lod1_buildings" type="button" class="btnTextF" style="float:left;" >세종시 도시 표출</button>
+					<button id="newyork_lod2_buildings" type="button" class="btnTextF" style="float:left;" >뉴욕 도시 표출</button>
 					<button id="result_build" type="button" class="btnTextF" >결과 산출</button>
 				</li>
 			</ul>
