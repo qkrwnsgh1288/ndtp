@@ -50,11 +50,11 @@
 			<ul class="analysisGroup">
 				<li>
 					<label for="">위도</label>
-					<label id="monitorLon" for="">OO</label>
+					<label class="monitorLon" for="">OO</label>
 					<label for="">경도</label>
-					<label id="monitorLat" for="">OO</label>
+					<label class="monitorLat" for="">OO</label>
 					<label for="">높이</label>
-					<label id="monitorHeight" for="">OO</label>
+					<label class="monitorHeight" for="">OO</label>
 				</li>
 				<li>
 					<label for="">위치 정보 모니터링</label>
@@ -97,6 +97,7 @@
 						<option value=1>부산 전망 - 2</option>
 						<option value=2>부산 전망 - 3</option>
 						<option value=3>센트럴 파크</option>
+						<option value=3>자유의 여신상</option>
 					</select>
 					<button id="cameraLocaMove" type="button" class="btnText">이동</button>
 				</li>
@@ -316,6 +317,24 @@
 					<button id="sejong_lod1_buildings" type="button" class="btnTextF" style="float:left;" >세종시 도시 표출</button>
 					<button id="newyork_lod2_buildings" type="button" class="btnTextF" style="float:left;" >뉴욕 도시 표출</button>
 					<button id="result_build" type="button" class="btnTextF" >결과 산출</button>
+				</li>
+			</ul>
+		</div>
+	</li>
+	<li>
+		<p id="forEvent">건물 접근성 시뮬레이션<span class="collapse-icon">icon</span></p>
+		<div class="listContents" id="">
+			<ul class="analysisGroup">
+				<li>
+					<label for="">위도</label>
+					<label class="monitorLon" for="">OO</label>
+					<label for="">경도</label>
+					<label class="monitorLat" for="">OO</label>
+					<label for="">높이</label>
+					<label class="monitorHeight" for="">OO</label>
+					<div style = "margin:5px">
+						<button type="button" id="accessSimuBtn" class="btnTextF" style="">분석</button>
+					</div>
 				</li>
 			</ul>
 		</div>

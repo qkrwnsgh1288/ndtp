@@ -381,9 +381,9 @@ var Simulation = function(magoInstance, viewer, $) {
 	
 	$('#constUploadBtn').click(function() {
 		constProcUploadDialog.dialog("open");
-		$('#cons_proc_lon').text($('#monitorLon').val());
-		$('cons_proc_lat').text($('#monitorLon').val());
-		$('cons_proc_alt').text($('#monitorLon').val());
+		$('#cons_proc_lon').text($('.monitorLon').val());
+		$('cons_proc_lat').text($('.monitorLon').val());
+		$('cons_proc_alt').text($('.monitorLon').val());
 	});
 	
 	var cache = {};
@@ -658,16 +658,20 @@ var Simulation = function(magoInstance, viewer, $) {
 		// 2. -73.9730287908529, 40.76445512636958
 		// 3. -73.9813479771143, 40.76815401354375
 		// 4. -73.95783959549503, 40.800457858592836
+		const posX = Cesium.Math.toRadians( -74.01317645863263);
+		const posY = Cesium.Math.toRadians(40.71298508341484);
+		const distStr = 'distance(vec2(radians(${Longitude}), radians(${Latitude})), vec2('+posX+','+posY+'))';
+		// radian
 		tileset.style = new Cesium.Cesium3DTileStyle({
 			defines : {
-				distance : 'distance(vec2(radians(${Longitude}), radians(${Latitude})), vec2(-1.291777521, 0.7105706624))'
+				distance : distStr
 			},
 			color : {
 				conditions : [
 					['${distance} > 0.00024',"color('gray')"],
 					['${distance} > 0.00016', "mix(color('yellow'), color('red'), (${distance} - 0.0016) / 0.00008)"],
 					['${distance} > 0.00008', "mix(color('green'), color('yellow'), (${distance} - 0.00008) / 0.00008)"],
-					['${distance} < 0.000002', "color('white')"],
+					['${distance} < 0.000008', "color('white')"],
 					['true', "mix(color('blue'), color('green'), ${distance} / 0.00008)"]
 				]
 			}
@@ -1966,9 +1970,9 @@ var Simulation = function(magoInstance, viewer, $) {
                 var latitudeString = Cesium.Math.toDegrees(cartographic.latitude);
                 var height = cartographic.height;
 
-            	$('#monitorLon').text(longitudeString);
-            	$('#monitorLat').text(latitudeString);
-            	$("#monitorHeight").text(height);
+            	$('.monitorLon').text(longitudeString);
+            	$('.monitorLat').text(latitudeString);
+            	$(".monitorHeight").text(height);
             	var lonlat = {
             		lon: longitudeString,
 					lat: latitudeString,
