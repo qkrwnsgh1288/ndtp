@@ -41,6 +41,13 @@
 	.tooltip:hover .tooltiptext {
 		visibility: visible;
 	}
+	ul.colorPalette {}
+	ul.colorPalette > li { display:inline-block; width:80px; padding:5px 10px; background:#eee; border:1px solid #eee; text-align:center; position:relative; }
+	ul.colorPalette > li:hover { background:#fff; }
+	ul.colorPalette > li ul.submenu { display:none; position:absolute; left:0; }
+	ul.colorPalette > li:hover ul.submenu { display:block; }
+	ul.colorPalette > li ul.submenu > li { display:inline-block; width:80px; padding:5px 10px; background:#eee; border:1px solid #eee; text-align:center; }
+	ul.colorPalette > li ul.submenu > li:hover { background:#fff; }
 </style>
 
 <ul class="listDrop">
@@ -322,21 +329,61 @@
 		</div>
 	</li>
 	<li>
-		<p id="forEvent">건물 접근성 시뮬레이션<span class="collapse-icon">icon</span></p>
+		<p id="forEvent">거리 시뮬레이션<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="">
 			<ul class="analysisGroup">
 				<li>
-					<label for="">위도</label>
-					<label class="monitorLon" for="">OO</label>
-					<label for="">경도</label>
-					<label class="monitorLat" for="">OO</label>
-					<label for="">높이</label>
-					<label class="monitorHeight" for="">OO</label>
+					<label for="">1분이내 거리</label>
+					<label class="distanceColorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(000,027,106)"></div></label>
+					<label for="">5분이내 거리</label>
+					<label class="distanceColorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(072,118,000)"></div></label>
+					<label for="">10분이내 거리</label>
+					<label class="distanceColorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(139,155,000)"></div></label>
+					<label for="">15분이내 거리</label>
+					<label class="distanceColorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(143,088,000)"></div></label>
+					<label for="">20분이내 거리</label>
+					<label class="distanceColorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(144,004,000)"></div></label>
 					<div style = "margin:5px">
 						<button type="button" id="accessSimuBtn" class="btnTextF" style="">분석</button>
 					</div>
 				</li>
 			</ul>
+		</div>
+	</li>
+	<li>
+		<p id="forEvent">건물 높이 시뮬레이션<span class="collapse-icon">icon</span></p>
+		<div class="listContents">
+			<ul class="analysisGroup">
+				<li>
+					<label for="">색상 팔레트</label>
+					<label for="">
+						<div>
+							<ul class="colorPalette">
+								<li><div id="selectPaletteList"></div>
+									<ul id="colorPaletteList" class="subMenu">
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</label>
+					<label for="">5 미터 이하</label>
+					<label class="colorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(255,255,142)"></div></label>
+					<label for="">5 - 10 미터</label>
+					<label class="colorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(255,255,142)"></div></label>
+					<label for="">10 - 25 미터</label>
+					<label class="colorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(255,255,142)"></div></label>
+					<label for="">25 - 50 미터</label>
+					<label class="colorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(255,255,142)"></div></label>
+					<label for="">50 - 100 미터</label>
+					<label class="colorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(255,255,142)"></div></label>
+					<label for="">100 - 200 미터</label>
+					<label class="colorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(255,255,142)"></div></label>
+					<label for="">200 이상</label>
+					<label class="colorPaletItem" for=""><div style="width: 10px; height: 10px; background: rgb(255,255,142)"></div></label>
+				</li>
+			</ul>
+			<button type="button" id="heightAnalysisBtn" class="btnTextF">확인</button>
+			<input id="heightSlider" style="margin-top: 10px;" type="range" max="6" min="0" step="1" value="0" class="slider">
 		</div>
 	</li>
 	<li style="display: none;">

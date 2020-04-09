@@ -99,7 +99,7 @@ var Simulation = function(magoInstance, viewer, $) {
 	let deltaRadians = Cesium.Math.toRadians(3.0);
 	let autoRemoteCenter = new Cesium.Cartesian3();
 	let controller = _scene.screenSpaceCameraController;
-	let autoRemotePosition = Cesium.Cartesian3.fromDegrees(  128.6842177683109, 35.1470528006441,  60.08976932797917);
+	let autoRemotePosition = Cesium.Cartesian3.fromDegrees(   -73.98077346456517, 40.7682591189821,  10.08976932797917);
 	//let autoRemotePosition = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, 5000.0);
 	let speedVector = new Cesium.Cartesian3();
 	let fixedFrameTransform = Cesium.Transforms.localFrameToFixedFrameGenerator('south', 'west');
@@ -109,6 +109,19 @@ var Simulation = function(magoInstance, viewer, $) {
 	let r = 0;
 	let speed = 1;
 	const autoRemoteCanvas = _viewer.canvas;
+	let newYorkTileSet = null;
+
+	// Information about the currently highlighted feature
+	var highlighted = {
+		feature : undefined,
+		originalColor : new Cesium.Color()
+	};
+
+// Information about the currently selected feature
+	const tilesSetSelected = {
+		feature: undefined,
+		originalColor: new Cesium.Color()
+	};
 
 	$('#dataMenu').hide();
 	$('#converterMenu').hide();
@@ -572,65 +585,76 @@ var Simulation = function(magoInstance, viewer, $) {
 		notyetAlram();
 	});
 
-	$('#newyork_lod2_buildings').click(function() {
-		var tileset = viewer.scene.primitives.add(
+	initNewYork();
+	function initNewYork() {
+		newYorkTileSet = viewer.scene.primitives.add(
 			new Cesium.Cesium3DTileset({
 				url: Cesium.IonResource.fromAssetId(75343)
 			})
 		);
+	}
 
-		viewer.zoomTo(tileset)
+	$('#newyork_lod2_buildings').click(function() {
+		viewer.zoomTo(newYorkTileSet)
 			.otherwise(function (error) {
 				console.log(error);
-			});
-/*
-		Sandcastle.addToolbarMenu([{
-			text : 'Color By Height',
-			onselect : function() {
-				colorByHeight();
-			}
-		}, {
-			text : 'Color By Latitude',
-			onselect : function() {
-				colorByLatitude();
-			}
-		}, {
-			text : 'Color By Distance',
-			onselect : function() {
-				colorByDistance();
-			}
-		}, {
-			text : 'Color By Name Regex',
-			onselect : function() {
-				colorByStringRegex();
-			}
-		}, {
-			text : 'Hide By Height',
-			onselect : function() {
-				hideByHeight();
-			}
-		}]);*/
+		});
+	});
+	$('#heightAnalysisBtn').click(function() {
+		const paletList = $('#selectPaletteList').children().children();
+		const aletteLen = $('#selectPaletteList').children().children().length;
+		const colorTable = [];
+		for(let i = 0; i < aletteLen; i++) {
+			const paletItem = paletList[i];
+			const bgInfo = paletItem.style.background;
+			colorTable.push(bgInfo);
+		}
 
-		colorByDistance(tileset);
+		hideByHeight(newYorkTileSet, siliderToHeight[parseInt($('#heightSlider').val())], colorTable);
 	});
 
+	$('#accessSimuBtn').click(function() {
+		colorByDistance(newYorkTileSet);
+	});
+
+	const siliderToHeight = {
+		0 : 0,
+		1 : 5,
+		2 : 10,
+		3 : 25,
+		4 : 50,
+		5 : 100,
+		6 : 10000
+	}
+	$('#heightSlider').change(function(data) {
+		const paletList = $('#selectPaletteList').children().children();
+		const aletteLen = $('#selectPaletteList').children().children().length;
+		const colorTable = [];
+		for(let i = 0; i < aletteLen; i++) {
+			const paletItem = paletList[i];
+			const bgInfo = paletItem.style.background;
+			colorTable.push(bgInfo);
+		}
+
+		hideByHeight(newYorkTileSet, siliderToHeight[data.currentTarget.value], colorTable);
+	});
 	// Color buildings based on their height.
-	function colorByHeight(tileset) {
+	function colorByHeight(tileset, colorTables) {
 		tileset.style = new Cesium.Cesium3DTileStyle({
 			color: {
 				conditions: [
-					['${Height} >= 300', 'rgba(45, 0, 75, 0.5)'],
-					['${Height} >= 200', 'rgb(102, 71, 151)'],
-					['${Height} >= 100', 'rgb(170, 162, 204)'],
-					['${Height} >= 50', 'rgb(224, 226, 238)'],
-					['${Height} >= 25', 'rgb(252, 230, 200)'],
-					['${Height} >= 10', 'rgb(248, 176, 87)'],
-					['${Height} >= 5', 'rgb(198, 106, 11)'],
-					['true', 'rgb(127, 59, 8)']
+					['${Height} >= 200', colorTables[6]],
+					['${Height} >= 100', colorTables[5]],
+					['${Height} >= 50', colorTables[4]],
+					['${Height} >= 25', colorTables[3]],
+					['${Height} >= 10', colorTables[2]],
+					['${Height} >= 5', colorTables[1]],
+					['true', colorTables[0]]
 				]
 			}
 		});
 	}
+
 
 	// Color buildings by their latitude coordinate.
 	function colorByLatitude(tileset) {
@@ -686,9 +710,20 @@ var Simulation = function(magoInstance, viewer, $) {
 	}
 
 	// Show only buildings greater than 200 meters in height.
-	function hideByHeight(tileset) {
+	function hideByHeight(tileset, height, colorTables) {
 		tileset.style = new Cesium.Cesium3DTileStyle({
-			show : '${Height} > 200'
+			show : '${Height} <= '+ height,
+			color: {
+				conditions: [
+					['${Height} >= 200', colorTables[6]],
+					['${Height} >= 100', colorTables[5]],
+					['${Height} >= 50', colorTables[4]],
+					['${Height} >= 25', colorTables[3]],
+					['${Height} >= 10', colorTables[2]],
+					['${Height} >= 5', colorTables[1]],
+					['true', colorTables[0]]
+				]
+			}
 		});
 	}
 
@@ -1452,7 +1487,7 @@ var Simulation = function(magoInstance, viewer, $) {
 		if (val === "bus") {
 			samplePosition = busSamplePosition;
 		} else if (val === "drone") {
-			samplePosition = droneSamplePosition;
+			samplePosition = droneSamplePositionByNewYork;
 		} else {
 			alert("아직 지원되지 않음.");
 			return;
@@ -1543,7 +1578,7 @@ var Simulation = function(magoInstance, viewer, $) {
             preDir = 'buses';
             uri = '/data/simulation-rest/cityPlanModelSelect?FileName='+fileName+'&preDir='+preDir;
             scale = 0.01;
-            samplePosition = droneSamplePosition;
+            samplePosition = droneSamplePositionByNewYork;
             id = "drone";
 		}
 		
@@ -2180,7 +2215,6 @@ var Simulation = function(magoInstance, viewer, $) {
 				else if (runAllocBuildStat === "maple_yellow") {
 					genBuild(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 1, "texture_maple", "maple_yellow.gltf")
 				}
-
 				else if (runAllocBuildStat === "test123") {
 					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 1, "test123", "test.gltf")
 				}
@@ -2196,11 +2230,6 @@ var Simulation = function(magoInstance, viewer, $) {
 				else if (runAllocBuildStat === "building3") {
 					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 10, "building3", "building3.gltf")
 				}
-
-
-
-
-
 				else if(runAllocBuildStat === "imsiBuildSelect") {
                 	// 새로운 모델 선택
                 	
@@ -2214,22 +2243,54 @@ var Simulation = function(magoInstance, viewer, $) {
 //                    _viewer._selectedEntity = pickedFeature.id.polygon;
                 } else {
 					var pickedFeature = viewer.scene.pick(event.position);
-
+					debugger;
 					if(pickedFeature) {
-						if(pickedFeature.id.type === "delta") {
+						if(pickedFeature.id === undefined) {
 
+							// If a feature was previously selected, undo the highlight
+							if (Cesium.defined(tilesSetSelected.feature)) {
+								tilesSetSelected.feature.color = tilesSetSelected.originalColor;
+								tilesSetSelected.feature = undefined;
+							}
+
+							// Pick a new feature
+							if (!Cesium.defined(pickedFeature)) {
+								clickHandler(movement);
+								return;
+							}
+
+							// Select the feature if it's not already selected
+							if (tilesSetSelected.feature === pickedFeature) {
+								return;
+							}
+							tilesSetSelected.feature = pickedFeature;
+
+							// Save the selected feature's original color
+							if (pickedFeature === highlighted.feature) {
+								Cesium.Color.clone(highlighted.originalColor, tilesSetSelected.originalColor);
+								highlighted.feature = undefined;
+							} else {
+								Cesium.Color.clone(pickedFeature.color, tilesSetSelected.originalColor);
+							}
+
+							// Highlight newly selected feature
+							pickedFeature.color = Cesium.Color.LIME;
 						} else {
-							pickedName = pickedFeature.id.name;
-							allObject[pickedName].terrain = pickedFeature.id;
-							allObject[pickedName].plottage = getArea(allObject[pickedName].terrain.polygon._hierarchy._value.positions);
-							$("#selectDistrict").val(allObject[pickedName].terrain.name).trigger("change");
-							// $("#districtDisplay").val("enable").trigger("change");
+							if(pickedFeature.id.type === "delta") {
+
+							} else {
+								pickedName = pickedFeature.id.name;
+								allObject[pickedName].terrain = pickedFeature.id;
+								allObject[pickedName].plottage = getArea(allObject[pickedName].terrain.polygon._hierarchy._value.positions);
+								$("#selectDistrict").val(allObject[pickedName].terrain.name).trigger("change");
+								// $("#districtDisplay").val("enable").trigger("change");
+							}
 						}
 					} else {
 						pickedName = "";
 					}
-
 				}
+
                 /*else {
 					var pickedFeature = _viewer.scene.pick(event.position);
 					if(pickedFeature) {
@@ -3098,7 +3159,7 @@ var Simulation = function(magoInstance, viewer, $) {
 	_viewer.scene.preUpdate.addEventListener(function(scene, time) {
 		if(planePrimitive !== undefined && planePrimitiveReady === true) {
 			MAGO3D_INSTANCE.getViewer().clock.currentTime = Cesium.JulianDate.now();
-			speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, speed / 20, speedVector);
+			speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, speed / 50, speedVector);
 			autoRemotePosition = Cesium.Matrix4.multiplyByPoint(planePrimitive.modelMatrix, speedVector, autoRemotePosition);
 			pathPosition.addSample(Cesium.JulianDate.now(), autoRemotePosition);
 			debugger;
@@ -3303,78 +3364,6 @@ var Simulation = function(magoInstance, viewer, $) {
 		return data;
 	}
 
-	const busSamplePosition = [
-		127.268185563992,36.52498984302221,1,
-		127.26787876098984,36.525301485567915,1,
-		127.26767990481896,36.525558132376325,1,
-		127.26747820504661,36.525791865414426,1,
-		127.26741570210505,36.52610809448586,1,
-		127.26747542763627,36.526420606537705,1,
-		127.267532486665,36.526765806481635,1,
-		127.26756957372169,36.527067279608964,1,
-		127.26765516252534,36.527400971539514,1,
-		127.26770651393856,36.52779450064776,1,
-		127.2677893861096,36.52826761249312,1,
-		127.26784664857215,36.528588630785634,1,
-		127.26789818443586,36.5289835536422,1,
-		127.26773178802088,36.52943476242508,1,
-		127.26747924569432,36.52974956928284,1,
-		127.26725253181495,36.5297796606732,1,
-		127.26698851411592,36.52958521868429,1,
-		127.26639733347912,36.52939077280283,1,
-		127.2655830559292,36.529052964342206,1,
-		127.26519035501734,36.528669153993995,1,
-		127.26481792919128,36.52827626402508,1,
-		127.26446894697484,36.52791862411967,1,
-		127.26401412479109,36.52740407791329,1,
-		127.26378889782335,36.527102690625604,1,
-		127.26346957512136,36.52668642773908,1,
-		127.26332417061622,36.52630006158854,1,
-		127.26326714951544,36.5259504902189,1,
-		127.26319047750127,36.525712238393396,1,
-		127.26307119906448,36.52543733336696,1,
-		127.26295192099887,36.52510639039557,1,
-		127.26305984185795,36.52484981307907,1,
-		127.2635710381883,36.52473985176785,1,
-		127.2644400793169,36.524507239871056,1,
-		127.26487120840146,36.52439972714907,1,
-		127.26509227329731,36.52448203149675,1,
-		127.2652368135746,36.52474722971511,1,
-		127.26538985591549,36.52501928775557,1,
-		127.26557691158472,36.525090159985346,1,
-		127.2660473855522,36.524909550442935,1,
-		127.26652919307674,36.52468550268405,1,
-		127.2670450120734,36.5244660255848,1,
-		127.26757217818313,36.52445458906652,1,
-		127.26802882757312,36.52461226556226,1,
-		127.26825591353428,36.5247130152673,1,
-		127.268185563992,36.52498984302221,1,
-		127.26787876098984,36.525301485567915,1];
-
-	const droneSamplePosition =	[127.2856504212428,36.48066411326436,2+11,
-			127.28578304702818,36.48080979054118,2+11,
-			127.28592662916796,36.48103489505022,4+11,
-			127.28617248357656,36.48125446340615,4+11,
-			127.28638765775678,36.48152561777509,6+11,
-			127.28641000252487,36.48164386125527,6+11,
-			127.28628911618449,36.481981325955395,6+11,
-			127.28580573784654,36.481965602851105,6+11,
-			127.28532255462311,36.481885781823884,6+11,
-			127.28513165322146,36.48166234771338,8+11,
-			127.28554530433529,36.48127130963175,8+11,
-			127.28605964844036,36.481483415184094,10+11,
-			127.28591970469876,36.482110309041346,26+11,
-			127.28481112026408,36.481724032641885,26+11,
-			127.28431385979691,36.48194272150995,26+11,
-			127.2837558833892,36.48202593951379,26+11,
-			127.28368326049522,36.48179209922455,26+11,
-			127.28412163666673,36.48143259180876,14+11,
-			127.28454406753546,36.481254649097195,6+11,
-			127.28489244391889,36.481060150041856,4+11,
-			127.2852421125134,36.48083960258572,2+11,
-			127.2856504212428,36.48066411326436,2+11,
-			127.28578304702818,36.48080979054118,2+11];
-
 	function runIot(id, pos, modelPath, scale) {
 		console.log("runIot: ", id);
 		var startTime = '';
@@ -3469,7 +3458,7 @@ var Simulation = function(magoInstance, viewer, $) {
 
     var onTickListener = null;
 	
-	function sceneViewEntity(param_id){
+	function sceneViewEntity(param_id) {
 		var first_flip = 0;
 
         onTickListener = viewer.clock.onTick.addEventListener(function(clock){
@@ -3500,7 +3489,7 @@ var Simulation = function(magoInstance, viewer, $) {
 
                 // console.log("angle=", angle, " pitch=", pitch, " range=", range, " offset=", offset);
                 viewer.camera.lookAt(trackedEntity.position.getValue(clock.currentTime), offset);
-            } else{
+            } else {
 				iotEntities[param_id].isTracking = false;
 
                 // viewer.entities.removeById(iotEntities[param_id]._id);
@@ -3509,6 +3498,37 @@ var Simulation = function(magoInstance, viewer, $) {
             }
         });
 	};
+    initColorTableList();
+	function initColorTableList() {
+        for(const obj in colorTableList) {
+            if(obj.includes('colorTable')) {
+                let tableItem = '<li style="display: flex; align-items: center; justify-content: center">';
+                const colorList = colorTableList[obj];
+                for( const color of colorList) {
+                    const colorString = colorTableList.toString(color);
+                    tableItem += '<div style="width: 10px; height: 10px; background: '+colorString+'"></div>';
+                }
+                tableItem += '</li>';
+                const ti = $(tableItem);
+				ti.click(function(data) {
+					$('#selectPaletteList').empty();
+					const sampleData = $(this).clone();
+					$('#selectPaletteList').append(sampleData);
+
+				});
+				$('#colorPaletteList').append(ti);
+            }
+        }
+        $('#selectPaletteList').bind("DOMSubtreeModified", function() {
+			const len = $(this.children[0]).children().length;
+			const childrenItem = $(this.children[0]).children();
+			debugger;
+			for(let i = 0; i < len; i++) {
+				const bg = $(this.children[0]).children()[i].style.background;
+				$($('.colorPaletItem')[i].children[0]).css('background',bg);
+			}
+		});
+    }
 };
 
 const f4dDataGenMaster = {
@@ -3620,6 +3640,91 @@ const f4dDataGenMaster = {
 	},
 };
 
+const busSamplePosition = [
+	127.268185563992,36.52498984302221,1,
+	127.26787876098984,36.525301485567915,1,
+	127.26767990481896,36.525558132376325,1,
+	127.26747820504661,36.525791865414426,1,
+	127.26741570210505,36.52610809448586,1,
+	127.26747542763627,36.526420606537705,1,
+	127.267532486665,36.526765806481635,1,
+	127.26756957372169,36.527067279608964,1,
+	127.26765516252534,36.527400971539514,1,
+	127.26770651393856,36.52779450064776,1,
+	127.2677893861096,36.52826761249312,1,
+	127.26784664857215,36.528588630785634,1,
+	127.26789818443586,36.5289835536422,1,
+	127.26773178802088,36.52943476242508,1,
+	127.26747924569432,36.52974956928284,1,
+	127.26725253181495,36.5297796606732,1,
+	127.26698851411592,36.52958521868429,1,
+	127.26639733347912,36.52939077280283,1,
+	127.2655830559292,36.529052964342206,1,
+	127.26519035501734,36.528669153993995,1,
+	127.26481792919128,36.52827626402508,1,
+	127.26446894697484,36.52791862411967,1,
+	127.26401412479109,36.52740407791329,1,
+	127.26378889782335,36.527102690625604,1,
+	127.26346957512136,36.52668642773908,1,
+	127.26332417061622,36.52630006158854,1,
+	127.26326714951544,36.5259504902189,1,
+	127.26319047750127,36.525712238393396,1,
+	127.26307119906448,36.52543733336696,1,
+	127.26295192099887,36.52510639039557,1,
+	127.26305984185795,36.52484981307907,1,
+	127.2635710381883,36.52473985176785,1,
+	127.2644400793169,36.524507239871056,1,
+	127.26487120840146,36.52439972714907,1,
+	127.26509227329731,36.52448203149675,1,
+	127.2652368135746,36.52474722971511,1,
+	127.26538985591549,36.52501928775557,1,
+	127.26557691158472,36.525090159985346,1,
+	127.2660473855522,36.524909550442935,1,
+	127.26652919307674,36.52468550268405,1,
+	127.2670450120734,36.5244660255848,1,
+	127.26757217818313,36.52445458906652,1,
+	127.26802882757312,36.52461226556226,1,
+	127.26825591353428,36.5247130152673,1,
+	127.268185563992,36.52498984302221,1,
+	127.26787876098984,36.525301485567915,1];
+
+const droneSamplePositionByKorea =	[127.2856504212428,36.48066411326436,2+11,
+	127.28578304702818,36.48080979054118,2+11,
+	127.28592662916796,36.48103489505022,4+11,
+	127.28617248357656,36.48125446340615,4+11,
+	127.28638765775678,36.48152561777509,6+11,
+	127.28641000252487,36.48164386125527,6+11,
+	127.28628911618449,36.481981325955395,6+11,
+	127.28580573784654,36.481965602851105,6+11,
+	127.28532255462311,36.481885781823884,6+11,
+	127.28513165322146,36.48166234771338,8+11,
+	127.28554530433529,36.48127130963175,8+11,
+	127.28605964844036,36.481483415184094,10+11,
+	127.28591970469876,36.482110309041346,26+11,
+	127.28481112026408,36.481724032641885,26+11,
+	127.28431385979691,36.48194272150995,26+11,
+	127.2837558833892,36.48202593951379,26+11,
+	127.28368326049522,36.48179209922455,26+11,
+	127.28412163666673,36.48143259180876,14+11,
+	127.28454406753546,36.481254649097195,6+11,
+	127.28489244391889,36.481060150041856,4+11,
+	127.2852421125134,36.48083960258572,2+11,
+	127.2856504212428,36.48066411326436,2+11,
+	127.28578304702818,36.48080979054118,2+11];
+
+
+const droneSamplePositionByNewYork = [
+	-74.043851888056,40.68958246072606, 2,
+	-74.04435121184555,40.689794628992104, 4,
+	-74.04501660955937,40.68965655006841, 10,
+	-74.04505702118283,40.68888403489096, 24,
+	-74.04439012461766,40.68866990264323, 30,
+	-74.04374166977952,40.68912170242458, 15,
+	-74.043851888056,40.68958246072606, 2,
+	-74.04435121184555,40.689794628992104, 4
+	];
+
+
 //4fd sample data structure
 const f4dJsonStudySample = {
 	makeSampleJson: function() {
@@ -3687,6 +3792,7 @@ const f4dJsonStudySample = {
 		];
 	},
 };
+
 const echoMap = {
 	0: [
 		{
@@ -3980,6 +4086,7 @@ const echoMap = {
 		}
 	]
 };
+
 const echoDataMap = {
 	0: [],
 	1: [],
@@ -3987,4 +4094,55 @@ const echoDataMap = {
 	3: [],
 	4: [],
 	5: [],
+};
+
+const colorTableList = {
+    colorTable_1: [
+        '255,247,236',
+        '253,225,186',
+        '253,195,140',
+        '252,141,089',
+        '231,083,058',
+        '191,015,010',
+        '127,000,000'
+    ],
+    colorTable_2: [
+        '255,247,251',
+        '226,223,238',
+        '180,195,222',
+        '116,169,207',
+        '037,133,186',
+        '004,097,152',
+        '002,056,088'
+    ],
+    colorTable_3: [
+        '247,252,253',
+        '213,227,239',
+        '169,195,222',
+        '140,150,198',
+        '138,093,170',
+        '131,031,135',
+        '077,000,075'
+    ],
+    colorTable_4: [
+        '255,245,235',
+        '253,222,191',
+        '253,185,125',
+        '253,141,060',
+        '233,094,013',
+        '183,059,002',
+        '127,039,004'
+    ],
+    colorTable_5: [
+        '247,252,253',
+        '220,242,242',
+        '170,222,210',
+        '102,194,164',
+        '055,162,101',
+        '011,119,052',
+        '000,068,027'
+    ],
+    toString: (colorTable) => {
+        return 'rgba('+colorTable+')';
+    }
 };
