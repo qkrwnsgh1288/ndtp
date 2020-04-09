@@ -316,6 +316,13 @@
 							<option value="building1">빌딩1</option>
 							<option value="building2">빌딩2</option>
 							<option value="building3">빌딩3</option>
+							<option value="building4">빌딩4</option>
+							<option value="building5">빌딩5</option>
+							<option value="building6">빌딩6</option>
+							<option value="building7">빌딩7</option>
+							<option value="building8">빌딩8</option>
+							<option value="building9">빌딩9</option>
+							<option value="building10">빌딩10</option>
 							<option value="obj_stool">stool</option>
 						</select>
 					</div>

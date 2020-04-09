@@ -2222,13 +2222,34 @@ var Simulation = function(magoInstance, viewer, $) {
 					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 2, "stool", "Stool.gltf")
 				}
 				else if (runAllocBuildStat === "building1") {
-					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.5, "building1", "building1.gltf")
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building1", "building1.gltf")
 				}
 				else if (runAllocBuildStat === "building2") {
-					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.5, "building2", "building2.gltf")
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building2", "building2.gltf")
 				}
 				else if (runAllocBuildStat === "building3") {
-					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 10, "building3", "building3.gltf")
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building3", "building3.gltf")
+				}
+				else if (runAllocBuildStat === "building4") {
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building4", "building4.gltf")
+				}
+				else if (runAllocBuildStat === "building5") {
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building5", "building5.gltf")
+				}
+				else if (runAllocBuildStat === "building6") {
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building6", "building6.gltf")
+				}
+				else if (runAllocBuildStat === "building7") {
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building7", "building7.gltf")
+				}
+				else if (runAllocBuildStat === "building8") {
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building8", "building8.gltf")
+				}
+				else if (runAllocBuildStat === "building9") {
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building9", "building9.gltf")
+				}
+				else if (runAllocBuildStat === "building10") {
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building10", "building10.gltf")
 				}
 				else if(runAllocBuildStat === "imsiBuildSelect") {
                 	// 새로운 모델 선택
