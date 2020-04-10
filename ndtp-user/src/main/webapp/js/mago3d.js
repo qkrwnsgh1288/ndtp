@@ -18664,7 +18664,7 @@ CesiumViewerInit.prototype.init = function()
     this.options.semakeEchoGltflectionIndicator = false;
 
     this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
-        url: Cesium.IonResource.fromAssetId(85676)
+        url: Cesium.IonResource.fromAssetId(88773)
     })
 
 	this.options.shouldAnimate = false;
