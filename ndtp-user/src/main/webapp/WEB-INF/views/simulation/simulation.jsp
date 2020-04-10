@@ -104,7 +104,9 @@
 						<option value=1>부산 전망 - 2</option>
 						<option value=2>부산 전망 - 3</option>
 						<option value=3>센트럴 파크</option>
-						<option value=3>자유의 여신상</option>
+						<option value=4>뉴욕 빌딩</option>
+						<option value=5>자유의 여신상</option>
+						<option value=6>마이 빌리지</option>
 					</select>
 					<button id="cameraLocaMove" type="button" class="btnText">이동</button>
 				</li>
