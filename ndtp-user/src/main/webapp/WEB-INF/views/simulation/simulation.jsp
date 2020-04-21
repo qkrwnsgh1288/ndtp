@@ -220,7 +220,7 @@
 					<div id="smulationToolbar">
 						<label for="">위치</label>
 						<select id="curLocation" name="curLocation">
-							<option value="sejong">세종시</option>
+							<option value="sejong">뉴욕</option>
 							<option value="pusan">부산시</option>
 						</select>
 						<label for="">필지 선택</label>
