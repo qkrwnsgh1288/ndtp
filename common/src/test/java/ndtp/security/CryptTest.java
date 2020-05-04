@@ -11,7 +11,7 @@ public class CryptTest {
 	 */
 	@Test
 	public void 암복호화() {
-		System.out.println("url : " + Crypt.encrypt("jdbc:postgresql://localhost:5432/postgres"));
+		System.out.println("url : " + Crypt.encrypt("jdbc:postgresql://localhost:5432/ndtp"));
 		System.out.println("user : " + Crypt.encrypt("postgres"));
 		System.out.println("password : " + Crypt.encrypt("postgres"));
 		

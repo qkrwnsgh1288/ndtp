@@ -18648,14 +18648,25 @@ CesiumViewerInit.prototype.init = function()
 		}
 	}
 	
-	if (!this.options.imageryProvider) 
+	if (!this.options.imageryProvider)
 	{
 		this.options.imageryProvider = new Cesium.ArcGisMapServerImageryProvider({
 			url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
 		});
 	}
-	
-	this.options.shouldAnimate = false;
+
+    this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
+        url: 'http://211.106.171.246:39998/tilesets/terrain/'
+    });
+
+    /*
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxODQ0NTUxYi1mODg3LTQxZTEtYmU2Zi00NzQ0ODI3YjI1ZDIiLCJpZCI6MTUxODYsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1Njc0MDU5MDJ9.gqA_lEtPeiKI_Tn6WbBKfcaSaiHmj0f1GmcD0VBtmPc';
+
+    this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
+        url: Cesium.IonResource.fromAssetId(88773)
+    });*/
+
+    this.options.shouldAnimate = false;
 	this.viewer = new Cesium.Viewer(this.targetId, this.options);
 
 	this.postProcessDataProvider();
@@ -19444,6 +19455,7 @@ F4dController.prototype.addSmartTileGroup = function(f4dObject)
 	} 
 	else 
 	{
+	    debugger;
 		var groupId = f4dObject.data_key || f4dObject.dataGroupId;
 		var groupDataFolder;
 		var groupKey;
@@ -57591,7 +57603,7 @@ var TinTerrainManager = function()
 	this.tinTerrainsQuadTreeAmerica; // Use if this imageryType = CODE.imageryType.CRS84.
 	this.tinTerrainQuadTreeMercator; // Use if this imageryType = CODE.imageryType.WEB_MERCATOR.
 	
-	this.geoServURL = "http://192.168.10.57:9090/geoserver/gwc/service/wmts";
+	this.geoServURL = "http://ds3d10.57:9090/geoserver/gwc/service/wmts";
 	
 	// Elevation model or plain ellipsoid.
 	// terrainType = 0 -> terrainPlainModel.

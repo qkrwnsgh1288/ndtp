@@ -42,7 +42,7 @@ public class ServletConfig implements WebMvcConfigurer {
 	
 	@Autowired
 	private PropertiesConfig propertiesConfig;
-	
+
 	@Autowired
 	private CSRFHandlerInterceptor cSRFHandlerInterceptor;
 	@Autowired
@@ -60,7 +60,7 @@ public class ServletConfig implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		log.info(" @@@ ServletConfig addInterceptors @@@@ ");
-		
+
 		registry.addInterceptor(securityInterceptor)
 				.addPathPatterns("/**")
 				.excludePathPatterns("/f4d/**", "/sign/**", "/cache/reload", "/guide/**", "/sample/**", "/css/**", "/externlib/**", "favicon*", "/images/**", "/js/**");
@@ -82,7 +82,7 @@ public class ServletConfig implements WebMvcConfigurer {
 	public InternalResourceViewResolver viewResolver() {
 		log.info(" @@@ ServletConfig viewResolver @@@");
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-		viewResolver.setPrefix("/WEB-INF/views");
+		viewResolver.setPrefix("/WEB-INF/views/");
 		viewResolver.setSuffix(".jsp");
 		viewResolver.setOrder(3);
 		
@@ -137,12 +137,11 @@ public class ServletConfig implements WebMvcConfigurer {
 			registry.addResourceHandler("/data/simulation-rest/**").addResourceLocations("file:/Users/junho/data/mago3d/building_obj/");
 		} else {
 			registry.addResourceHandler("/f4d/**").addResourceLocations("file:" + propertiesConfig.getDataServiceDir());
-			registry.addResourceHandler("/data/simulation-rest/**").addResourceLocations("file:C:\\data\\mago3d\\building_obj\\");
+			registry.addResourceHandler("/data/simulation-rest/**").addResourceLocations("file:" + propertiesConfig.getServiceFileBuildingobjDir());
 		}
 
 //		registry.addResourceHandler("/f4d/sample/**").addResourceLocations("/sample/f4d/");
 		registry.addResourceHandler("/f4d/sample/**").addResourceLocations("file:" + propertiesConfig.getGuideDataServiceDir());
-
 		registry.addResourceHandler("/css/**").addResourceLocations("/css/");
 		registry.addResourceHandler("/externlib/**").addResourceLocations("/externlib/");
 		registry.addResourceHandler("/images/**").addResourceLocations("/images/");
@@ -150,7 +149,7 @@ public class ServletConfig implements WebMvcConfigurer {
 		
 //		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 	}
-	
+
 	@Bean
 	public RequestDataValueProcessor requestDataValueProcessor() {
 		log.info(" @@@ ServletConfig requestDataValueProcessor @@@ ");

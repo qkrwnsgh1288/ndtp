@@ -57372,7 +57372,7 @@ var TinTerrainManager = function()
 	this.tinTerrainsQuadTreeAmerica; // Use if this imageryType = CODE.imageryType.CRS84.
 	this.tinTerrainQuadTreeMercator; // Use if this imageryType = CODE.imageryType.WEB_MERCATOR.
 	
-	this.geoServURL = "http://192.168.10.57:9090/geoserver/gwc/service/wmts";
+	// this.geoServURL = "http://ds3d10.57:9090/geoserver/gwc/service/wmts";
 	
 	// Elevation model or plain ellipsoid.
 	// terrainType = 0 -> terrainPlainModel.

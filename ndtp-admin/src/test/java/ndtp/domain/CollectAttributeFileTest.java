@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +13,7 @@ class CollectAttributeFileTest {
 
 	String inputDirectory = "C:\\data\\lx";
 	String outDirectory = "C:\\data\\mago3d\\smart-tiling-attribute";
-	
+/*
 	@Test
 	void test() throws Exception {
 		File rootDirectory = new File(inputDirectory);
@@ -34,7 +34,7 @@ class CollectAttributeFileTest {
 			}
 		}
 	}
-	
+	*/
 	private void moveAttribute(String groupName, File file) throws IOException {
 		String directoryName = file.getName();
 		String subPath = File.separator + groupName + File.separator + file.getName() + File.separator;

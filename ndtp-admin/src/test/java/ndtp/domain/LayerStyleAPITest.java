@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.jupiter.api.Test;
+//import org.json.JSONArray;
+//import org.json.JSONObject;
+//import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,7 +22,7 @@ import ndtp.geospatial.LayerStyleParser;
 
 @Slf4j
 public class LayerStyleAPITest {
-	
+	/*
 	@Test
 	public void getLayerList() {
 		try {
@@ -45,9 +45,8 @@ public class LayerStyleAPITest {
 			restTemplate.setMessageConverters(messageConverters);
 		    
 			HttpEntity<String> entity = new HttpEntity<>(headers);
-			
-//			String url = "http://localhost:8080/geoserver/rest/workspaces/ndtp/layers";
-			String url = "http://192.168.10.9:8080/geoserver/rest/layers";
+
+			String url = "http://localhost:8080/geoserver/rest/workspaces/ndtp/layers";
 			ResponseEntity<?> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 			JSONObject layerJson = new JSONObject((String)response.getBody());
 			JSONArray layerList = layerJson.getJSONObject("layers").getJSONArray("layer");
@@ -61,7 +60,7 @@ public class LayerStyleAPITest {
 		}
 	}
 	
-	
+	*/
 	public void stylesInsert() {
 		try {
 			RestTemplate restTemplate = new RestTemplate();
