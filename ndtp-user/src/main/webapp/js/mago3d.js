@@ -18655,16 +18655,17 @@ CesiumViewerInit.prototype.init = function()
 		});
 	}
 
-    this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
+	//terrain Settings~!
+    /*this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
         url: 'http://211.106.171.246:39998/tilesets/terrain/'
-    });
+    });*/
 
-    /*
+
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxODQ0NTUxYi1mODg3LTQxZTEtYmU2Zi00NzQ0ODI3YjI1ZDIiLCJpZCI6MTUxODYsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1Njc0MDU5MDJ9.gqA_lEtPeiKI_Tn6WbBKfcaSaiHmj0f1GmcD0VBtmPc';
 
     this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
         url: Cesium.IonResource.fromAssetId(88773)
-    });*/
+    });
 
     this.options.shouldAnimate = false;
 	this.viewer = new Cesium.Viewer(this.targetId, this.options);
@@ -19455,7 +19456,6 @@ F4dController.prototype.addSmartTileGroup = function(f4dObject)
 	} 
 	else 
 	{
-	    debugger;
 		var groupId = f4dObject.data_key || f4dObject.dataGroupId;
 		var groupDataFolder;
 		var groupKey;
@@ -19491,7 +19491,7 @@ F4dController.prototype.addSmartTileGroup = function(f4dObject)
  * f4d data group 등록
  * @param {Array<object> | object} f4dObject f4d data definition object
  */
-F4dController.prototype.addF4dGroup = function(f4dObject) 
+F4dController.prototype.addF4dGroup = function(f4dObject)
 {
 	// TODO : validate f4dObject.
 	//F4dController.f4dObjectValidate()

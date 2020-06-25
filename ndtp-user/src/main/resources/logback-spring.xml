@@ -25,11 +25,11 @@
 		</encoder>
 	</appender> -->
 
-	<logger name="org.apache.tomcat" level="debug" additivity="false" />
-	<logger name="org.apache.commons" level="info" additivity="false" />
-	<logger name="org.springframework.web" level="info" additivity="false" />
+	<logger name="org.apache.tomcat" level="trace" additivity="false" />
+	<logger name="org.apache.commons" level="trace" additivity="false" />
+	<logger name="org.springframework.web" level="trace" additivity="false" />
 	<!-- <logger name="org.springframework.web" level="info" additivity="false" /> -->
-	<logger name="com.zaxxer.hikari.pool.HikariPool" level="info" additivity="false" />
+	<logger name="com.zaxxer.hikari.pool.HikariPool" level="trace" additivity="false" />
 	
 	<root level="debug">
 		<appender-ref ref="STDOUT" />

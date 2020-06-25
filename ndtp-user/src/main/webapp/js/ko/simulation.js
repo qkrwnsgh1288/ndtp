@@ -457,6 +457,14 @@ var Simulation = function(magoInstance, viewer, $) {
 						}
 						delete consBuildStepInfo[obj];
 					}
+					// LOD 시뮬레이션을 위해서 남겨두었었음.
+					// if (index > parseInt(obj)) {
+					// 	for ( const dataKeyObj of consBuildStepInfo[parseInt(obj)]) {
+					// 		const dataKey = dataKeyObj.data_key;
+					// 		f4dController.deleteF4dGroup(dataKey);
+					// 	}
+					// 	delete consBuildStepInfo[obj];
+					// }
 				}
 				if(consBuildBillboardStepInfo !== undefined) {
 					for(const obj_index in consBuildBillboardStepInfo) {
@@ -776,6 +784,7 @@ var Simulation = function(magoInstance, viewer, $) {
 				totalFloorArea: 0, 	// 빌딩들의 총 건축면적
 				shadowView: false	// building shadow
 			};
+			let color = Cesium.Color.fromBytes(255, 109, 109, 130);
 
 			// const fileName = "Parcel6-4.geojson";
 			const fileName = "6-4_disApart.geojson";
@@ -785,8 +794,8 @@ var Simulation = function(magoInstance, viewer, $) {
 				trailTime : 100,
 				resolution : 5,
 				strokeWidth: 0,
-				stroke: Cesium.Color.AQUA.withAlpha(0.0),
-				fill: Cesium.Color.AQUA.withAlpha(0.8),
+				stroke: color,
+				fill: color,
 				clampToGround: true
 			};
 			let url = "/data/simulation-rest/drawGeojson?fileName=" + fileName;
@@ -795,6 +804,7 @@ var Simulation = function(magoInstance, viewer, $) {
 				let entitis = dataSource.entities._entities._array;
 
 				for(let index in entitis) {
+					debugger;
 					let entitiyObj = entitis[index];
 					let registeredEntity = _viewer.entities.add(entitiyObj);
 					registeredEntity.name = "sejong_apartmentComplex1";
@@ -804,7 +814,8 @@ var Simulation = function(magoInstance, viewer, $) {
 
 					Cesium.knockout.getObservable(viewModel, 'standardFloorCount').subscribe(
 						function(newValue) {
-							registeredEntity.polygon.extrudedHeight = newValue * 4;
+							// 기준층수 변경
+							registeredEntity.polygon.extrudedHeight = newValue * 3.05;
 						}
 					);
 					allObject[val].terrain = registeredEntity;
@@ -921,6 +932,7 @@ var Simulation = function(magoInstance, viewer, $) {
 
 					Cesium.knockout.getObservable(viewModel, 'standardFloorCount').subscribe(
 						function(newValue) {
+							// 기준 층수에 따라 값이 변함. 기존 층수가 20일때 3를 두면 실제 층수 26과 맞게 떨어짐
 							registeredEntity.polygon.extrudedHeight = newValue * 4;
 						}
 					);
@@ -948,10 +960,10 @@ var Simulation = function(magoInstance, viewer, $) {
 		}
 		switch (val){
 			case "dType1":
-				allObject[pickedName].terrain.polygon.material.color=Cesium.Color.YELLOW.withAlpha(0.6);
+				allObject[pickedName].terrain.polygon.material.color=Cesium.Color.fromBytes(255, 109, 109, 130);
 				$("#standardFloorAreaRatio").val(180).trigger("change");
 				$("#standardBuildingToLandRatio").val(50).trigger("change");
-				$("#standardFloorCount").val(20).trigger("change");
+				$("#standardFloorCount").val(30).trigger("change");
 				break;
 			case "dType2":
 				allObject[pickedName].terrain.polygon.material.color=Cesium.Color.ORANGERED.withAlpha(0.6);
@@ -1039,7 +1051,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			alert("이 지역의 3D 모형이 이미 생성되어 있습니다.");
 			return;
 		}
-
+		const color = Cesium.Color.fromBytes(163, 197, 230, 255);
 		if (val === "sejong_apartmentComplex1") {
 			const fileName = "6-4_buildings.geojson";
 			const obj = {
@@ -1047,8 +1059,8 @@ var Simulation = function(magoInstance, viewer, $) {
 				leadTime : 0,
 				trailTime : 100,
 				resolution : 5,
-				stroke: Cesium.Color.BLUEVIOLET,
-				fill: Cesium.Color.BLUEVIOLET,
+				stroke: color,
+				fill: color,
 				clampToGround: true
 			};
 			let url = "/data/simulation-rest/drawGeojson?fileName=" + fileName;
@@ -2059,13 +2071,13 @@ var Simulation = function(magoInstance, viewer, $) {
 					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 2, "stool", "Stool.gltf")
 				}
 				else if (runAllocBuildStat === "building1") {
-					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.5, "building1", "building1.gltf")
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building1", "building1.gltf")
 				}
 				else if (runAllocBuildStat === "building2") {
-					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.5, "building2", "building2.gltf")
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building2", "building2.gltf")
 				}
 				else if (runAllocBuildStat === "building3") {
-					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 10, "building3", "building3.gltf")
+					genBuild3(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), cartographic.height, 0.1, "building3", "building3.gltf")
 				}
 
 
@@ -2416,7 +2428,7 @@ var Simulation = function(magoInstance, viewer, $) {
 		let roll = 0;
 		let hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
 		let orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
-
+		// const p = new Cesium.Cartesian3(1, 1.5, 1);
 		const entity = new Cesium.Entity({
 			name: fileName,
 			position: position,
@@ -2426,7 +2438,13 @@ var Simulation = function(magoInstance, viewer, $) {
 				uri: '/data/simulation-rest/cityPlanModelSelect3?FileName='+fileName+'&preDir='+preDir,
 				scale: scale,
 				show: true,
-				heightReference : Cesium.HeightReference.CLAMP_TO_GROUND,
+				color: Cesium.Color.fromBytes(238, 85, 255, 255),
+				heightReference : Cesium.HeightReference.CLAMP_TO_GROUND
+				/*nodeTransformations: {
+					Highr1: {
+						scale: p
+					}
+				}*/
 			}
 		});
 		_viewer.entities.add(entity);

@@ -28,11 +28,11 @@ public class XSSFilter implements Filter {
     public void destroy() {
     	this.filterConfig = null;
     }
- 
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-    	HttpServletRequest request2 = (HttpServletRequest) request;
-    	log.info(" >>> XSSFilter uri = {}", request2.getRequestURI());
+    	/*HttpServletRequest request2 = (HttpServletRequest) request;
+    	log.info(" >>> XSSFilter uri = {}", request2.getRequestURI());*/
     	chain.doFilter(new XSSRequestWrapper((HttpServletRequest) request), response);
     }
 }

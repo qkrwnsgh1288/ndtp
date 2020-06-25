@@ -34,7 +34,6 @@
             <input type="range" min="0.0" max="360.0" step="1" data-bind="value: roll, valueUpdate: 'input'" style="width:69%; -webkit-appearance: slider-horizontal">
             <input type="text" size="5" data-bind="value: roll">
         </div>
-
         <div style="font-weight: bold; margin-top: 10px;">🔸 자동 회전 조정</div>
         <button id="auto_heading" type="button" class="btnTextF">Heading</button>
         <button id="auto_pitch" type="button" class="btnTextF">Pitch</button>
