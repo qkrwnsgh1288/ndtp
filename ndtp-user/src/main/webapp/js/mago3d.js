@@ -83060,7 +83060,9 @@ Renderer.prototype.renderGeometryDepth = function(gl, renderType, visibleObjCont
 
         let objId = this.magoManager.objectSelected.objectId;
         let buildingFileName = this.magoManager.buildingSelected.buildingFileName;
-
+        /**
+         * vaiv code added 추가
+         */
         if (buildingFileName === "F4D_KSJ_100") {
             // 설계도
             if (!magoManager.isShowingBlueprint) {
