@@ -27,7 +27,7 @@ public class ControllerExceptionHandler {
 		
 		ModelAndView mav = new ModelAndView();
 	    mav.addObject("exception", exception);
-	    mav.setViewName("/error/error");
+	    mav.setViewName("error/error");
 	    return mav;
 	}
 

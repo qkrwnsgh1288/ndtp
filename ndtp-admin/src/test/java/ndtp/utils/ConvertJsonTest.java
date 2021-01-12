@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,7 @@ class ConvertJsonTest {
 		private List<DataInfo> datas;
 		private String dataGroupKey;
 	}
-	
+	/*
 	@Test
 	void test() {
 		try {
@@ -34,14 +34,14 @@ class ConvertJsonTest {
 			//String fileName = "121.json";
 			File dir = Paths.get(filePath).toFile();
 			File[] files = dir.listFiles();
-			
+
 			for (File file : files) {
 				if (!file.isDirectory()) {
 					ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 					SourceJSON src = objectMapper.readValue(file, SourceJSON.class);
 					DataInfoLegacyWrapper tgt = new DataInfoLegacyWrapper();
 					List<DataInfoLegacy> childrens = new ArrayList<>();
-					
+
 					List<DataInfo> datas = src.getDatas();
 					for (DataInfo info : datas) {
 						DataInfoLegacy children = new DataInfoLegacy();
@@ -60,22 +60,22 @@ class ConvertJsonTest {
 						childrens.add(children);
 					}
 					tgt.setChildren(childrens);
-					String fileName = datas.get(0).getDataGroupId() + "_" + src.getDataGroupKey() + ".json"; 
-					
+					String fileName = datas.get(0).getDataGroupId() + "_" + src.getDataGroupKey() + ".json";
+
 					String result = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(tgt);
-					
+
 					File targetFile = Paths.get(filePath, fileName).toFile();
 					objectMapper.writeValue(targetFile, tgt);
-					
+
 					log.info(result);
-				}  
+				}
 			}
-			
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("" + e);
 		}
-		
-	}
 
+	}
+*/
 }

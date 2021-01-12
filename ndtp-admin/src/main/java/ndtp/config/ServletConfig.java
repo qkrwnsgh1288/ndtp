@@ -41,7 +41,7 @@ import ndtp.interceptor.SecurityInterceptor;
 @Slf4j
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = { "ndtp.config, ndtp.controller.view, ndtp.restcontroller.rest, ndtp.interceptor, ndtp.validator" }, includeFilters = {
+@ComponentScan(basePackages = { "ndtp.config", "ndtp.controller.view", "ndtp.controller.rest", "ndtp.interceptor", "ndtp.validation" }, includeFilters = {
 		@Filter(type = FilterType.ANNOTATION, value = Component.class),
 		@Filter(type = FilterType.ANNOTATION, value = Controller.class),
 		@Filter(type = FilterType.ANNOTATION, value = RestController.class)})
@@ -141,6 +141,7 @@ public class ServletConfig implements WebMvcConfigurer {
 		
 		// F4D converter file 경로
 		registry.addResourceHandler("/f4d/**").addResourceLocations("file:" + propertiesConfig.getDataServiceDir());
+
 		registry.addResourceHandler("/f4d/sample/**").addResourceLocations("file:" + propertiesConfig.getGuideDataServiceDir());
 		registry.addResourceHandler("/css/**").addResourceLocations("/css/");
 		registry.addResourceHandler("/externlib/**").addResourceLocations("/externlib/");

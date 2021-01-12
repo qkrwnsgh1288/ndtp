@@ -32,6 +32,7 @@ import ndtp.support.URLSupport;
  * @author Eyal Lupu
  * @see CSRFRequestDataValueProcessor
  */
+
 @Slf4j
 @Component
 public class CSRFHandlerInterceptor extends HandlerInterceptorAdapter{
@@ -44,11 +45,11 @@ public class CSRFHandlerInterceptor extends HandlerInterceptorAdapter{
 
 		String uri = request.getRequestURI();
 		log.info("CSRFHandlerInterceptor uri = {}", uri);
-    	if(uri.indexOf("/error") >= 0) {
-    		log.info("CSRFHandlerInterceptor error pass!!!");
-    		return true;
-    	}
-    	
+		if(uri.indexOf("/error") >= 0) {
+			log.info("CSRFHandlerInterceptor error pass!!!");
+			return true;
+		}
+
     	boolean isExceptionURI = false;
     	int exceptionURICount = URLSupport.EXCEPTION_URI.length;
     	for(int i=0 ; i<exceptionURICount; i++) {
@@ -80,27 +81,8 @@ public class CSRFHandlerInterceptor extends HandlerInterceptorAdapter{
 			log.info("@@@@@@@@@@@@@ sessionToken = {}", sessionToken);
 			log.info("@@@@@@@@@@@@@ requestToken = {}", requestToken);
 			return true;
-//			if (sessionToken.equals(requestToken)) {
-//				return true;
-//			} else {
-//				log.info("@@@@@@@@@@@@@ CSRF Token Different. uri = {}", uri);
-//				if(isAjax(request)) {
-//					Map<String, Object> unauthorizedResult = new HashMap<>();
-//					unauthorizedResult.put("statusCode", HttpStatus.UNAUTHORIZED.value());
-//					unauthorizedResult.put("errorCode", "csrf.token.invalid");
-//					unauthorizedResult.put("message", null);
-//
-//					response.setContentType("application/json");
-//					response.setCharacterEncoding("UTF-8");
-//					response.getWriter().write(objectMapper.writeValueAsString(unauthorizedResult));
-//					return false;
-//				} else {
-//					response.sendRedirect(loginUrl);
-//		    		return false;
-//				}
-//			}
 		}
-		
+
 		return true;
 	}
 	

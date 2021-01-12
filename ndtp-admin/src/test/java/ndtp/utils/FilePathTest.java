@@ -1,16 +1,19 @@
 package ndtp.utils;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.nio.file.Paths;
-
+/*
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+*/
+
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 class FilePathTest {
+/*
 
 	@Test
 	void test() {
@@ -29,5 +32,6 @@ class FilePathTest {
 			log.info("----------- fullName = {}", fullName);
 		}
 	}
+*/
 
 }

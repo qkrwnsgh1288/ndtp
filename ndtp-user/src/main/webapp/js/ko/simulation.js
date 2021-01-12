@@ -2447,7 +2447,7 @@ var Simulation = function(magoInstance, viewer, $) {
 	}
 
 	function makeEchoGltf(stepInfo, index, lon, lat) {
-		var position = Cesium.Cartesian3.fromDegrees(lon, lat, 33);
+		var position = Cesium.Cartesian3.fromDegrees(lon, lat,10);
 		var heading = 190;
 		var pitch = 0;
 		var roll = 0;
@@ -2474,6 +2474,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			allowPicking : true,            // not pickable
 			debugShowBoundingVolume : false, // default
 			debugWireframe : false,
+			heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
 			show: false
 		});
 
@@ -2483,6 +2484,7 @@ var Simulation = function(magoInstance, viewer, $) {
 		Cesium.when(primiti_model.readyPromise).then(function(model) {
 			model._nodeCommands.forEach(function(data) {
 				data.show = false;
+				data.heightReference =  Cesium.HeightReference.CLAMP_TO_GROUND;
 			});
 			model.show = true;
 
@@ -3407,7 +3409,7 @@ const f4dDataGenMaster = {
 		for(var i = 0; i < f4dSubObject.length; i++) {
 			var obj = f4dSubObject[i];
 			if(obj.data_key === 'KSJ_100'){
-				alt = 50;
+				alt = 32;
 			}
 			var imsiF4dSubObject = {
 				"attributes": {
@@ -3438,7 +3440,7 @@ const f4dDataGenMaster = {
 		for(var i = 0; i < f4dSubObject.length; i++) {
 			var obj = f4dSubObject[i];
 			if(obj.data_key === 'M_DTL') {
-				obj.height = 32;
+				obj.height = 0;
 			}
 			var imsiF4dSubObject = {
 				"attributes": {
