@@ -16,5 +16,5 @@ public class URLSupport {
     // 파일 업로딩 URL
  	public static final String[] MULTIPART_REQUEST_URI = { "/upload-datas", "/layers/" };
  	
-//	public static final Pattern STATIC_RESOURCES = Pattern.compile("(^/js/.*)|(^/css/.*)|(^/images/.*)|(^/externlib/.*)|(/favicon.ico)");
+//	public static final Pattern STATIC_RESOURCES = Pattern.compile("(^/js/.*)|(^/css/.*)|(^/images/.*)|(^/externlib/.*)|(/favicon2.ico)");
 }

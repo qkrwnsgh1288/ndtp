@@ -8,7 +8,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<title>비밀번호 변경 | NDTP</title>
-	<link rel="shortcut icon" href="/images/favicon.ico">
+	<link rel="shortcut icon" href="/images/favicon2.ico">
 	<link rel="stylesheet" href="/css/${lang}/font/font.css" />
 	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css" />
 	<link rel="stylesheet" href="/externlib/normalize/normalize.min.css" />

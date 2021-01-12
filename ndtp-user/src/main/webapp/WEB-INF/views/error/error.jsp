@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="robots" content="index,nofollow"/>
 	<title>오류 | NDTP</title>
-    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link rel="shortcut icon" href="/images/favicon2.ico">
 	<link rel="stylesheet" href="/css/ko/style.css"/>
 </head>
 

@@ -2698,7 +2698,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			// url : '/sample/independent/'+index+'/'+index + '.gltf',
 			// uri : '/data/simulation-rest/cityPlanModelSelect?FileName='+index + '.gltf'+'&preDir='+'/independent/'+index+'/',
 			url: '/data/simulation-rest/cityPlanModelSelect2?FileName='+fileName+'&preDir='+preDir+'&preDir2='+preDir2,
-			modelMatrix : transform,
+			modelMatrix : transformheadingPitchRollToFixedFrame
 			scale : 1,                     // double size
 			allowPicking : true,            // not pickable
 			debugShowBoundingVolume : false, // default
