@@ -4,5 +4,10 @@
 # Ignore Gradle build output directory
 build
 /.settings/
-.idea
 .DS_Store
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
