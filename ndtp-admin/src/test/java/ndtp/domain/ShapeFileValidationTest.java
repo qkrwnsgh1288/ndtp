@@ -46,7 +46,7 @@ public class ShapeFileValidationTest {
             e.printStackTrace();
         } 
 	}
-	
+
 	@Test
 	public void count() {
 		LayerFileInfo file0 = new LayerFileInfo();

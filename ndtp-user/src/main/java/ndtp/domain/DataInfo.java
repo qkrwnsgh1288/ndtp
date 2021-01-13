@@ -31,6 +31,8 @@ public class DataInfo extends Search implements Serializable {
 	
 	private static final long serialVersionUID = 6267402319518438249L;
 	
+	public static final String F4D_PREFIX = "F4D_";
+	
 	/******** 화면 오류 표시용 ********/
 	private String messageCode;
 	private String errorCode;
@@ -40,6 +42,8 @@ public class DataInfo extends Search implements Serializable {
 	private Long dataCount;
 	// 3D 지도 표시 시 목록에서 온건지, 수정에서 온건지를 구분하기 위해.
 	private String referrer;
+	// 고유번호
+	private Integer userGroupId;
 	
 	// 위도
 	private BigDecimal latitude;
@@ -67,6 +71,9 @@ public class DataInfo extends Search implements Serializable {
 	private String dataGroupTarget;
 	// data group key
 	private String dataGroupKey;
+	// smart
+	private Boolean tiling;
+	
 	// data 고유 식별번호
 	private String dataKey;
 	// data 고유 식별번호
@@ -125,12 +132,6 @@ public class DataInfo extends Search implements Serializable {
 	@Setter(AccessLevel.NONE)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private Timestamp viewInsertDate;
-	public Timestamp getInsertDate() {
-		return insertDate;
-	}
-	public void setInsertDate(Timestamp insertDate) {
-		this.insertDate = insertDate;
-	}
 	
 	public Timestamp getViewUpdateDate() {
 		return this.updateDate;

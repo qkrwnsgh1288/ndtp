@@ -8,14 +8,16 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<title>데이터 목록 | NDTP</title>
-
-	<link rel="stylesheet" href="/externlib/cesium/Widgets/widgets.css" />
-	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css" />
-	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css" />
-	<link rel="stylesheet" href="/css/${lang}/user-style.css" />
-	<link rel="stylesheet" href="/css/${lang}/style.css" />
-	<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js"></script>
-	<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+	<link rel="shortcut icon" href="/images/favicon.ico?cacheVersion=${contentCacheVersion}">
+	<link rel="stylesheet" href="/externlib/cesium/Widgets/widgets.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/css/${lang}/user-style.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/css/${lang}/style.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/externlib/json-viewer/json-viewer.css?cacheVersion=${contentCacheVersion}" />
+	<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js?cacheVersion=${contentCacheVersion}"></script>
+	<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js?cacheVersion=${contentCacheVersion}"></script>
+	<script type="text/javascript" src="/externlib/json-viewer/json-viewer.js?cacheVersion=${contentCacheVersion}"></script>
 </head>
 <body>
 
@@ -32,12 +34,13 @@
 		<div style="padding: 20px 20px 0px 10px; font-size: 18px;">3D 업로딩 데이터 자동 변환</div>
 		<div class="tabs" >
 			<ul class="tab">
-				<li onclick="location.href='/data-group/list'">데이터 그룹</li>
-				<li onclick="location.href='/data-group/input'">데이터 그룹 등록</li>
-				<li onclick="location.href='/upload-data/input'">업로딩 데이터</li>
-			   	<li onclick="location.href='/upload-data/list'">업로딩 데이터 목록</li>
-			  	<li onclick="location.href='/converter/list'">업로딩 데이터 변환 목록</li>
-			  	<li onclick="location.href='/data/list'" class="on">데이터 목록</li>
+				<li id="tabDataGroupList"><a href="/data-group/list">데이터 그룹</a></li>
+				<li id="tabDataGroupInput"><a href="/data-group/input">데이터 그룹 등록</a></li>
+				<li id="tabUploadDataInput"><a href="/upload-data/input">업로딩 데이터</a></li>
+			   	<li id="tabUploadDataList"><a href="/upload-data/list">업로딩 데이터 목록</a></li>
+			  	<li id="tabConverterList"><a href="/converter/list">업로딩 데이터 변환 목록</a></li>
+			  	<li id="tabDataList"><a href="/data/list">데이터 목록</a></li>
+			  	<li id="tabDataLogList"><a href="/data-log/list">데이터 변경 이력</a></li>
 			</ul>
 		</div>
 		<div class="filters">
@@ -57,9 +60,9 @@
 				</div>
 				<div class="input-set">
 					<label for="startDate"><spring:message code='search.date'/></label>
-					<input type="text" class="s date" id="startDate" name="startDate" />
+					<input type="text" class="s date" id="startDate" name="startDate" autocomplete="off" />
 					<span class="delimeter tilde">~</span>
-					<input type="text" class="s date" id="endDate" name="endDate" />
+					<input type="text" class="s date" id="endDate" name="endDate" autocomplete="off" />
 				</div>
 				<div class="input-set">
 					<label for="orderWord"><spring:message code='search.order'/></label>
@@ -91,37 +94,38 @@
 				<input type="hidden" id="checkIds" name="checkIds" value="" />
 			<div class="list-header row">
 				<div class="list-desc u-pull-left">
-					<spring:message code='all.d'/> <em><fmt:formatNumber value="${pagination.totalCount}" type="number"/></em><spring:message code='search.what.count'/>
+					<spring:message code='all.d'/> <span class="totalCount"><fmt:formatNumber value="${pagination.totalCount}" type="number"/></span> <spring:message code='search.what.count'/>,
 					<fmt:formatNumber value="${pagination.pageNo}" type="number"/> / <fmt:formatNumber value="${pagination.lastPage }" type="number"/> <spring:message code='search.page'/>
 				</div>
 			</div>
-			<table class="list-table scope-col">
+			<table class="list-table scope-col" summary="데이터 목록 테이블">
+			<caption class="hiddenTag">데이터 목록 테이블</caption>
 				<col class="col-number" />
 				<col class="col-name" />
 				<col class="col-name" />
-				<col class="col-name" />
-				<col class="col-name" />
-				<col class="col-name" />
-				<col class="col-name" />
-				<col class="col-name" />
-				<col class="col-functions" />
-				<col class="col-functions" />
-				<col class="col-functions" />
+				<col class="col-type" />
+				<col class="col-type" />
+				<col class="col-type" />
+				<col class="col-type" />
+				<col class="col-type" />
+				<col class="col-type" />
+				<col class="col-type" />
+				<col class="col-type" />
 				<col class="col-functions" />
 				<thead>
 					<tr>
 						<th scope="col" class="col-number"><spring:message code='number'/></th>
 						<th scope="col" class="col-name">그룹명</th>
 						<th scope="col" class="col-name">데이터명</th>
-						<th scope="col" class="col-name">아이디</th>
-						<th scope="col" class="col-name">데이터 타입</th>
-						<th scope="col" class="col-name">공유 유형</th>
-						<th scope="col" class="col-name">매핑타입</th>
-						<th scope="col" class="col-name">상태</th>
-						<th scope="col" class="col-name">지도</th>
-						<th scope="col" class="col-name">속성</th>
-						<th scope="col" class="col-name">Object 속성</th>
-						<th scope="col" class="col-date">등록일</th>
+						<th scope="col" class="col-type">등록자</th>
+						<th scope="col" class="col-type">데이터 타입</th>
+						<th scope="col" class="col-type">공유 유형</th>
+						<th scope="col" class="col-type">매핑타입</th>
+						<th scope="col" class="col-type">상태</th>
+						<th scope="col" class="col-type">지도</th>
+						<th scope="col" class="col-type">속성</th>
+						<th scope="col" class="col-type">Object 속성</th>
+						<th scope="col" class="col-functions">등록일</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -135,21 +139,11 @@
 
 					<tr>
 						<td class="col-number">${pagination.rowNumber - status.index }</td>
-						<td class="col-name ellipsis" style="max-width: 300px;">${dataInfo.dataGroupName }</td>
-						<td class="col-name">
-		<c:if test="${dataInfo.dataGroupTarget eq 'admin'}">
-							<a href="/data-adjust-log/modify?dataId=${dataInfo.dataId}">${dataInfo.dataName }</a>
-		</c:if>
-		<c:if test="${dataInfo.dataGroupTarget eq 'user'}">
-			<c:if test="${dataInfo.userId eq owner}">
+						<td class="col-name ellipsis" style="min-width:100px;max-width:100px;">${dataInfo.dataGroupName }</td>
+						<td class="col-name ellipsis" style="min-width:160px;max-width:160px;">
 							<a href="/data/modify?dataId=${dataInfo.dataId}">${dataInfo.dataName }</a>
-			</c:if>
-			<c:if test="${dataInfo.userId ne owner}">
-							<a href="/data-adjust-log/modify?dataId=${dataInfo.dataId}">${dataInfo.dataName }</a>
-			</c:if>
-		</c:if>
 						</td>
-						<td class="col-name">
+						<td class="col-type">
 		<c:if test="${dataInfo.userId eq owner}">
 							${dataInfo.userId }
 		</c:if>
@@ -157,14 +151,14 @@
 							<span style="color: blue;">${dataInfo.userId }</span>
 		</c:if>
 						</td>
-						<td class="col-name">${dataInfo.dataType }</td>
+						<td class="col-type">${dataInfo.dataType }</td>
 						<td class="col-type">
 		<c:if test="${dataInfo.sharing eq 'common'}">공통</c:if>
 		<c:if test="${dataInfo.sharing eq 'public'}">공개</c:if>
 		<c:if test="${dataInfo.sharing eq 'private'}">개인</c:if>
 		<c:if test="${dataInfo.sharing eq 'group'}">그룹</c:if>
 						</td>
-						<td class="col-name">${dataInfo.mappingType }</td>
+						<td class="col-type ellipsis" style="min-width:80px;max-width:80px;">${dataInfo.mappingType }</td>
 						<td class="col-type">
 		<c:if test="${dataInfo.status eq 'processing' }">
 							변환중
@@ -184,7 +178,7 @@
 						</td>
 						<td class="col-type">
 		<c:if test="${dataInfo.attributeExist eq 'true' }">
-							등록
+							<a href="#" onclick="detailDataAttribute('${dataInfo.dataId }', '${dataInfo.dataName }'); return false;">보기</a>
 		</c:if>
 		<c:if test="${dataInfo.attributeExist eq 'false' }">
 							미등록
@@ -192,7 +186,7 @@
 						</td>
 						<td class="col-type">
 		<c:if test="${dataInfo.objectAttributeExist eq 'true' }">
-							등록
+							<a href="#" onclick="detailDataObjectAttribute('${dataInfo.dataId }', '${dataInfo.dataName }'); return false;">보기</a>
 		</c:if>
 		<c:if test="${dataInfo.objectAttributeExist eq 'false' }">
 							미등록
@@ -215,10 +209,13 @@
 </div>
 <!-- E: WRAP -->
 
-<script type="text/javascript" src="/js/${lang}/common.js"></script>
-<script type="text/javascript" src="/js/${lang}/message.js"></script>
-<script type="text/javascript" src="/js/${lang}/map-controll.js"></script>
-<script type="text/javascript" src="/js/${lang}/ui-controll.js"></script>
+<%@ include file="/WEB-INF/views/data/data-attribute-dialog.jsp" %>
+<%@ include file="/WEB-INF/views/data/data-object-attribute-dialog.jsp" %>
+
+<script type="text/javascript" src="/js/${lang}/common.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/message.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/map-controll.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/ui-controll.js?cacheVersion=${contentCacheVersion}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		var searchWord = "${dataInfo.searchWord}";
@@ -242,19 +239,85 @@
 		$(":checkbox[name=dataId]").prop("checked", this.checked);
 	});
 
-	//지도에서 찾기
+	// 데이터 속성 다이얼 로그
+	var dataAttributeDialog = $( "#dataAttributeDialog" ).dialog({
+		autoOpen: false,
+		width: 800,
+		height: 550,
+		modal: true,
+		resizable: false
+	});
+
+	// 데이터 속성
+	function detailDataAttribute(dataId, dataName) {
+		dataAttributeDialog.dialog( "open" );
+		$("#dataNameForAttribute").html(dataName);
+
+		$.ajax({
+			url: "/datas/attributes/" + dataId,
+			type: "GET",
+			headers: {"X-Requested-With": "XMLHttpRequest"},
+			dataType: "json",
+			success: function(msg){
+				if(msg.statusCode <= 200) {
+					if(msg.dataAttribute !== null) {
+						//$("#dataAttributeForOrigin").html(msg.dataAttribute.attributes);
+						$("#dataAttributeViewer").html("");
+						var jsonViewer = new JSONViewer();
+						document.querySelector("#dataAttributeViewer").appendChild(jsonViewer.getContainer());
+						jsonViewer.showJSON(JSON.parse(msg.dataAttribute.attributes), -1, -1);
+					}
+				} else {
+					alert(JS_MESSAGE[msg.errorCode]);
+				}
+			},
+			error:function(request,status,error){
+				alert(JS_MESSAGE["ajax.error.message"]);
+			}
+		});
+	}
+
+	// 데이터 Object 속성 다이얼 로그
+	var dataObjectAttributeDialog = $( "#dataObjectAttributeDialog" ).dialog({
+		autoOpen: false,
+		width: 800,
+		height: 550,
+		modal: true,
+		resizable: false
+	});
+
+	// 데이터 Object 속성
+	function detailDataObjectAttribute(dataId, dataName) {
+		dataObjectAttributeDialog.dialog( "open" );
+		$("#dataNameForObjectAttribute").html(dataName);
+
+		$.ajax({
+			url: "/datas/object/attributes/" + dataId,
+			type: "GET",
+			headers: {"X-Requested-With": "XMLHttpRequest"},
+			dataType: "json",
+			success: function(msg){
+				if(msg.statusCode <= 200) {
+					if(msg.dataObjectAttribute !== null) {
+						//$("#dataObjectAttributeForOrigin").html(msg.dataObjectAttribute.attributes);
+						$("#dataObjectAttributeViewer").html("");
+						var jsonViewer = new JSONViewer();
+						document.querySelector("#dataObjectAttributeViewer").appendChild(jsonViewer.getContainer());
+						jsonViewer.showJSON(JSON.parse(msg.dataObjectAttribute.attributes), -1, -1);
+					}
+				} else {
+					alert(JS_MESSAGE[msg.errorCode]);
+				}
+			},
+			error:function(request,status,error){
+				alert(JS_MESSAGE["ajax.error.message"]);
+			}
+		});
+	}
+
+	// 지도에서 찾기 -- common.js, openFindDataPoint
 	function viewDataInfo(dataId) {
-		var url = "/map/find-data-point?dataId=" + dataId + "&referrer=list";
-		var width = 1024;
-		var height = 700;
-
-		var popupX = (window.screen.width / 2) - (width / 2);
-		// 만들 팝업창 좌우 크기의 1/2 만큼 보정값으로 빼주었음
-		var popupY= (window.screen.height / 2) - (height / 2);
-
-	    var popWin = window.open(url, "", "toolbar=no, width=" + width + ", height=" + height + ", top=" + popupY + ", left=" + popupX
-	            + ", directories=no, status=yes, scrollbars=no, menubar=no, location=no");
-	    //popWin.document.title = layerName;
+		openFindDataPoint(dataId, "list");
 	}
 </script>
 </body>

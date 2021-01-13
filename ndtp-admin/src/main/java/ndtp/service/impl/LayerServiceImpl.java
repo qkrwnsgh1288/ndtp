@@ -19,6 +19,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +81,50 @@ public class LayerServiceImpl implements LayerService {
     public List<Layer> getListLayer(Layer layer) {
         return layerMapper.getListLayer(layer);
     }
+    
+    /**
+     * geoserver layer 목록 조회 
+     */
+    @Transactional(readOnly=true)
+    public String getListGeoserverLayer(GeoPolicy geoPolicy) {
+    	String geoserverLayerJson = null;
+    	try {
+			RestTemplate restTemplate = new RestTemplate();
+			
+			HttpHeaders headers = new HttpHeaders();
+			// 클라이언트가 서버에 어떤 형식(MediaType)으로 달라는 요청을 할 수 있는데 이게 Accpet 헤더를 뜻함.
+			List<MediaType> acceptList = new ArrayList<>();
+			acceptList.add(MediaType.ALL);
+			headers.setAccept(acceptList);
+			// 클라이언트가 request에 실어 보내는 데이타(body)의 형식(MediaType)를 표현
+			headers.setContentType(MediaType.TEXT_XML);
+			// geoserver basic 암호화 아이디:비밀번호 를 base64로 encoding 
+			headers.add("Authorization", "Basic " + Base64.getEncoder().
+					encodeToString((geoPolicy.getGeoserverUser() + ":" + geoPolicy.getGeoserverPassword()).getBytes()));
+			
+			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+			//Add the String Message converter
+			messageConverters.add(new StringHttpMessageConverter());
+			//Add the message converters to the restTemplate
+			restTemplate.setMessageConverters(messageConverters);
+		    
+			HttpEntity<String> entity = new HttpEntity<>(headers);
+			
+			String url = geoPolicy.getGeoserverDataUrl() + "/rest/workspaces/" + geoPolicy.getGeoserverDataWorkspace()+ "/layers";
+			ResponseEntity<?> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+			log.info("-------- statusCode = {}, body = {}", response.getStatusCodeValue(), response.getBody());
+			geoserverLayerJson = response.getBody().toString();
+		
+    	} catch(RestClientException e) {
+    		log.info("@@@ RestClientException. message = {}", e.getMessage());
+    	} catch(RuntimeException e) {
+    		log.info("@@@ RuntimeException. message = {}", e.getMessage());
+		} catch(Exception e) {
+			log.info("@@@ Exception. message = {}", e.getMessage());
+		}
+    	
+    	return geoserverLayerJson;
+    }
 
     /**
     * layer 정보 취득
@@ -89,6 +134,11 @@ public class LayerServiceImpl implements LayerService {
     @Transactional(readOnly=true)
     public Layer getLayer(Integer layerId) {
         return layerMapper.getLayer(layerId);
+    }
+    
+    @Transactional(readOnly=true)
+    public Boolean isLayerKeyDuplication(String layerKey) {
+    	return layerMapper.isLayerKeyDuplication(layerKey);
     }
 
     /**
@@ -151,6 +201,7 @@ public class LayerServiceImpl implements LayerService {
             layerFileInfoGroupMap.put("shapeEncoding", shapeEncoding);
             layerFileInfoGroupMap.put("layerFileInfoGroupId", layerFileInfoGroupId);
             layerFileInfoGroupMap.put("layerFileInfoGroupIdList", layerFileInfoGroupIdList);
+            layerFileInfoGroupMap.put("layerId", layerId);
             log.info("+++ layerFileInfoGroupMap = {}", layerFileInfoGroupMap);
             layerFileInfoMapper.updateLayerFileInfoGroup(layerFileInfoGroupMap);
         }
@@ -248,12 +299,12 @@ public class LayerServiceImpl implements LayerService {
         }
 
         GeoPolicy geoPolicy = geoPolicyService.getGeoPolicy();
-        String layerSourceCoordinate = geoPolicy.getLayerSourceCoordinate();
+        String layerSourceCoordinate = layer.getCoordinate();
         String layerTargetCoordinate = geoPolicy.getLayerTargetCoordinate();
 //		ShapeFileParser shapeFileParser = new ShapeFileParser();
 //		shapeFileParser.parse(shapeFileName);
-
-        Ogr2OgrExecute ogr2OgrExecute = new Ogr2OgrExecute(osType, driver, shapeFileName, shapeEncoding, layer.getLayerKey(), updateOption, layerSourceCoordinate, layerTargetCoordinate);
+        String enviromentPath = propertiesConfig.getOgr2ogrEnviromentPath();
+        Ogr2OgrExecute ogr2OgrExecute = new Ogr2OgrExecute(osType, driver, shapeFileName, shapeEncoding, layer.getLayerKey(), updateOption, layerSourceCoordinate, layerTargetCoordinate, enviromentPath);
         ogr2OgrExecute.insert();
     }
     
@@ -375,7 +426,10 @@ public class LayerServiceImpl implements LayerService {
 			// layer_file_info 히스토리 삭제
 			layerFileInfoMapper.deleteLayerFileInfo(layerId);
 			// 공간정보 테이블 삭제
-			layerMapper.deleteLayerTable(layer.getLayerKey());
+			String layerExists = layerMapper.isLayerExists(layer.getLayerKey());
+			if(layerExists != null) {
+				layerMapper.deleteLayerTable(layer.getLayerKey());
+			}
 		}
 		// 레이어 메타정보 삭제 
 		return layerMapper.deleteLayer(layerId);
@@ -509,6 +563,14 @@ public class LayerServiceImpl implements LayerService {
 			httpStatus = response.getStatusCode();
 			log.info("-------- layerKey = {}, statusCode = {}, body = {}", layerKey, response.getStatusCodeValue(),
 					response.getBody());
+		} catch (RestClientException e) {
+			log.info("-------- RestClientException message = {}", e.getMessage());
+			String message = e.getMessage();
+			if (message.indexOf("404") >= 0) {
+				httpStatus = HttpStatus.NOT_FOUND;
+			} else {
+				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
 		} catch (Exception e) {
 			log.info("-------- exception message = {}", e.getMessage());
 			String message = e.getMessage();
@@ -592,6 +654,14 @@ public class LayerServiceImpl implements LayerService {
             ResponseEntity<?> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
             httpStatus = response.getStatusCode();
             log.info("-------- getLayerStyle styleName = {}, statusCode = {}, body = {}", layerKey, response.getStatusCodeValue(), response.getBody());
+        } catch (RestClientException e) {
+			log.info("-------- RestClientException message = {}", e.getMessage());
+			String message = e.getMessage();
+			if (message.indexOf("404") >= 0) {
+				httpStatus = HttpStatus.NOT_FOUND;
+			} else {
+				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			}
         } catch(Exception e) {
             log.info("-------- exception message = {}", e.getMessage());
             String message = e.getMessage();
@@ -646,6 +716,16 @@ public class LayerServiceImpl implements LayerService {
 			layerStyleFileData = response.getBody().toString();
 			log.info("-------- getLayerStyle geometry type = {}, statusCode = {}, body = {}", geometryType,
 					response.getStatusCodeValue(), response.getBody());
+		} catch (RestClientException e) {
+			log.info("-------- RestClientException message = {}", e.getMessage());
+			String message = e.getMessage();
+			if (message.indexOf("404") >= 0) {
+				httpStatus = HttpStatus.NOT_FOUND;
+				layerStyleFileData = null;
+			} else {
+				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+				layerStyleFileData = null;
+			}
 		} catch (Exception e) {
 			log.info("-------- exception message = {}", e.getMessage());
 			String message = e.getMessage();
@@ -703,6 +783,16 @@ public class LayerServiceImpl implements LayerService {
 			layerStyleFileData = response.getBody().toString();
 			log.info("-------- getLayerStyle styleName = {}, statusCode = {}, body = {}", layer.getLayerKey(),
 					response.getStatusCodeValue(), response.getBody());
+		} catch (RestClientException e) {
+			log.info("-------- RestClientException message = {}", e.getMessage());
+			String message = e.getMessage();
+			if (message.indexOf("404") >= 0) {
+				httpStatus = HttpStatus.NOT_FOUND;
+				layerStyleFileData = null;
+			} else {
+				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+				layerStyleFileData = null;
+			}
 		} catch (Exception e) {
 			log.info("-------- exception message = {}", e.getMessage());
 			String message = e.getMessage();
@@ -788,6 +878,9 @@ public class LayerServiceImpl implements LayerService {
 			httpStatus = response.getStatusCode();
 			log.info("-------- geoserver layer delete. layerKey = {}, statusCode = {}, body = {}", layerKey,
 					response.getStatusCodeValue(), response.getBody());
+		} catch (RestClientException e) {
+			log.info("-------- RestClientException message = {}", e.getMessage());
+			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 		} catch (Exception e) {
 			log.info("-------- exception message = {}", e.getMessage());
 			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -818,6 +911,9 @@ public class LayerServiceImpl implements LayerService {
 			log.info("-------- url = {}", url);
 			ResponseEntity<?> response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
 			httpStatus = response.getStatusCode();
+		} catch (RestClientException e) {
+			log.info("-------- RestClientException message = {}", e.getMessage());
+			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 		} catch (Exception e) {
 			log.info("-------- exception message = {}", e.getMessage());
 			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;

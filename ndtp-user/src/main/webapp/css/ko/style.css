@@ -1306,6 +1306,9 @@ html, body {
   min-width: 1420px; }
 	
 /* header */
+header {
+min-width: 1420px;
+}
 .site-header {
 	padding-top: 13px; }
 	
@@ -1319,6 +1322,10 @@ html, body {
 	padding: 24px 0 0 0; }
 	
 /* body */
+#wrap {
+min-width: 1420px;
+min-height: 700px;
+}
 .site-body {
 	padding: 14px 0 21px 0; }
 
@@ -2570,7 +2577,7 @@ min-width: 325px;
 .tab li {
 display: inline-block;
 width: 180px;
-padding: 5px 0px;
+/* padding: 5px 0px; */
 color: #000;
 cursor: pointer;
 border: 1px solid #d9d9d9;
@@ -2583,7 +2590,19 @@ text-align: center;
 color: #fff;
 border: 1px solid #006bd2;
 background-color: #0073e2;
-} 
+}
+.tab li > a {
+display: inline-block;
+width: 100%;
+height: 100%;
+padding: 5px 0px;
+}
+.tab li > a:hover {
+color: #fff;
+}
+.tab li:not(.on) > a:hover {
+color: #006bd2;
+}
 .input-set {
 margin: 10px 20px 10px 10px;
 float: left; 
@@ -2595,3 +2614,21 @@ float: left;
 	height: 30px; margin-bottom: 7px; border-color: #d5d5d5;
 }
 
+.hiddenTag {
+overflow: hidden;
+border: 0;
+position: absolute;
+width: 1px;
+height: 1px;
+clip: rect(1px, 1px, 1px, 1px);
+clip-path: inset(50%);
+}
+/* 마고 라벨 렌더 캔버스 */
+#objectLabel {
+background-color: transparent;
+position: absolute;
+left: 0px;
+top: 0px;
+/* z-index: 10; */
+pointer-events: none;
+}

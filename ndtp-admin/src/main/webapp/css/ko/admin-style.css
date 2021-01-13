@@ -358,17 +358,16 @@ input.toggle-button:checked + label:after {
 	text-align: center;
 	font-size: 90%; }
 
-table tr:nth-of-type(1) .index:after { content: '1'; }
-table tr:nth-of-type(2) .index:after { content: '2'; }
-table tr:nth-of-type(3) .index:after { content: '3'; }
-table tr:nth-of-type(4) .index:after { content: '4'; }
-table tr:nth-of-type(5) .index:after { content: '5'; }
-table tr:nth-of-type(6) .index:after { content: '6'; }
-table tr:nth-of-type(7) .index:after { content: '7'; }
-table tr:nth-of-type(8) .index:after { content: '8'; }
-table tr:nth-of-type(9) .index:after { content: '9'; }
-table tr:nth-of-type(10) .index:after { content: '10'; }
-
+table tbody tr:nth-of-type(1) .index:after { content: '1'; }
+table tbody tr:nth-of-type(2) .index:after { content: '2'; }
+table tbody tr:nth-of-type(3) .index:after { content: '3'; }
+table tbody tr:nth-of-type(4) .index:after { content: '4'; }
+table tbody tr:nth-of-type(5) .index:after { content: '5'; }
+table tbody tr:nth-of-type(6) .index:after { content: '6'; }
+table tbody tr:nth-of-type(7) .index:after { content: '7'; }
+table tbody tr:nth-of-type(8) .index:after { content: '8'; }
+table tbody tr:nth-of-type(9) .index:after { content: '9'; }
+table tbody tr:nth-of-type(10) .index:after { content: '10'; }
 
 
 /* Buttons
@@ -1814,7 +1813,7 @@ tr:hover td {
 
 .scope-row .col-label,
 .scope-row .col-sub-label {
-	width: 120px; }
+	width: 130px; }
 
 .scope-row .col-label.m,
 .scope-row .col-sub-label.m {
@@ -1910,6 +1909,7 @@ tr:hover td {
 	padding: 3px; }
 
 .widget-content {
+	font-size: 1.3rem;
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-top: 7px; }
@@ -2213,7 +2213,8 @@ tr:hover td {
 	margin: 0; }
 
 .ui-dialog .ui-dialog-content {
-	padding: 0; }
+	padding: 0;
+	overflow-x: hidden; }
 
 .ui-dialog .button-group {
 	margin-top: 30px; }
@@ -2560,3 +2561,165 @@ tr:hover td {
 	overflow:hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis; }
+
+/* 관리자 레이어 관련 */
+#layerButtonArea {
+list-style:none;
+}
+/* 기존 사용하는 on 클래스에 색상이 있어서 onArea 클래스사용 */
+#layerButtonArea li.onArea {
+display:block;
+}
+#layerButtonArea li {
+display:none;
+}
+
+.likes-icon {
+	display: inline-block;
+	width: 20px;
+	text-indent: 999em;
+	background-image: url(/images/ko/ico.png);
+	background-repeat: no-repeat;
+    background-position: 0 -977px;
+}
+
+
+/* 게시판 / 댓글, 답글 */
+.reply {
+border-top: 1px solid #e3e3e3;
+}
+.reply li {
+position: relative;
+padding: 7px 0;
+border-bottom: 1px dotted #ccc;
+}
+.reply li > p.text {
+width:920px;
+}
+.reply li > span.date {
+display: block;
+color: #999;
+}
+.reply li div.btns {
+position: absolute;
+top: 20px;
+right: 0px;
+margin-top: -13px;
+}
+.reply li div > button {
+padding: 3px 10px;
+color: #777;
+font-size: 12px;
+border: 1px solid #999;
+background-color: #eee;
+}
+li.re {
+position: relative;
+padding: 7px 0 7px 30px;
+border-bottom: 1px dotted #ccc;
+background: #fafafa url(/images/ko/ico_comment.png) no-repeat 10px 10px;
+}
+h4.comment {
+margin-top: 30px;
+}
+.commentWrite {
+position: relative;
+margin: 10px 0;
+padding: 5px 5px 5px 30px;
+border: 1px solid #e6e6e6;
+background: #fafafa url(/images/ko/ico_comment.png) no-repeat 10px 10px;
+}
+.commentWrite p {
+margin: 0;
+}
+.commentWrite > textarea {
+width: 840px;
+height: 38px;
+padding: 10px;
+/* box-sizing: content-box; */
+}
+.user {
+/* padding: 0 0 5px 28px; */
+/* background: url(/images/ico.png) no-repeat -130px -200px; */
+}
+.commentWrite > .textCount {
+position: absolute;
+top: 10px;
+right: 85px;
+display: inline-block;
+font-size: 11px;
+color: #888;
+}
+.commentWrite > button.regist {
+padding: 20px;
+border: 1px solid #ccc;
+color: #888;
+background-color: #fff;
+}
+.commentWrite > button {
+padding: 20px;
+border: 1px solid #ccc;
+color: #888;
+background-color: #fff;
+}
+.commentWrite * {
+vertical-align: middle;
+}
+
+.hiddenTag {
+overflow: hidden;
+border: 0;
+position: absolute;
+width: 1px;
+height: 1px;
+clip: rect(1px, 1px, 1px, 1px);
+clip-path: inset(50%);
+}
+
+/* Dashboard */
+div.gaugeGraph {
+text-align: center;
+margin-top: 10px;
+}
+.pie-chart {
+position: relative;
+display: inline-block;
+width: 135px;
+height: 150px;
+border-radius: 50%;
+-webkit-transition: 0.3s;
+transition: 0.3s;
+}
+.pie-chart span.center{
+z-index: 100;
+display : block;
+position: absolute;
+top: 50%;
+left: 50%;
+width: 80px;
+height: 80px;
+border-radius: 50%;
+text-align:center;
+line-height: 70px;
+font-size: 14px;
+font-weight: normal;
+font-family: 'Nanum Gothic', sans-serif;
+-webkit-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+}
+.pie-chart span.title{
+z-index: 100;
+display : block;
+position: absolute;
+left: 50%;
+width: 80px;
+font-weight: normal;
+font-family: 'Nanum Gothic', sans-serif;
+-webkit-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+bottom: -20px;
+}
+
+.block-element-wrapper > * {
+display : block;
+}

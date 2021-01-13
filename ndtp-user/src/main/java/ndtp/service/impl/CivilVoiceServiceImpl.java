@@ -3,47 +3,65 @@ package ndtp.service.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ndtp.domain.CivilVoice;
+import ndtp.persistence.CivilVoiceCommentMapper;
+import ndtp.persistence.CivilVoiceMapper;
 import ndtp.service.CivilVoiceService;
 
 @Service
 public class CivilVoiceServiceImpl implements CivilVoiceService {
+	private final CivilVoiceMapper civilVoiceMapper;
+	private final CivilVoiceCommentMapper civilVoiceCommentMapper;
 
-	@Override
+	public CivilVoiceServiceImpl(CivilVoiceMapper civilVoiceMapper, CivilVoiceCommentMapper civilVoiceCommentMapper) {
+		this.civilVoiceMapper = civilVoiceMapper;
+		this.civilVoiceCommentMapper = civilVoiceCommentMapper;
+	}
+
+	@Transactional(readOnly = true)
 	public List<CivilVoice> getListCivilVoice(CivilVoice civilvoice) {
-		// TODO Auto-generated method stub
-		return null;
+		return civilVoiceMapper.getListCivilVoice(civilvoice);
 	}
 
-	@Override
-	public Long getCivilVoiceTotalCount(CivilVoice civilvoice) {
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional(readOnly = true)
+	public List<CivilVoice> getListAllCivilVoice(CivilVoice civilvoice) {
+		return civilVoiceMapper.getListAllCivilVoice(civilvoice);
 	}
 
-	@Override
-	public CivilVoice getCivilVocieById() {
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional(readOnly = true)
+	public Long getCivilVoiceTotalCount(CivilVoice civilVoice) {
+		return civilVoiceMapper.getCivilVoiceTotalCount(civilVoice);
 	}
 
-	@Override
-	public int insertCivilVoice(CivilVoice civilvoice) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Transactional(readOnly = true)
+	public CivilVoice getCivilVocieById(CivilVoice civilVoice) {
+		return civilVoiceMapper.getCivilVocieById(civilVoice);
 	}
 
-	@Override
-	public int updateCivilVoice(CivilVoice civilvoice) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Transactional
+	public CivilVoice insertCivilVoice(CivilVoice civilVoice) {
+		civilVoiceMapper.insertCivilVoice(civilVoice);
+		
+		return civilVoice;
 	}
 
-	@Override
-	public int deleteCivilVoice(CivilVoice civilvoice) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Transactional
+	public CivilVoice updateCivilVoice(CivilVoice civilVoice) {
+		civilVoiceMapper.updateCivilVoice(civilVoice);
+		return civilVoice;
+	}
+
+	@Transactional
+	public int updateCivilVoiceViewCount(CivilVoice civilVoice) {
+		return civilVoiceMapper.updateCivilVoiceViewCount(civilVoice);
+	}
+
+	@Transactional
+	public int deleteCivilVoice(CivilVoice civilVoice) {
+		civilVoiceCommentMapper.deleteCivilVoiceCommentFromId(civilVoice.getCivilVoiceId());
+		return civilVoiceMapper.deleteCivilVoice(civilVoice.getCivilVoiceId());
 	}
 
 }

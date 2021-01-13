@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import ndtp.domain.DataFileInfo;
+import ndtp.domain.DataFileParseLog;
 import ndtp.domain.DataGroup;
 import ndtp.domain.DataInfo;
-import ndtp.domain.DataInfoAttribute;
+import ndtp.domain.DataInfoSimple;
+import ndtp.domain.FileInfo;
 
 /**
  * Data
@@ -30,13 +33,6 @@ public interface DataMapper {
 	 */
 	Long getDataTotalCountByStatus(String status);
 	
-//	/**
-//	 * Data Object 총건수
-//	 * @param dataInfoObjectAttribute
-//	 * @return
-//	 */
-//	Long getDataObjectAttributeTotalCount(DataInfoObjectAttribute dataInfoObjectAttribute);
-	
 	/**
 	 * Data 목록
 	 * @param dataInfo
@@ -45,11 +41,11 @@ public interface DataMapper {
 	List<DataInfo> getListData(DataInfo dataInfo);
 	
 	/**
-	 * DataGroupId를 제외한 Data 목록
-	 * @param dataInfo
+	 * 데이터 그룹에 포함되는 모든 데이터를 취득
+	 * @param dataGroupId
 	 * @return
 	 */
-	List<DataInfo> getListExceptDataGroupDataByGroupId(DataInfo dataInfo);
+	List<DataInfoSimple> getListAllDataByDataGroupId(Integer dataGroupId);
 	
 	/**
 	 * Data Key 중복 건수
@@ -86,20 +82,6 @@ public interface DataMapper {
 	 */
 	List<DataInfo> getDataByConverterJob(DataInfo dataInfo);
 	
-//	/**
-//	 * Data Attribute 정보 취득
-//	 * @param dataId
-//	 * @return
-//	 */
-//	DataInfoAttribute getDataAttribute(Long dataId);
-//	
-//	/**
-//	 * Data Object Attribute 정보 취득
-//	 * @param data_object_attribute_id
-//	 * @return
-//	 */
-//	DataInfoObjectAttribute getDataObjectAttribute(Long data_object_attribute_id);
-	
 	/**
 	 * 표시 순서
 	 * @param dataInfo
@@ -114,21 +96,6 @@ public interface DataMapper {
 	 */
 	Integer getRootParentCount(DataInfo dataInfo);
 	
-//	/**
-//	 * data_key 를 이용하여 data_attribute_id 를 얻음
-//	 * TODO 9.6 이후에 merge로 변경 예정 
-//	 * @param data_key
-//	 * @return
-//	 */
-//	DataInfoAttribute getDataIdAndDataAttributeIDByDataKey(String data_key);
-//	
-//	/**
-//	 * Data Object 조회
-//	 * @param dataInfoObjectAttribute
-//	 * @return
-//	 */
-//	List<DataInfoObjectAttribute> getListDataObjectAttribute(DataInfoObjectAttribute dataInfoObjectAttribute);
-//	
 	/**
 	 * Data 등록
 	 * @param dataInfo
@@ -136,19 +103,33 @@ public interface DataMapper {
 	 */
 	int insertData(DataInfo dataInfo);
 	
-//	/**
-//	 * Data 속성 등록
-//	 * @param dataInfoAttribute
-//	 * @return
-//	 */
-//	int insertDataAttribute(DataInfoAttribute dataInfoAttribute);
-//	
-//	/**
-//	 * Data Object 속성 등록
-//	 * @param dataInfoObjectAttribute
-//	 * @return
-//	 */
-//	int insertDataObjectAttribute(DataInfoObjectAttribute dataInfoObjectAttribute);
+	/**
+	 * Bulk 파일로 부터 데이터 등록(시퀀스를 사용하지 않고, 파일에 있는 dataId 사용)
+	 * @param dataInfo
+	 * @return
+	 */
+	int insertBulkData(DataInfo dataInfo);
+	
+	/**
+	 * Data 파일 정보 등록
+	 * @param dataFileInfo
+	 * @return
+	 */
+	int insertDataFileInfo(DataFileInfo dataFileInfo);
+	
+	/**
+	 * Data 파일 파싱 정보 등록
+	 * @param dataFileParseLog
+	 * @return
+	 */
+	int insertDataFileParseLog(DataFileParseLog dataFileParseLog);
+	
+	/**
+	 * 데이터 속성 파일 정보 등록
+	 * @param fileInfo
+	 * @return
+	 */
+	int insertDataAttributeFileInfo(FileInfo fileInfo);
 	
 	/**
 	 * Data 수정
@@ -157,13 +138,13 @@ public interface DataMapper {
 	 */
 	int updateData(DataInfo dataInfo);
 	
-//	/**
-//	 * Data 속성 수정
-//	 * @param dataInfoAttribute
-//	 * @return
-//	 */
-//	int updateDataAttribute(DataInfoAttribute dataInfoAttribute);
-//	
+	/**
+	 * Data 파일 정보 수정
+	 * @param dataFileInfo
+	 * @return
+	 */
+	int updateDataFileInfo(DataFileInfo dataFileInfo);
+	
 	/**
 	 * Data 테이블의 Data 그룹 정보 변경
 	 * @param dataInfo
@@ -205,4 +186,11 @@ public interface DataMapper {
 	 * @return
 	 */
 	int deleteDataByConverterJob(DataInfo dataInfo);
+	
+	/**
+	 * user data 삭제
+	 * @param userId
+	 * @return
+	 */
+	int deleteDataByUserId(String userId);
 }

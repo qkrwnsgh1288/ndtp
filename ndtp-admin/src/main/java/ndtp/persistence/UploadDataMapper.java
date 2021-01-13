@@ -31,19 +31,19 @@ public interface UploadDataMapper {
 	 */
 	UploadData getUploadData(UploadData uploadData);
 	
-	/**
-	 * 업로딩 데이터 파일 총 건수
-	 * @param uploadDataFile
-	 * @return
-	 */
-	Long getUploadDataFileTotalCount(UploadDataFile uploadDataFile);
-
-	/**
-	 * 업로딩 데이터 파일 총 용량
-	 * @param uploadDataFile
-	 * @return
-	 */
-	Long getUploadDataFileTotalSize(UploadDataFile uploadDataFile);
+//	/**
+//	 * 업로딩 데이터 파일 총 건수
+//	 * @param uploadDataFile
+//	 * @return
+//	 */
+//	Long getUploadDataFileTotalCount(UploadDataFile uploadDataFile);
+//
+//	/**
+//	 * 업로딩 데이터 파일 총 용량
+//	 * @param uploadDataFile
+//	 * @return
+//	 */
+//	Long getUploadDataFileTotalSize(UploadDataFile uploadDataFile);
 	
 	/**
 	 * 업로딩 데이터 파일 목록
@@ -72,6 +72,13 @@ public interface UploadDataMapper {
 	 * @return
 	 */
 	int updateUploadData(UploadData uploadData);
+	
+	/**
+	 * 사용자 파일 업로딩 수정
+	 * @param uploadDataFile
+	 * @return
+	 */
+	int updateUploadDataFile(UploadDataFile uploadDataFile);
 
 	/**
 	 * 업로딩 데이터 정보 삭제

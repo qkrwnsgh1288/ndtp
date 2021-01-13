@@ -82,10 +82,10 @@
 				AND A.status = #{status}
 				</if>
 				<if test="searchWord != null and searchWord != '' and searchValue != null and searchValue != '' and searchOption == '0'.toString()">
-				AND A.${searchWord} = #{searchValue}
+				AND ${searchWord} = #{searchValue}
 				</if>
 				<if test="searchWord != null and searchWord != '' and searchValue != null and searchValue != '' and searchOption == '1'.toString()">
-				AND A.${searchWord} LIKE '%' || #{searchValue} || '%'
+				AND ${searchWord} LIKE '%' || #{searchValue} || '%'
 				</if>
 				<if test="startDate != null and startDate != ''">
 				<![CDATA[
@@ -108,6 +108,16 @@
 			</choose>
 			OFFSET #{offset} LIMIT #{limit}
 		) X
+	</select>
+	
+	<!-- Data 목록 -->
+	<select id="getListAllDataByDataGroupId" parameterType="int" resultType="dataInfoSimple">
+		/* getListData */
+		SELECT A.*, ST_X(A.location) AS longitude, ST_Y(A.location) AS latitude, B.data_group_name
+		FROM data_info A LEFT JOIN data_group B
+        	ON A.data_group_id = B.data_group_id
+		WHERE A.data_group_id = #{dataGroupId}
+		ORDER BY A.insert_date DESC, A.data_id DESC
 	</select>
 
 	<!-- Data 정보 -->
@@ -175,11 +185,12 @@
 	<!-- converterJob 정보를 이용하여 data 정보 취득 -->
 	<select id="getDataByConverterJob" parameterType="dataInfo" resultType="dataInfo">
 		/* getDataByConverterJob */
-		SELECT data_id, data_group_id
-		FROM data_info 
-		WHERE converter_job_id = #{converterJobId}
+		SELECT A.data_id, A.data_key, A.data_group_id, A.data_type, B.data_group_key
+		FROM data_info A, data_group B 
+		WHERE A.data_group_id = B.data_group_id
+			AND A.converter_job_id = #{converterJobId}
 			<if test="userId != null and userId != ''">
-			AND user_id = #{userId}
+			AND A.user_id = #{userId}
 			</if>
 	</select>
 	
@@ -192,7 +203,7 @@
 	</select> -->
 
 	<!-- Data 등록 -->
-	<insert id="insertData" parameterType="dataInfo">
+	<insert id="insertData" useGeneratedKeys="true" keyProperty="dataId" parameterType="dataInfo">
 		/* insertData */
 		<selectKey keyProperty="dataId" resultType="long" order="BEFORE">
     		SELECT NEXTVAL('data_info_seq')
@@ -217,6 +228,58 @@
 			TO_JSON(#{metainfo}::json),
 			</if>
 			#{status}, #{description}
+		)
+	</insert>
+	
+	<!-- Bulk 파일로 부터 데이터 등록(시퀀스를 사용하지 않고, 파일에 있는 dataId 사용) -->
+	<insert id="insertBulkData" parameterType="dataInfo">
+		/* insertBulkData */
+		INSERT INTO data_info(
+			data_id, data_group_id, converter_job_id, data_key, data_name, data_type, sharing, user_id, mapping_type,
+			<if test="location != null">
+			location,
+			</if>
+			altitude, heading, pitch, roll, children_ancestor, children_parent, children_depth, children_view_order,
+			<if test="metainfo != null and metainfo != ''">
+			metainfo,
+			</if>
+			status, description
+		) VALUES (
+			#{dataId}, #{dataGroupId}, #{converterJobId}, #{dataKey}, #{dataName}, #{dataType}, #{sharing}, #{userId}, #{mappingType},
+			<if test="location != null">
+			ST_GeomFromText(#{location}, 4326),
+			</if>
+			#{altitude}, COALESCE(#{heading}, 0), COALESCE(#{pitch}, 0), COALESCE(#{roll}, 0), #{childrenAncestor}, #{childrenParent}, #{childrenDepth}, #{childrenViewOrder},
+			<if test="metainfo != null and metainfo != ''">
+			TO_JSON(#{metainfo}::json),
+			</if>
+			#{status}, #{description}
+		)
+	</insert>
+	
+	<!-- 데이터 파일 정보 저장 -->
+	<insert id="insertDataFileInfo" parameterType="dataFileInfo" >
+		/* insertDataFileInfo */
+		<selectKey keyProperty="dataFileInfoId" resultType="long" order="BEFORE">
+    		SELECT NEXTVAL('data_file_info_seq')
+  		</selectKey>
+		INSERT INTO data_file_info (
+			data_file_info_id, data_group_id, user_id, file_name, file_real_name, file_path, file_size, file_ext
+		) VALUES (
+			#{dataFileInfoId}, #{dataGroupId}, #{userId}, #{fileName}, #{fileRealName}, #{filePath}, #{fileSize}, #{fileExt}
+		)
+	</insert>
+	
+	<!-- 데이터 파일 파싱 로그 저장 -->
+	<insert id="insertDataFileParseLog" parameterType="dataFileParseLog">
+		/* insertDataFileParseLog */
+		<selectKey keyProperty="dataFileParseLogId" resultType="long" order="BEFORE">
+			SELECT NEXTVAL('data_file_parse_log_seq');
+		</selectKey>
+		INSERT INTO data_file_parse_log (
+			data_file_parse_log_id	, data_file_info_id, identifier_value, error_code, log_type, status
+		) VALUES (
+			#{dataFileParseLogId}, #{dataFileInfoId}, #{identifierValue}, #{errorCode}, #{logType}, #{status}
 		)
 	</insert>
 
@@ -282,12 +345,36 @@
 			AND user_id = #{userId}
 			</if>
 	</update>
+	
+	<!-- Data 파일 정보 수정 -->
+	<update id="updateDataFileInfo" parameterType="dataFileInfo">
+		/* updateDataFileInfo */
+		UPDATE data_file_info
+		SET total_count = #{totalCount},
+			parse_success_count = #{parseSuccessCount},
+			parse_error_count = #{parseErrorCount},
+			insert_success_count = #{insertSuccessCount},
+			insert_error_count = #{insertErrorCount}
+		WHERE data_file_info_id = #{dataFileInfoId}
+	</update>
 
 	<!-- Data 상태 수정 -->
 	<update id="updateDataStatus" parameterType="dataInfo">
 		/* updateDataStatus */
 		UPDATE data_info
 		SET status = #{status},
+			<if test="location != null">
+			location = ST_GeomFromText(#{location}, 4326),
+			</if>
+			<if test="altitude != null">
+			altitude = #{altitude},
+			</if>
+			<if test="attributeExist != null">
+			attribute_exist = #{attributeExist},
+			</if>
+			<if test="objectAttributeExist != null">
+			object_attribute_exist = #{objectAttributeExist},
+			</if>
 			update_date = NOW()
 		WHERE data_id = #{dataId}
 			<if test="userId != null and userId != ''">
@@ -329,5 +416,12 @@
 			<if test="dataId != null and dataId != ''">
 			AND data_id = #{dataId}
 			</if>
+	</delete>
+	
+	<delete id="deleteDataByUserId" parameterType="string">
+		/* deleteDataByProjectId */
+		DELETE
+		FROM data_info
+		WHERE user_id = #{value}
 	</delete>
 </mapper>

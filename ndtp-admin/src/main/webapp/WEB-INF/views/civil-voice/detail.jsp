@@ -8,11 +8,11 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<title>시민참여 상세 정보 | NDTP</title>
-	<link rel="stylesheet" href="/css/${lang}/font/font.css" />
-	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css" />
-	<link rel="stylesheet" href="/externlib/normalize/normalize.min.css" />
-	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css" />
-    <link rel="stylesheet" href="/css/${lang}/admin-style.css" />
+	<link rel="stylesheet" href="/css/${lang}/font/font.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/externlib/normalize/normalize.min.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css?cacheVersion=${contentCacheVersion}" />
+    <link rel="stylesheet" href="/css/${lang}/admin-style.css?cacheVersion=${contentCacheVersion}" />
 </head>
 <body>
 	<%@ include file="/WEB-INF/views/layouts/header.jsp" %>
@@ -26,25 +26,31 @@
 					<div class="page-content">
 						<div class="content-desc u-pull-right"><span class="icon-glyph glyph-emark-dot color-warning"></span><spring:message code='check'/></div>
 						<div class="tabs">
-							<ul>
-								<li><a href="#userInfoTab"><spring:message code='user.input.information'/></a></li>
-								<%-- <li><a href="#userDeviceTab"><spring:message code='user.input.device'/></a></li> --%>
-							</ul>
 							<div id="userInfoTab">
 								<table class="inner-table scope-row">
 									<col class="col-label" />
 									<col class="col-data" />
 									<tr>
-										<th class="col-label" scope="row"><spring:message code='user.id'/></th>
-										<td class="col-data">${civilVoice.userId}</td>
-									</tr>
-									<tr>
 										<th class="col-label" scope="row"><spring:message code='title'/></th>
 										<td class="col-data">${civilVoice.title}</td>
 									</tr>
 									<tr>
+										<th class="col-label" scope="row">위치</th>
+										<td class="col-data">
+											<span id="longitude">${civilVoice.longitude}</span>
+											&emsp;
+											<span id="latitude">${civilVoice.latitude}</span>
+											&emsp;
+											<input type="button" id="mapButtion" value="지도에서 보기" />
+										</td>
+									</tr>
+									<tr>
 										<th class="col-label" scope="row"><spring:message code='contant'/></th>
 										<td class="col-data">${civilVoice.contents}</td>
+									</tr>
+									<tr>
+										<th class="col-label" scope="row">작성자</th>
+										<td class="col-data">${civilVoice.userId}</td>
 									</tr>
 									<tr>
 										<th class="col-label" scope="row"><spring:message code='search.insert.date'/></th>
@@ -53,313 +59,154 @@
 											<fmt:formatDate value="${viewInsertDate}" pattern="yyyy-MM-dd HH:mm"/>
 										</td>
 									</tr>
-									<%-- <tr>
-										<th class="col-label" scope="row"><spring:message code='phone.number'/></th>
-										<td class="col-data">${userInfo.viewMaskingTelePhone}</td>
-									</tr>
-									<tr>
-										<th class="col-label" scope="row"><spring:message code='mobile'/></th>
-										<td class="col-data">${userInfo.viewMaskingMobilePhone}</td>
-									</tr>
-									<tr>
-										<th class="col-label" scope="row"><spring:message code='email'/></th>
-										<td class="col-data">${userInfo.viewMaskingEmail}</td>
-									</tr>
-									<tr>
-										<th class="col-label" scope="row"><spring:message code='messenger'/></th>
-										<td class="col-data">${userInfo.messanger}</td>
-									</tr>
-									<tr>
-										<th class="col-label" scope="row"><spring:message code='address'/></th>
-										<td class="col-data">${userInfo.postal_code} ${userInfo.address} ${userInfo.viewMaskingAddressEtc}</td>
-									</tr>
-									<tr>
-										<th class="col-label" scope="row"><spring:message code='config.login.fail.count'/></th>
-										<td class="col-data">${userInfo.fail_login_count}</td>
-									</tr>
-									<tr>
-										<th class="col-label" scope="row"><spring:message code='user.group.last.login'/></th>
-										<td class="col-data">${userInfo.viewLastLoginDate}</td>
-									</tr>
-									<tr>
-										<th class="col-label" scope="row"><spring:message code='status'/></th>
-										<td class="col-input radio-set">
-		<c:choose>
-			<c:when test="${userInfo.status eq '0'}">
-				<span class="icon-glyph glyph-on on" style="float: left; margin-right:3px;"></span>
-				<span class="icon-text"><spring:message code='user.group.in.use' /></span>
-			</c:when>
-			<c:when test="${userInfo.status eq '1'}">
-				<span class="icon-glyph glyph-off off" style="float: left; margin-right:3px;"></span>
-				<span class="icon-text"><spring:message code='user.group.stop.use'/></span>
-			</c:when>
-			<c:when test="${userInfo.status eq '2'}">
-				<span class="icon-glyph glyph-off off" style="float: left; margin-right:3px;"></span>
-				<span class="icon-text"><spring:message code='user.group.lock.password'/></span>
-			</c:when>
-			<c:when test="${userInfo.status eq '3'}">
-				<span class="icon-glyph glyph-off off" style="float: left; margin-right:3px;"></span>
-				<span class="icon-text"><spring:message code='user.group.dormancy'/></span>
-			</c:when>
-			<c:when test="${userInfo.status eq '4'}">
-				<span class="icon-glyph glyph-off off" style="float: left; margin-right:3px;"></span>
-				<span class="icon-text"><spring:message code='user.group.expires'/></span>
-			</c:when>
-			<c:when test="${userInfo.status eq '5'}">
-				<span class="icon-glyph glyph-off off" style="float: left; margin-right:3px;"></span>
-				<span class="icon-text"><spring:message code='user.group.delete'/></span>
-			</c:when>
-			<c:when test="${userInfo.status eq '6'}">
-				<span class="icon-glyph glyph-off off" style="float: left; margin-right:3px;"></span>
-				<span class="icon-text"><spring:message code='user.group.temporary.password'/></span>
-			</c:when>
-		</c:choose>
-
-										</td>
-									</tr>
-									<tr>
-										<th class="col-label" scope="row"><spring:message code='insert.type'/></th>
-										<td class="col-data">
-											${userInfo.viewUserInsertType}
-										</td>
-									</tr>
-									<tr>
-										<th class="col-label" scope="row">Single Sign-On</th>
-										<td class="col-data">
-	<c:if test="${user_info.sso_use_yn eq 'N'}">
-											<spring:message code='no.use'/>
-	</c:if>
-										</td>
-									</tr> --%>
 								</table>
 							</div>
-							<%--
-							<div id="user_device_tab">
-								<table class="inner-table scope-col">
-									<col class="col-number" />
-									<col class="col-name" />
-									<col class="col-type" />
-									<col class="col-ip" />
-									<col class="col-toggle" />
-									<thead>
-										<tr>
-											<th class="col-number" scope="col"><spring:message code='user.device.priority'/></th>
-											<th class="col-name" scope="col"><spring:message code='user.device.device.name'/></th>
-											<th class="col-type" scope="col"><spring:message code='user.device.type'/></th>
-											<th class="col-ip" scope="col"><spring:message code='user.device.ip'/></th>
-											<th class="col-toggle" scope="col"><spring:message code='user.device.use.not'/></th>
-										</tr>
-									</thead>
-									<tbody>
-	<c:if test="${userDevice.device_name1 != null && userDevice.device_name1 != ''}">
-										<tr>
-											<td class="col-number">${userDevice.device_priority1}</td>
-											<td class="col-name">${userDevice.device_name1}</td>
-											<td class="col-type">${userDevice.viewDeviceType1}</td>
-											<td class="col-ip">${userDevice.device_ip1}</td>
-											<td class="col-toggle">${userDevice.viewUseYn1}</td>
-										</tr>
-	</c:if>
-	<c:if test="${userDevice.device_name2 != null && userDevice.device_name2 != ''}">
-										<tr>
-											<td class="col-number">${userDevice.device_priority2}</td>
-											<td class="col-name">${userDevice.device_name2}</td>
-											<td class="col-type">${userDevice.viewDeviceType2}</td>
-											<td class="col-ip">${userDevice.device_ip2}</td>
-											<td class="col-toggle">${userDevice.viewUseYn2}</td>
-										</tr>
-	</c:if>
-	<c:if test="${userDevice.device_name3 != null && userDevice.device_name3 != ''}">
-										<tr>
-											<td class="col-number">${userDevice.device_priority3}</td>
-											<td class="col-name">${userDevice.device_name3}</td>
-											<td class="col-type">${userDevice.viewDeviceType3}</td>
-											<td class="col-ip">${userDevice.device_ip3}</td>
-											<td class="col-toggle">${userDevice.viewUseYn3}</td>
-										</tr>
-	</c:if>
-	<c:if test="${userDevice.device_name4 != null && userDevice.device_name4 != ''}">
-										<tr>
-											<td class="col-number">${userDevice.device_priority4}</td>
-											<td class="col-name">${userDevice.device_name4}</td>
-											<td class="col-type">${userDevice.viewDeviceType4}</td>
-											<td class="col-ip">${userDevice.device_ip4}</td>
-											<td class="col-toggle">${userDevice.viewUseYn4}</td>
-										</tr>
-	</c:if>
-	<c:if test="${userDevice.device_name5 != null && userDevice.device_name5 != ''}">
-										<tr>
-											<td class="col-number">${userDevice.device_priority5}</td>
-											<td class="col-name">${userDevice.device_name5}</td>
-											<td class="col-type">${userDevice.viewDeviceType5}</td>
-											<td class="col-ip">${userDevice.device_ip5}</td>
-											<td class="col-toggle">${userDevice.viewUseYn5}</td>
-										</tr>
-	</c:if>
-									</tbody>
-								</table>
-							</div>
-						 --%>
 						</div>
 						<div class="button-group">
 							<div class="center-buttons">
 								<a href="/civil-voice/list?${listParameters}" class="button"><spring:message code='list'/></a>
+								<a href="/civil-voice/modify?civilVoiceId=${civilVoice.civilVoiceId}&amp;${listParameters}" class="button"><spring:message code='modified'/></a>
 							</div>
 						</div>
+
+						<!-- 댓글 등록 -->
+						<form:form id="civilVoiceCommentForm" modelAttribute="civilVoiceComment" method="post" onsubmit="return false;">
+						<h4 class="comment">의견</h4>
+						<div class="commentWrite">
+							<p class="user"></p>
+							<!-- <textarea name="" id="" class="reply"></textarea>
+							<span class="textCount">0/256</span> -->
+							<input type="text" name="title" placeholder="동의합니다" value="">
+							<button type="button" id="civilVoiceAgree" class="regist" title="동의">동의</button>
+						</div>
+						</form:form>
+						<ul id="civilVoiceComment" class="reply"></ul>
+						<div id="civilVoiceCommentPagination" class="pagination" style="margin:10px;"></div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<%@ include file="/WEB-INF/views/layouts/footer.jsp" %>
+	<%@ include file="/WEB-INF/views/civil-voice/comment.jsp" %>
 
 <%-- F4D Converter Job 등록 --%>
-<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js"></script>
-<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
-<script type="text/javascript" src="/js/${lang}/common.js"></script>
-<script type="text/javascript" src="/js/${lang}/message.js"></script>
+<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/externlib/handlebars-4.1.2/handlebars.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/handlebarsHelper.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/common.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/message.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/navigation.js?cacheVersion=${contentCacheVersion}"></script>
 <script type="text/javascript">
+
 	$(document).ready(function() {
-		$( ".tabs" ).tabs();
+		getCivilVoiceCommentList();
 	});
 
-	//전체 선택
-	$("#chkAll").click(function() {
-		$(":checkbox[name=uploadDataId]").prop("checked", this.checked);
+	// 시민참여 댓글 등록
+	$('#civilVoiceAgree').on('click', function() {
+		saveCivilVoiceComment();
 	});
 
-	var dialogConverterJob = $( ".dialogConverterJob" ).dialog({
-		autoOpen: false,
-		height: 280,
-		width: 600,
-		modal: true,
-		resizable: false,
-		close: function() {
-			$("#converterCheckIds").val("");
-			$("#title").val("");
-			//location.reload();
-		}
-	});
-
-	// F4D Converter Button Click
-	function converterFile(uploadDataId, dataName) {
-		$("#converterCheckIds").val(uploadDataId + ",");
-		$("#title").val(dataName);
-
-		dialogConverterJob.dialog( "open" );
+	function drawHandlebarsHtml(data, templateId, targetId) {
+		var source = $('#' + templateId).html();
+		var template = Handlebars.compile(source);
+		var html = template(data);
+		$('#' + targetId).empty().append(html);
 	}
 
-	// All F4D Converter Button Click
-	function converterFiles() {
-		var checkedValue = "";
-		$("input:checkbox[name=uploadDataId]:checked").each(function(index) {
-			checkedValue += $(this).val() + ",";
-		});
-		if(checkedValue === "") {
-			alert("파일을 선택해 주십시오.");
-			return;
-		}
-		$("#converterCheckIds").val(checkedValue);
-
-		dialogConverterJob.dialog( "open" );
+	function initFormContent(formId) {
+		var tokenSelector = '[name=CSRFToken]';
+		$('#' + formId + ' input').not(tokenSelector).val("");
+		$('#' + formId + ' textarea').not(tokenSelector).val("");
 	}
 
-	// F4D Converter 일괄 변환
-	var saveConverterJobFlag = true;
-	function saveConverterJob() {
-		if($("#title").val() === null || $("#title").val() === "") {
-			alert("제목을 입력하여 주십시오.");
-			$("#title").focus();
-			return false;
-		}
+	// 시민참여 댓글 조회
+	function getCivilVoiceCommentList(page) {
+		if(!page) page = 1;
+		var id = "${civilVoice.civilVoiceId}";
 
-		if(saveConverterJobFlag) {
-			saveConverterJobFlag = false;
-			var formData =$("#converterJobForm").serialize();
-			$.ajax({
-				url: "/converter/insert",
-				type: "POST",
-				data: formData,
-				dataType: "json",
-				headers: {"X-Requested-With": "XMLHttpRequest"},
-				success: function(msg){
-					if(msg.statusCode <= 200) {
-						alert(JS_MESSAGE["insert"]);
-					} else {
-						alert(JS_MESSAGE[msg.errorCode]);
-					}
-
-					$("#converterCheckIds").val("");
-					$("#title").val("");
-					$(":checkbox[name=uploadDataId]").prop("checked", false);
-					dialogConverterJob.dialog( "close" );
-					saveConverterJobFlag = true;
-				},
-				error:function(request,status,error){
-					alert(JS_MESSAGE["ajax.error.message"]);
-					dialogConverterJob.dialog( "close" );
-					saveConverterJobFlag = true;
+		$.ajax({
+			url: '/civil-voice-comments/' + id,
+			type: 'GET',
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json',
+			data: {pageNo: page},
+			success: function(res){
+				if(res.statusCode <= 200) {
+					$('#civilVoiceCommentTotalCount').text(res.totalCount);
+					drawHandlebarsHtml(res, 'templateCivilVoiceComment', 'civilVoiceComment');
+					drawHandlebarsHtml(res, 'templateCivilVoiceCommentPagination', 'civilVoiceCommentPagination');
+				} else {
+					alert(JS_MESSAGE[res.errorCode]);
+					console.log("---- " + res.message);
 				}
+			},
+			error: function(request, status, error) {
+				alert(JS_MESSAGE["ajax.error.message"]);
+			}
+		});
+	}
+
+	// 시민참여 댓글 등록
+	var insertCivilVoiceCommentFlag = true;
+	function saveCivilVoiceComment() {
+		if(insertCivilVoiceCommentFlag) {
+			insertCivilVoiceCommentFlag = false;
+			var id = "${civilVoice.civilVoiceId}";
+			var url = "/civil-voice-comments";
+			var formId = 'civilVoiceCommentForm';
+			var formData = $('#' + formId).serialize();
+
+			$.ajax({
+				url: url,
+				type: "POST",
+				headers: {"X-Requested-With": "XMLHttpRequest"},
+				data: formData + '&civilVoiceId=' + id,
+				dataType: "json",
+				success: function(msg) {
+					if(msg.statusCode <= 200) {
+						alert("등록 되었습니다.");
+						initFormContent(formId);
+						getCivilVoiceCommentList();
+					} else {
+			        	alert(JS_MESSAGE[msg.errorCode]);
+						console.log("---- " + msg.message);
+					}
+					insertCivilVoiceCommentFlag = true;
+				},
+		        error: function(request, status, error) {
+		        	alert(JS_MESSAGE["ajax.error.message"]);
+		        	insertCivilVoiceCommentFlag = true;
+		        }
 			});
 		} else {
-			alert(JS_MESSAGE["button.dobule.click"]);
+			alert("진행 중입니다.");
 			return;
 		}
 	}
 
-	function deleteUploadData(uploadDataId) {
-		deleteAllUploadData(uploadDataId);
-	}
+	// 지도에서 찾기
+	$( "#mapButtion" ).on( "click", function() {
+		var longitude = Number($('#longitude').text());
+		var latitude = Number($('#latitude').text());
+		var readOnly = true;
 
-	// 삭제
-	var deleteUploadDataFlag = true;
-	function deleteAllUploadData(uploadDataId) {
-		var formData = null;
-		if(uploadDataId === undefined) {
-			if($("input:checkbox[name=uploadDataId]:checked").length == 0) {
-				alert(JS_MESSAGE["check.value.required"]);
-				return false;
-			} else {
-				var checkedValue = "";
-				$("input:checkbox[name=uploadDataId]:checked").each(function(index){
-					checkedValue += $(this).val() + ",";
-				});
-				$("#checkIds").val(checkedValue);
-			}
-			formData = "checkIds=" + $("#checkIds").val();
-		} else {
-			formData = "checkIds=" + uploadDataId;
-		}
+		var url = "/map/fly-to-point?readOnly=" + readOnly + "&longitude=" + longitude + "&latitude=" + latitude;
+		var width = 800;
+		var height = 700;
 
-		if(confirm(JS_MESSAGE["delete.confirm"])) {
-			if(deleteUploadDataFlag) {
-				deleteUploadDataFlag = false;
-				$.ajax({
-					url: "/upload-data/delete",
-					type: "POST",
-					data: formData,
-					dataType: "json",
-					headers: {"X-Requested-With": "XMLHttpRequest"},
-					success: function(msg){
-						if(msg.statusCode <= 200) {
-							alert(JS_MESSAGE["delete"]);
-							location.reload();
-						} else {
-							alert(JS_MESSAGE[msg.errorCode]);
-						}
-						deleteDatasFlag = true;
-					},
-					error:function(request,status,error){
-				        alert(JS_MESSAGE["ajax.error.message"]);
-				        deleteDatasFlag = true;
-					}
-				});
-			} else {
-				alert(JS_MESSAGE["button.dobule.click"]);
-				return;
-			}
-		}
-	}
+		var popupX = (window.screen.width / 2) - (width / 2);
+		// 만들 팝업창 좌우 크기의 1/2 만큼 보정값으로 빼주었음
+		var popupY= (window.screen.height / 2) - (height / 2);
+
+	    var popWin = window.open(url, "","toolbar=no,width=" + width + ",height=" + height + ",top=" + popupY + ",left="+popupX
+	            + ",directories=no,status=yes,scrollbars=no,menubar=no,location=no");
+	    //popWin.document.title = layerName;
+	});
+
 </script>
 </body>
 </html>

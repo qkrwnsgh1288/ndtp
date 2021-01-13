@@ -9,6 +9,11 @@ public enum RoleKey {
 	ADMIN_LAYER_MANAGE,
 	
 	// 사용자 페이지 sign int
-	USER_SIGNIN;
-	
+	USER_SIGNIN,
+	// 사용자 페이지 DATA 등록 권한
+	USER_DATA_CREATE,
+	// 사용자 페이지 DATA 조회 권한
+	USER_DATA_READ,
+	// 사용자 페이지 시민참여 관리 권한
+	USER_CIVIL_VOICE_MANAGE;
 }

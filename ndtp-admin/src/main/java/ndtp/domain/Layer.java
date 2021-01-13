@@ -82,6 +82,8 @@ public class Layer extends Search implements Serializable {
     private String serviceType;
     // 레이어 타입 (Raster, Vector)	
     private String layerType;
+    // 레이어 등록 타입 
+    private String layerInsertType;
     // 도형 타입 (point, line, polygon)
     private String geometryType;
     
@@ -108,6 +110,8 @@ public class Layer extends Search implements Serializable {
     private Boolean available;
     // 레이블 표시 유무. Y : 표시, N : 비표시(기본값)
     private Boolean labelDisplay;
+    
+    private Boolean cacheAvailable;
     
     // 좌표계
     private String coordinate;

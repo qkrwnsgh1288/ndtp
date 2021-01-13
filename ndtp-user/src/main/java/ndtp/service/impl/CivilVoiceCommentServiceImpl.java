@@ -3,35 +3,55 @@ package ndtp.service.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import ndtp.domain.CivilVoice;
 import ndtp.domain.CivilVoiceComment;
+import ndtp.persistence.CivilVoiceCommentMapper;
+import ndtp.persistence.CivilVoiceMapper;
 import ndtp.service.CivilVoiceCommentService;
 
 @Service
 public class CivilVoiceCommentServiceImpl implements CivilVoiceCommentService {
+	private final CivilVoiceMapper civilVoiceMapper;
+	private final CivilVoiceCommentMapper civilVoiceCommentMapper;
 
-	@Override
-	public List<CivilVoiceComment> getListCivilVoiceComment(Long CivilVoiceId) {
-		// TODO Auto-generated method stub
-		return null;
+	public CivilVoiceCommentServiceImpl(CivilVoiceMapper civilVoiceMapper, CivilVoiceCommentMapper civilVoiceCommentMapper) {
+		this.civilVoiceMapper = civilVoiceMapper;
+		this.civilVoiceCommentMapper = civilVoiceCommentMapper;
 	}
 
-	@Override
-	public int insertCivilVoiceComment(CivilVoiceComment civilvoiceComment) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Transactional(readOnly=true)
+	public List<CivilVoiceComment> getListCivilVoiceComment(CivilVoiceComment civilVoiceComment) {
+		return civilVoiceCommentMapper.getListCivilVoiceComment(civilVoiceComment);
 	}
 
-	@Override
-	public int updateCivilVoiceComment(CivilVoiceComment civilvoiceComment) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Transactional(readOnly=true)
+	public Long getCivilVoiceCommentTotalCount(CivilVoiceComment civilVoiceComment) {
+		return civilVoiceCommentMapper.getCivilVoiceCommentTotalCount(civilVoiceComment);
 	}
 
-	@Override
-	public int deleteCivilVoiceComment(CivilVoiceComment civilvoiceComment) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Transactional
+	public int insertCivilVoiceComment(CivilVoiceComment civilVoiceComment) {
+		CivilVoice civilVoice = new CivilVoice();
+		civilVoice.setCivilVoiceId(civilVoiceComment.getCivilVoiceId());
+		civilVoiceMapper.updateCivilVoiceCommentCount(civilVoice);
+
+		return civilVoiceCommentMapper.insertCivilVoiceComment(civilVoiceComment);
 	}
 
+	@Transactional
+	public int updateCivilVoiceComment(CivilVoiceComment civilVoiceComment) {
+		return civilVoiceCommentMapper.updateCivilVoiceComment(civilVoiceComment);
+	}
+
+	@Transactional
+	public int deleteCivilVoiceComment(long civilVoiceCommentId) {
+		return civilVoiceCommentMapper.deleteCivilVoiceComment(civilVoiceCommentId);
+	}
+
+	@Transactional(readOnly=true)
+	public Boolean alreadyRegistered(CivilVoiceComment civilVoiceComment) {
+		return civilVoiceCommentMapper.alreadyRegistered(civilVoiceComment);
+	}
 }

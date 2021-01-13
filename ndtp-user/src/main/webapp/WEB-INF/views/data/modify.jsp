@@ -8,14 +8,14 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<title>데이터 수정 | NDTP</title>
-	
-	<link rel="stylesheet" href="/externlib/cesium/Widgets/widgets.css" />
-	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css" />
-	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css" />
-	<link rel="stylesheet" href="/css/${lang}/user-style.css" />
-	<link rel="stylesheet" href="/css/${lang}/style.css" />
-	<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js"></script>
-	<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+	<link rel="shortcut icon" href="/images/favicon.ico?cacheVersion=${contentCacheVersion}">
+	<link rel="stylesheet" href="/externlib/cesium/Widgets/widgets.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/css/${lang}/user-style.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/css/${lang}/style.css?cacheVersion=${contentCacheVersion}" />
+	<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js?cacheVersion=${contentCacheVersion}"></script>
+	<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js?cacheVersion=${contentCacheVersion}"></script>
 </head>
 <body>
 
@@ -24,23 +24,25 @@
 <div id="wrap">
 	<!-- S: NAVWRAP -->
 	<div class="navWrap">
-	 	<%@ include file="/WEB-INF/views/layouts/menu.jsp" %> 
+	 	<%@ include file="/WEB-INF/views/layouts/menu.jsp" %>
 	</div>
 	<!-- E: NAVWRAP -->
-	
+
 	<div class="container" style="float:left; width: calc(100% - 78px);">
 		<div style="padding: 20px 20px 0px 10px; font-size: 18px;">3D 업로딩 데이터 자동 변환</div>
 		<div class="tabs" >
 			<ul class="tab">
-				<li onclick="location.href='/data-group/list'">데이터 그룹</li>
-				<li onclick="location.href='/data-group/input'">데이터 그룹 등록</li>
-				<li onclick="location.href='/upload-data/input'">업로딩 데이터</li>
-			   	<li onclick="location.href='/upload-data/list'">업로딩 데이터 목록</li>
-			  	<li onclick="location.href='/converter/list'">업로딩 데이터 변환 목록</li>
-			  	<li onclick="location.href='/data/list'" class="on">데이터 목록</li>
+				<li id="tabDataGroupList"><a href="/data-group/list">데이터 그룹</a></li>
+				<li id="tabDataGroupInput"><a href="/data-group/input">데이터 그룹 등록</a></li>
+				<li id="tabUploadDataInput"><a href="/upload-data/input">업로딩 데이터</a></li>
+			   	<li id="tabUploadDataList"><a href="/upload-data/list">업로딩 데이터 목록</a></li>
+			  	<li id="tabConverterList"><a href="/converter/list">업로딩 데이터 변환 목록</a></li>
+			  	<li id="tabDataList"><a href="/data/list">데이터 목록</a></li>
+			  	<li id="tabDataLogList"><a href="/data-log/list">데이터 변경 이력</a></li>
 			</ul>
 		</div>
 		<form:form id="dataInfo" modelAttribute="dataInfo" method="post" onsubmit="return false;">
+		<input type="hidden" name="dataId" value="" />
 		<table class="input-table scope-row">
 			<col class="col-label l" />
 			<col class="col-input" />
@@ -73,10 +75,12 @@
 	            	공유 타입
 				</th>
 	            <td class="col-input">
-	<c:if test="${dataInfo.sharing eq 'common'}">공통</c:if>
-	<c:if test="${dataInfo.sharing eq 'public'}">공개</c:if>
-	<c:if test="${dataInfo.sharing eq 'private'}">개인</c:if>
-	<c:if test="${dataInfo.sharing eq 'group'}">그룹</c:if>
+					<select id="sharing" name="sharing" class="selectBoxClass">
+						<option value="public">공개</option>
+						<option value="common">공통</option>
+						<option value="private">비공개</option>
+						<option value="group">그룹 공개</option>
+					</select>
 				</td>
 			</tr>
 			<tr>
@@ -108,10 +112,13 @@
 			</tr>
 			<tr>
 				<th class="col-label" scope="row">
-					heading/pitch/roll
+					<form:label path="heading">heading/pitch/roll</form:label>
+
 				</th>
 				<td class="col-input">
-					${dataInfo.heading } / ${dataInfo.pitch } / ${dataInfo.roll }
+					<form:input path="heading" cssClass="m" />
+					<form:input path="pitch" cssClass="m" />
+					<form:input path="roll" cssClass="m" />
 				</td>
 			</tr>
 			<tr>
@@ -142,7 +149,7 @@
 					속성 정보
 				</th>
 				<td class="col-input">
-		<c:if test="${dataInfo.attributeExist eq 'true' }">	
+		<c:if test="${dataInfo.attributeExist eq 'true' }">
 							등록
 		</c:if>
 		<c:if test="${dataInfo.attributeExist eq 'false' }">
@@ -155,7 +162,7 @@
 					Object 속성 정보
 				</th>
 				<td class="col-input">
-		<c:if test="${dataInfo.objectAttributeExist eq 'true' }">	
+		<c:if test="${dataInfo.objectAttributeExist eq 'true' }">
 							등록
 		</c:if>
 		<c:if test="${dataInfo.objectAttributeExist eq 'false' }">
@@ -194,20 +201,21 @@
 		</div>
 		</form:form>
 	</div>
-	
+
 </div>
 <!-- E: WRAP -->
 
-<script type="text/javascript" src="/js/${lang}/common.js"></script>
-<script type="text/javascript" src="/js/${lang}/message.js"></script>
-<script type="text/javascript" src="/js/${lang}/map-controll.js"></script>
-<script type="text/javascript" src="/js/${lang}/ui-controll.js"></script>
+<script type="text/javascript" src="/js/${lang}/common.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/message.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/map-controll.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/ui-controll.js?cacheVersion=${contentCacheVersion}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
+		$("#sharing").val("${dataInfo.sharing}");
 		$("#mappingType").val("${dataInfo.mappingType}");
 		$("#status").val("${dataInfo.status}");
 	});
-	
+
 	function validate() {
 		if ($("#longitude").val() === "") {
 			alert("대표 위치(경도)를 입력하여 주십시오.");
@@ -230,8 +238,69 @@
 			return false;
 		}
 	}
-	
+
 	// 수정
+	function updateDataInfo() {
+		if (validate() == false) {
+			return false;
+		}
+		if(confirm(JS_MESSAGE["data.update.check"])) {
+			startLoading();
+			var formData = $("#dataInfo").serialize();
+			$.ajax({
+				url: "/datas/${dataInfo.dataId}",
+				type: "POST",
+				headers: {"X-Requested-With": "XMLHttpRequest"},
+				data: formData,
+				success: function(msg){
+					if(msg.statusCode <= 200) {
+						alert(JS_MESSAGE["update"]);
+					} else if(msg.statusCode === 403) {
+						//data.smart.tiling
+						alert("변경 권한(Smart Tiling)이 존재하지 않습니다.");
+					} else if (msg.statusCode === 428) {
+						if(confirm(JS_MESSAGE[msg.errorCode])) {
+							$('input[name="dataId"]').val('${dataInfo.dataId}');
+							var formData = $("#dataInfo").serialize();
+							$.ajax({
+								url: "/data-adjust-logs",
+								type: "POST",
+								headers: {"X-Requested-With": "XMLHttpRequest"},
+								data: formData,
+								success: function(msg){
+									if(msg.statusCode <= 200) {
+										alert("요청 하였습니다.");
+									} else {
+										alert(JS_MESSAGE[msg.errorCode]);
+										console.log("---- " + msg.message);
+									}
+									insertDataAdjustLogFlag = true;
+								},
+								error: function(request, status, error){
+							        alert(JS_MESSAGE["ajax.error.message"]);
+							        insertDataAdjustLogFlag = true;
+								},
+								always: function(msg) {
+									$('input[name="dataId"]').val("");
+								}
+							});
+						}
+					} else {
+						alert(JS_MESSAGE[msg.errorCode]);
+						console.log("---- " + msg.message);
+					}
+					updateDataInfoFlag = true;
+				},
+				error:function(request, status, error){
+			        alert(JS_MESSAGE["ajax.error.message"]);
+			        updateDataInfoFlag = true;
+				}
+			}).always(stopLoading);
+		} else {
+			//alert('no');
+		}
+	}
+	/*
 	var updateDataInfoFlag = true;
 	function updateDataInfo() {
 		if (validate() == false) {
@@ -239,7 +308,7 @@
 		}
 		if(updateDataInfoFlag) {
 			updateDataInfoFlag = false;
-			var formData = $("#dataInfo").serialize();		
+			var formData = $("#dataInfo").serialize();
 			$.ajax({
 				url: "/datas/${dataInfo.dataId}",
 				type: "POST",
@@ -265,21 +334,23 @@
 			return;
 		}
 	}
-	
-	// 지도에서 찾기
+	*/
+	// 지도에서 찾기 -- common.js, openFindDataPoint
 	$( "#mapButtion" ).on( "click", function() {
-		var url = "/map/find-data-point?dataId=${dataInfo.dataId}&referrer=MODIFY";
-		var width = 1400;
+		//openFindDataPoint("${dataInfo.dataId}", "MODIFY");
+		var url = "/map/find-point";
+		var width = 800;
 		var height = 700;
-	
+
 		var popupX = (window.screen.width / 2) - (width / 2);
 		// 만들 팝업창 좌우 크기의 1/2 만큼 보정값으로 빼주었음
 		var popupY= (window.screen.height / 2) - (height / 2);
-		
+
 	    var popWin = window.open(url, "","toolbar=no ,width=" + width + " ,height=" + height + ", top=" + popupY + ", left="+popupX
 	            + ", directories=no,status=yes,scrollbars=no,menubar=no,location=no");
 	    //popWin.document.title = layerName;
 	});
+	
 </script>
 </body>
 </html>

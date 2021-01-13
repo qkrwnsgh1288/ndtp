@@ -1,6 +1,5 @@
 package ndtp.utils;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -20,7 +19,7 @@ class FilePathTest {
 		String dataGroupPath = "basic/";
 		
 		String[] directors = dataGroupPath.split("/");
-		String fullName = "C:\\data\\mago3d\\f4d\\";
+		String fullName = "F:\\data\\mago3d\\f4d\\";
 		
 		boolean result = true;
 		for(String directoryName : directors) {

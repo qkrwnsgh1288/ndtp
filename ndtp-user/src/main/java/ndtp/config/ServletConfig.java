@@ -22,16 +22,19 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.support.RequestDataValueProcessor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import lombok.extern.slf4j.Slf4j;
+import ndtp.interceptor.CSRFHandlerInterceptor;
 import ndtp.interceptor.ConfigInterceptor;
+import ndtp.interceptor.LogInterceptor;
 import ndtp.interceptor.SecurityInterceptor;
 
 @Slf4j
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = { "ndtp.config, ndtp.controller, ndtp.interceptor, ndtp.validator" }, includeFilters = {
+@ComponentScan(basePackages = { "ndtp.config", "ndtp.controller.view", "ndtp.controller.rest", "ndtp.interceptor" }, includeFilters = {
 		@Filter(type = FilterType.ANNOTATION, value = Component.class),
 		@Filter(type = FilterType.ANNOTATION, value = Controller.class),
 		@Filter(type = FilterType.ANNOTATION, value = RestController.class)})
@@ -39,9 +42,13 @@ public class ServletConfig implements WebMvcConfigurer {
 	
 	@Autowired
 	private PropertiesConfig propertiesConfig;
-	
+
+	@Autowired
+	private CSRFHandlerInterceptor cSRFHandlerInterceptor;
 	@Autowired
 	private ConfigInterceptor configInterceptor;
+	@Autowired
+	private LogInterceptor logInterceptor;
 	@Autowired
 	private SecurityInterceptor securityInterceptor;
 	
@@ -53,13 +60,21 @@ public class ServletConfig implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		log.info(" @@@ ServletConfig addInterceptors @@@@ ");
-		
+
 		registry.addInterceptor(securityInterceptor)
 				.addPathPatterns("/**")
-				.excludePathPatterns("/f4d/**",	"/sign/**", "/css/**", "/externlib/**", "favicon*", "/images/**", "/js/**");
+				.excludePathPatterns("/f4d/**", "/sign/**", "/cache/reload", "/guide/**", "/sample/**", "/css/**", "/externlib/**", "favicon*", "/images/**", "/js/**");
+		registry.addInterceptor(cSRFHandlerInterceptor)
+				.addPathPatterns("/**")
+				.excludePathPatterns("/f4d/**",
+						"/sign/**", "/cache/reload", "/data-groups/view-order/*", "/layer-groups/view-order/*", "/upload-datas", "/issues",
+						"/guide/**", "/css/**", "/externlib/**", "favicon*", "/images/**", "/js/**");
+		registry.addInterceptor(logInterceptor)
+				.addPathPatterns("/**")
+				.excludePathPatterns("/f4d/**",	"/sign/**", "/guide/**", "/cache/reload", "/css/**", "/sample/**", "/externlib/**", "favicon*", "/images/**", "/js/**", "/data/simulation-rest/**");
 		registry.addInterceptor(configInterceptor)
 				.addPathPatterns("/**")
-				.excludePathPatterns("/f4d/**",	"/sign/**", "/css/**", "/externlib/**", "favicon*", "/images/**", "/js/**");
+				.excludePathPatterns("/f4d/**", "/sign/**", "/guide/**", "/cache/reload", "/css/**", "/sample/**", "/externlib/**", "favicon*", "/images/**", "/js/**", "/data/simulation-rest/**");
     }
 	
 	@Bean
@@ -73,7 +88,7 @@ public class ServletConfig implements WebMvcConfigurer {
 		
 		return viewResolver;
 	}
-	
+
 	@Bean
 	public LocaleResolver localeResolver() {
 		SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
@@ -113,10 +128,11 @@ public class ServletConfig implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		log.info(" @@@ ServletConfig addResourceHandlers @@@");
-		
-		// F4D converter file 경로
+
 		registry.addResourceHandler("/f4d/**").addResourceLocations("file:" + propertiesConfig.getDataServiceDir());
-		
+		registry.addResourceHandler("/data/simulation-rest/**").addResourceLocations("file:" + propertiesConfig.getServiceFileBuildingobjDir());
+//		registry.addResourceHandler("/f4d/sample/**").addResourceLocations("/sample/f4d/");
+		registry.addResourceHandler("/f4d/sample/**").addResourceLocations("file:" + propertiesConfig.getGuideDataServiceDir());
 		registry.addResourceHandler("/css/**").addResourceLocations("/css/");
 		registry.addResourceHandler("/externlib/**").addResourceLocations("/externlib/");
 		registry.addResourceHandler("/images/**").addResourceLocations("/images/");
@@ -124,45 +140,11 @@ public class ServletConfig implements WebMvcConfigurer {
 		
 //		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 	}
+
+	@Bean
+	public RequestDataValueProcessor requestDataValueProcessor() {
+		log.info(" @@@ ServletConfig requestDataValueProcessor @@@ ");
+		return new CSRFRequestDataValueProcessor();
+	}
 	
-	
-//	/**
-//	 * TODO rest-template-mode 값으로 결정 하는게 아니라 request.isSecure 로 http, https 를 판별해서 결정 해야 하는데....
-//	 *      그럴경우 bean 설정이 아니라.... 개별 코드에서 판별을 해야 함 ㅠ.ㅠ
-//	 * @return
-//	 * @throws KeyStoreException
-//	 * @throws NoSuchAlgorithmException
-//	 * @throws KeyManagementException
-//	 */
-//	@Bean
-//    public RestTemplate restTempate() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-//    	// https://github.com/jonashackt/spring-boot-rest-clientcertificate/blob/master/src/test/java/de/jonashackt/RestClientCertTestConfiguration.java
-//    	
-//    	String restTemplateMode = propertiesConfig.getRestTemplateMode();
-//    	RestTemplate restTemplate = null;
-//    	RestTemplateBuilder builder = new RestTemplateBuilder(new CustomRestTemplateCustomizer());
-//    	if("http".equals(restTemplateMode)) {
-//    		restTemplate = builder.errorHandler(new RestTemplateResponseErrorHandler())
-//						.setConnectTimeout(Duration.ofMillis(10000))
-//	            		.setReadTimeout(Duration.ofMillis(10000))
-//	            		.build();
-//    	} else {
-//    		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
-//	    	SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
-//	 
-//	    	SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
-//	    	CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
-//	 
-//	    	HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-//	        requestFactory.setHttpClient(httpClient);
-//	        
-//	    	restTemplate = builder.errorHandler(new RestTemplateResponseErrorHandler())
-//						.setConnectTimeout(Duration.ofMillis(10000))
-//	            		.setReadTimeout(Duration.ofMillis(10000))
-//	            		.build();
-//			restTemplate.setRequestFactory(requestFactory);
-//    	}
-//    	
-//		return restTemplate;
-//    }
 }

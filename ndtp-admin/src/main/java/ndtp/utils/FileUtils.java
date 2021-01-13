@@ -2,18 +2,17 @@ package ndtp.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.extern.slf4j.Slf4j;
 import ndtp.domain.FileInfo;
 import ndtp.domain.UploadDirectoryType;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * TODO N중화 처리를 위해 FTP 로 다른 PM 으로 전송해 줘야 하는데....
@@ -40,6 +39,8 @@ public class FileUtils {
 	public static final String USER_FILE_UPLOAD = "USER_FILE_UPLOAD";
 	// Data 일괄 등록
 	public static final String DATA_FILE_UPLOAD = "DATA_FILE_UPLOAD";
+	// Smart Tiling Data 일괄 등록
+	public static final String DATA_SMART_TILING_FILE_UPLOAD = "DATA_SMART_TILING_FILE_UPLOAD";
 	// Issue 등록
 	public static final String ISSUE_FILE_UPLOAD = "ISSUE_FILE_UPLOAD";
 	// Data Attribute
@@ -51,6 +52,8 @@ public class FileUtils {
 	public static final String[] USER_FILE_TYPE = {"xlsx", "xls"};
 	// 데이터 일괄 등록 문서 타입
 	public static final String[] DATA_FILE_TYPE = {"xlsx", "xls", "json", "txt"};
+	// Smart Tiling 데이터 일괄 등록 문서 타입
+	public static final String[] DATA_SMART_TILING_FILE_TYPE = {"json", "txt"};
 	// issue 등록의 경우 허용 문서 타입
 	public static final String[] ISSUE_FILE_TYPE = {"png", "jpg", "jpeg", "gif", "tiff", "xlsx", "xls", "docx", "doc", "pptx", "ppt"};
 	// data attribute 허용 문서 타입
@@ -66,19 +69,19 @@ public class FileUtils {
 	// JEXCEL이 2007버전(xlsx) 을 읽지 못하기 때문에 POI를 병행해서 사용
 	public static final String EXCEL_EXTENSION_XLSX = "xlsx";
 	
-	// 업로더 가능한 파일 사이즈
-	public static final long FILE_UPLOAD_SIZE = 10000000l;
+	// 업로더 가능한 파일 사이즈(2G)
+	public static final long FILE_UPLOAD_SIZE = 2_000_000_000l;
 	// 파일 copy 시 버퍼 사이즈
 	public static final int BUFFER_SIZE = 8192;
 	
 	/**
-	 * 파일 등록 
+	 * 파일 업로딩 
 	 * @param multipartFile
 	 * @param jobType
 	 * @param directory
 	 * @return
 	 */
-	public static FileInfo upload(MultipartFile multipartFile, String jobType, String directory) {
+	public static FileInfo upload(String userId, MultipartFile multipartFile, String jobType, String directory) {
 	
 		FileInfo fileInfo = new FileInfo();
 		fileInfo.setJobType(jobType);
@@ -90,7 +93,7 @@ public class FileUtils {
 		}
 		
 		// 파일을 upload 디렉토리로 복사
-		fileInfo = fileCopy(multipartFile, fileInfo, directory);
+		fileInfo = fileCopy(userId, 2, multipartFile, fileInfo, directory);
 		
 		return fileInfo;
 	}
@@ -151,6 +154,8 @@ public class FileUtils {
 			extList = Arrays.asList(USER_FILE_TYPE);
 		} else if(DATA_FILE_UPLOAD.equals(fileInfo.getJobType())) {
 			extList = Arrays.asList(DATA_FILE_TYPE);
+		} else if(DATA_SMART_TILING_FILE_UPLOAD.equals(fileInfo.getJobType())) {
+			extList = Arrays.asList(DATA_SMART_TILING_FILE_TYPE);
 		} else if(DATA_ATTRIBUTE_UPLOAD.equals(fileInfo.getJobType())) {
 			extList = Arrays.asList(DATA_ATTRIBUTE_FILE_TYPE);
 		} else if(DATA_OBJECT_ATTRIBUTE_UPLOAD.equals(fileInfo.getJobType())) {
@@ -158,7 +163,7 @@ public class FileUtils {
 		} else {
 			extList =  Arrays.asList(ISSUE_FILE_TYPE);
 		}
-		if(!extList.contains(extension)) {
+		if(!extList.contains(extension.toLowerCase())) {
 			log.info("@@ extList = {}, extension = {}", extList, extension);
 			fileInfo.setErrorCode("fileinfo.ext.invalid");
 			return fileInfo;
@@ -183,7 +188,7 @@ public class FileUtils {
 	}
 	
 	private static FileInfo fileCopy(MultipartFile multipartFile, FileInfo fileInfo, String directory) {
-		return fileCopy(null, 1, multipartFile, fileInfo, directory);
+		return fileCopy(null, 2, multipartFile, fileInfo, directory);
 	}
 	
 	/**
@@ -245,9 +250,12 @@ public class FileUtils {
 			fileInfo.setFileRealName(saveFileName);
 			fileInfo.setFileSize(String.valueOf(size));
 			fileInfo.setFilePath(sourceDirectory);
+		} catch(IOException e) {
+			log.info("@@@@@@@@@@@@ io exception. message = {}", e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+			fileInfo.setErrorCode("io.exception");
 		} catch(Exception e) {
-			e.printStackTrace();
-			fileInfo.setErrorCode("fileinfo.copy.exception");
+			log.info("@@@@@@@@@@@@ file copy exception. message = {}", e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+			fileInfo.setErrorCode("file.copy.exception");
 		}
 
 		return fileInfo;

@@ -95,24 +95,24 @@
 	</select>
 	
 	<!-- 업로딩 파일 총 건수 -->
-	<select id="getUploadDataFileTotalCount" parameterType="uploadDataFile" resultType="long">
+	<!-- <select id="getUploadDataFileTotalCount" parameterType="uploadDataFile" resultType="long">
 		/* getUploadDataFileTotalCount */
 		SELECT COUNT(upload_data_file_id) 
 		FROM upload_data_file 
 		<if test="userId != null and userId != ''">
 		WHERE user_id =#{userId} 
 		</if>
-	</select>
+	</select> -->
 
 	<!-- 업로딩 파일 총 용량 -->
-	<select id="getUploadDataFileTotalSize" parameterType="uploadDataFile" resultType="long">
+	<!-- <select id="getUploadDataFileTotalSize" parameterType="uploadDataFile" resultType="long">
 		/* getUploadDataFileTotalSize */
 		SELECT SUM(TO_NUMBER(file_size, '99999999999999999999')) 
 		FROM upload_data_file 
 		<if test="userId != null and userId != ''">
 		WHERE user_id =#{userId} 
 		</if> 
-	</select>
+	</select> -->
 	
 	<!-- 업로딩한 파일 목록 -->
 	<select id="getListUploadDataFile" parameterType="uploadData" resultType="uploadDataFile">
@@ -207,6 +207,24 @@
 			</if>
 			update_date = NOW()
 		WHERE upload_data_id = #{uploadDataId}
+		<if test="userId != null and userId != ''">
+			AND user_id = #{userId}
+		</if>
+	</update>
+	
+	<!-- 사용자 3차원 파일 업로딩 수정 -->
+	<update id="updateUploadDataFile" parameterType="uploadDataFile" >
+		/* updateUploadDataFile */
+		UPDATE upload_data_file
+		<set>
+			<if test="fileExt != null and fileExt != ''">
+			file_ext = #{fileExt},
+			</if>
+			<if test="fileRealName != null and fileRealName != ''">
+			file_real_name = #{fileRealName},
+			</if>
+		</set>
+		WHERE upload_data_file_id = #{uploadDataFileId}
 		<if test="userId != null and userId != ''">
 			AND user_id = #{userId}
 		</if>

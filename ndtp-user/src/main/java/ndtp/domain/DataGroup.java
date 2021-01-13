@@ -3,8 +3,13 @@ package ndtp.domain;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+import javax.validation.constraints.Size;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,13 +46,17 @@ public class DataGroup extends Search {
 	/****** validator ********/
 	private String methodMode;
 	
-		// 고유번호
+	// 고유번호
 	private Integer dataGroupId;
+	// 공유 그룹 확인용
+	private Integer userGroupId;
 	// 링크 활용 등을 위한 확장 컬럼
+	@Size(max = 60)
 	private String dataGroupKey;
 	// old 고유 식별번호
 	private String oldDataGroupKey;
 	// 그룹명
+	@Size(max = 100)
 	private String dataGroupName;
 	// 서비스 경로
 	private String dataGroupPath;
@@ -74,6 +83,8 @@ public class DataGroup extends Search {
 	private Boolean basic;
 	// true : 사용, false : 사용안함
 	private Boolean available;
+	// 스마트 타일링 사용유무. true : 사용, false : 사용안함(기본)
+	private Boolean tiling;
 	
 	// 데이터 총 건수
 	private Integer dataCount;
@@ -90,10 +101,29 @@ public class DataGroup extends Search {
 	private String metainfo;
 	// 설명
 	private String description;
+	
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+	private Timestamp viewUpdateDate;
+	
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+	private Timestamp viewInsertDate;
+	
+	public Timestamp getViewUpdateDate() {
+		return this.updateDate;
+	}
+	public Timestamp getViewInsertDate() {
+		return this.insertDate;
+	}
+	
 	// 수정일
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Timestamp updateDate;
 	// 등록일
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Timestamp insertDate;
+	
 }

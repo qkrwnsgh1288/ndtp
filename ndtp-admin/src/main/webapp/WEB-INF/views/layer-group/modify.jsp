@@ -8,11 +8,12 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<title>Layer 그룹 수정 | NDTP</title>
-	<link rel="stylesheet" href="/css/${lang}/font/font.css" />
-	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css" />
-	<link rel="stylesheet" href="/externlib/normalize/normalize.min.css" />
-	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css" />
-    <link rel="stylesheet" href="/css/${lang}/admin-style.css" />
+	<link rel="stylesheet" href="/css/${lang}/font/font.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/externlib/normalize/normalize.min.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/css/fontawesome-free-5.2.0-web/css/all.min.css?cacheVersion=${contentCacheVersion}">
+	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css?cacheVersion=${contentCacheVersion}" />
+    <link rel="stylesheet" href="/css/${lang}/admin-style.css?cacheVersion=${contentCacheVersion}" />
 </head>
 <body>
 	<%@ include file="/WEB-INF/views/layouts/header.jsp" %>
@@ -29,7 +30,8 @@
 						</div>
 						<form:form id="layerGroup" modelAttribute="layerGroup" method="post" onsubmit="return false;">
 						<form:hidden path="layerGroupId"/>
-						<table class="input-table scope-row">
+						<table class="input-table scope-row" summary="2D 레이어 그룹 수정 테이블">
+						<caption class="hiddenTag">2D 레이어 그룹 수정</caption>
 							<col class="col-label l" />
 							<col class="col-input" />
 							<tr>
@@ -50,7 +52,7 @@
 								<td class="col-input">
 									<form:hidden path="parent" />
 		 							<form:input path="parentName" cssClass="l" readonly="true" />
-									<input type="button" id="layerGroupButtion" value="상위 그룹 선택" />
+									<!-- <input type="button" id="layerGroupButtion" value="상위 그룹 선택" /> -->
 								</td>
 							</tr>
 							<tr>
@@ -87,87 +89,13 @@
 	<%@ include file="/WEB-INF/views/layouts/footer.jsp" %>
 
 	<!-- Dialog -->
-	<div id="layerGroupDialog" class="dialog">
-		<table class="list-table scope-col">
-			<col class="col-number" />
-			<col class="col-name" />
-			<col class="col-toggle" />
-			<col class="col-id" />
-			<col class="col-function" />
-			<col class="col-date" />
-			<col class="col-toggle" />
-			<thead>
-				<tr>
-					<th scope="col" class="col-number">Depth</th>
-					<th scope="col" class="col-name">Layer 그룹명</th>
-					<th scope="col" class="col-toggle">사용 여부</th>
-					<th scope="col" class="col-toggle">사용자 아이디</th>
-					<th scope="col" class="col-toggle">설명</th>
-					<th scope="col" class="col-date">등록일</th>
-					<th scope="col" class="col-date">선택</th>
-				</tr>
-			</thead>
-			<tbody>
-<c:if test="${empty layerGroupList }">
-			<tr>
-				<td colspan="7" class="col-none">Layer 그룹이 존재하지 않습니다.</td>
-			</tr>
-</c:if>
-<c:if test="${!empty layerGroupList }">
-	<c:set var="paddingLeftValue" value="0" />
-	<c:forEach var="layerGroup" items="${layerGroupList}" varStatus="status">
-		<c:if test="${layerGroup.depth eq '1' }">
-            <c:set var="depthClass" value="oneDepthClass" />
-            <c:set var="paddingLeftValue" value="0px" />
-        </c:if>
-        <c:if test="${layerGroup.depth eq '2' }">
-            <c:set var="depthClass" value="twoDepthClass" />
-            <c:set var="paddingLeftValue" value="40px" />
-        </c:if>
-        <c:if test="${layerGroup.depth eq '3' }">
-            <c:set var="depthClass" value="threeDepthClass" />
-            <c:set var="paddingLeftValue" value="80px" />
-        </c:if>
+	<%@ include file="/WEB-INF/views/layer-group/layer-group-dialog.jsp" %>
 
-			<tr class="${depthClass } ${depthParentClass} ${ancestorClass }" style="${depthStyleDisplay}">
-				<td class="col-key" style="text-align: left;" nowrap="nowrap">
-					<span style="padding-left: ${paddingLeftValue}; font-size: 1.6em;"></span>
-					${layerGroup.depth }
-				</td>
-				<td class="col-name">
-					${layerGroup.layerGroupName }
-				</td>
-				<td class="col-type">
-        <c:if test="${layerGroup.available eq 'true' }">
-                	사용
-        </c:if>
-        <c:if test="${layerGroup.available eq 'false' }">
-        			미사용
-        </c:if>
-			    </td>
-			    <td class="col-key">${layerGroup.userId }</td>
-			    <td class="col-key">${layerGroup.description }</td>
-			    <td class="col-date">
-			    	<fmt:parseDate value="${layerGroup.insertDate}" var="viewInsertDate" pattern="yyyy-MM-dd HH:mm:ss"/>
-					<fmt:formatDate value="${viewInsertDate}" pattern="yyyy-MM-dd HH:mm"/>
-			    </td>
-			    <td class="col-toggle">
-			    	<a href="#" onclick="confirmParent('${layerGroup.layerGroupId}', '${layerGroup.layerGroupName}'); return false;">확인</a></td>
-			</tr>
-	</c:forEach>
-</c:if>
-			</tbody>
-		</table>
-		<div class="button-group">
-			<input type="button" id="rootParentSelect" class="button" value="최상위(ROOT) 그룹으로 저장"/>
-		</div>
-	</div>
-
-<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js"></script>
-<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
-<script type="text/javascript" src="/js/${lang}/common.js"></script>
-<script type="text/javascript" src="/js/${lang}/message.js"></script>
-<script type="text/javascript" src="/js/navigation.js"></script>
+<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/common.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/message.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/navigation.js?cacheVersion=${contentCacheVersion}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 	});
@@ -201,8 +129,12 @@
 		layerGroupDialog.dialog( "option", "title", "Layer 그룹 선택");
 	});
 
-	// 상위 Node
-	function confirmParent(parent, parentName) {
+	// 다이얼로그에서 선택
+	function confirmParent(parent, parentName, parentDepth) {
+		if(parentDepth >= 3) {
+			alert("레이어 그룹은 3Depth 이상 계층으로 입력할 수 없습니다.");
+			return;
+		}
 		$("#parent").val(parent);
 		$("#parentName").val(parentName);
 		layerGroupDialog.dialog( "close" );

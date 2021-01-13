@@ -126,13 +126,7 @@ public class Search {
 		buffer.append("&");
 		buffer.append("searchOption=" + getDefaultValue(this.searchOption));
 		buffer.append("&");
-		try {
-			buffer.append("searchValue=" + getDefaultValue(this.searchValue));
-			//buffer.append("searchValue=" + URLEncoder.encode(getDefaultValue(this.searchValue), "UTF-8"));
-		} catch(Exception e) {
-			e.printStackTrace();
-			buffer.append("searchValue=");
-		}
+		buffer.append("searchValue=" + getDefaultValue(this.searchValue));
 		buffer.append("&");
 		buffer.append("startDate=" + getDefaultValue(this.startDate));
 		buffer.append("&");
@@ -141,17 +135,19 @@ public class Search {
 		buffer.append("orderWord=" + getDefaultValue(this.orderWord));
 		buffer.append("&");
 		buffer.append("orderValue=" + getDefaultValue(this.orderValue));
+		buffer.append("&");
+		buffer.append("listCounter=" + this.listCounter);
 		return buffer.toString();
 	}
-	
+
 	private String getDefaultValue(String value) {
 		if(value == null || "".equals(value.trim())) {
 			return "";
 		}
-		
+
 		return value;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Search [totalCount=" + totalCount + ", offset=" + offset + ", limit=" + limit + ", searchWord="

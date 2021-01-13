@@ -8,12 +8,12 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<title>데이터 그룹 | NDTP</title>
-	<link rel="stylesheet" href="/css/${lang}/font/font.css" />
-	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css" />
-	<link rel="stylesheet" href="/externlib/normalize/normalize.min.css" />
-	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css" />
-	<link rel="stylesheet" href="/css/fontawesome-free-5.2.0-web/css/all.min.css">
-    <link rel="stylesheet" href="/css/${lang}/admin-style.css" />
+	<link rel="stylesheet" href="/css/${lang}/font/font.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/externlib/normalize/normalize.min.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/css/fontawesome-free-5.2.0-web/css/all.min.css?cacheVersion=${contentCacheVersion}">
+    <link rel="stylesheet" href="/css/${lang}/admin-style.css?cacheVersion=${contentCacheVersion}" />
 </head>
 <body>
 	<%@ include file="/WEB-INF/views/layouts/header.jsp" %>
@@ -38,11 +38,13 @@
 									</div>
 								</div>
 							</div>
-							<table class="list-table scope-col">
+							<table class="list-table scope-col" summary="데이터 그룹 트리">
+							<caption class="hiddenTag">데이터 그룹</caption>
 								<col class="col-name" />
 								<col class="col-name" />
 								<col class="col-name" />
-								<col class="col-toggle" />
+								<!-- <col class="col-toggle" /> -->
+								<col class="col-functions" />
 								<col class="col-functions" />
 								<col class="col-functions" />
 								<col class="col-functions" />
@@ -54,10 +56,11 @@
 										<th scope="col">그룹명</th>
 					                    <th scope="col">그룹 Key</th>
 					                    <th scope="col">공유 유형</th>
-					                    <th scope="col">기본 여부</th>
+					                    <!-- <th scope="col">기본 여부</th> -->
 					                    <th scope="col">사용 여부</th>
 					                    <th scope="col">데이터 건수</th>
 					                    <th scope="col">순서</th>
+					                    <th scope="col">SmartTiling 데이터</th>
 					                    <th scope="col">수정</th>
 					                    <th scope="col">삭제</th>
 					                    <th scope="col">등록일</th>
@@ -66,7 +69,7 @@
 								<tbody>
 <c:if test="${empty dataGroupList }">
 									<tr>
-										<td colspan="10" class="col-none">데이터 그룹이 존재하지 않습니다.</td>
+										<td colspan="11" class="col-none">데이터 그룹이 존재하지 않습니다.</td>
 									</tr>
 </c:if>
 <c:if test="${!empty dataGroupList }">
@@ -107,7 +110,7 @@
         	<c:set var="ancestorFolderClass" value="ancestorFolder-${dataGroup.ancestor }" />
         </c:if>
 									<tr class="${depthClass } ${depthParentClass} ${ancestorClass }" style="${depthStyleDisplay}">
-										<td class="col-key ellipsis" style="text-align: left;" nowrap="nowrap">
+										<td class="col-key ellipsis" style="text-align: left; max-width: 270px;" nowrap="nowrap">
         <c:if test="${dataGroup.depth eq 1 }">
 					                        <span style="padding-left: ${paddingLeftValue}; font-size: 1.6em;"
 					                        	onclick="childrenDisplayToggle('${dataGroup.depth}', '${dataGroup.dataGroupId}', '${dataGroup.ancestor}');">
@@ -127,7 +130,7 @@
         </c:if>
         <c:if test="${dataGroup.depth eq 3 }">
                         					<span style="padding-left: ${paddingLeftValue}; font-size: 1.5em; color: Tomato;">
-                        						<i class="fa fa-file-alt" aria-hidden="true"></i>
+                        						<!-- <i class="fa fa-file-alt" aria-hidden="true"></i> -->
                         						<i id="threeDepthFolder-${dataGroup.dataGroupId }" class="fa fa-folder threeFolder ${ancestorFolderClass }" aria-hidden="true"></i>
                         					</span>
         </c:if>
@@ -136,14 +139,14 @@
 										</td>
 										<td class="col-key">${dataGroup.dataGroupKey }</td>
 										<td class="col-type">${dataGroup.sharing }</td>
-					                    <td class="col-type">
+					                    <%-- <td class="col-type">
         <c:if test="${dataGroup.basic eq 'true' }">
                         					기본
         </c:if>
         <c:if test="${dataGroup.basic eq 'false' }">
                         					선택
         </c:if>
-					                    </td>
+					                    </td> --%>
 					                    <td class="col-type">
         <c:if test="${dataGroup.available eq 'true' }">
                         					사용
@@ -159,7 +162,7 @@
 				                    	</a>
 	</c:if>
 	<c:if test="${dataGroup.dataCount eq 0 }">
-											<fmt:formatNumber value="${dataGroup.dataCount}" type="number"/>	
+											<fmt:formatNumber value="${dataGroup.dataCount}" type="number"/>
 	</c:if>
 	                    				</td>
 					                    <td class="col-type">
@@ -170,15 +173,24 @@
 													class="button" style="text-decoration:none;">아래로</a>
 					                    	</div>
 					                    </td>
+					                    <td class="col-functions block-element-wrapper">
+											<a href="#" onclick="uploadSmartTilingData('${dataGroup.dataGroupId }', '${dataGroup.dataGroupName }'); return false;">
+												메타 정보 수정</a>
+											<a href="/data-groups/download/${dataGroup.dataGroupId }">내보내기(일반용)</a>
+											<a href="/data-groups/download/converter/${dataGroup.dataGroupId }">내보내기(변환용)</a>
+	<%-- <c:if test="${dataGroup.tiling eq 'false' }">
+											미사용
+	</c:if> --%>
+										</td>
 					                    <td class="col-type">
 											<a href="/data-group/modify?dataGroupId=${dataGroup.dataGroupId }" class="image-button button-edit">수정</a>
 					                    </td>
 					                     <td class="col-type">
 	<c:if test="${dataGroup.basic eq 'true' }">
 							불가(기본)
-	</c:if>                    
-	<c:if test="${dataGroup.basic ne 'true' }">			
-											<a href="/data-group/delete?dataGroupId=${dataGroup.dataGroupId }" onclick="return deleteWarning();" 
+	</c:if>
+	<c:if test="${dataGroup.basic ne 'true' }">
+											<a href="/data-group/delete?dataGroupId=${dataGroup.dataGroupId }" onclick="return deleteWarning();"
 												class="image-button button-delete"><spring:message code='delete'/></a>
 	</c:if>
 	                    				</td>
@@ -200,11 +212,14 @@
 	</div>
 	<%@ include file="/WEB-INF/views/layouts/footer.jsp" %>
 
-<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js"></script>
-<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
-<script type="text/javascript" src="/js/${lang}/common.js"></script>
-<script type="text/javascript" src="/js/${lang}/message.js"></script>
-<script type="text/javascript" src="/js/navigation.js"></script>
+	<%@ include file="/WEB-INF/views/data-group/data-smart-tiling-file-dialog.jsp" %>
+<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.form.min.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/externlib/handlebars-4.1.2/handlebars.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/common.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/message.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/navigation.js?cacheVersion=${contentCacheVersion}"></script>
 <script type="text/javascript">
 	//펼치기
 	function openAll() {
@@ -257,7 +272,10 @@
 	            $(".ancestorFolder-" + ancestor).removeClass("fa-folder-open");
 	            $(".ancestorFolder-" + ancestor).addClass("fa-folder");
 	        } else {
-	            // 펼친 상태
+				// 펼친 상태
+	            $(".ancestor-" + ancestor).hide();
+	            $(".oneDepthParent-" + id).hide();
+
 	        	var clickClass = $("#oneDepthArrow-" + id).attr("class");
 	            if(clickClass.indexOf("right") >= 0) {
 	            	// 닫힘 상태라 펼침
@@ -272,7 +290,7 @@
 	                $("#oneDepthFolder-" + id).removeClass("fa-folder-open");
 	                $("#oneDepthFolder-" + id).addClass("fa-folder");
 	            }
-	            
+
 	            $(".ancestorArrow-" + ancestor).removeClass("fa-caret-down");
 	            $(".ancestorArrow-" + ancestor).addClass("fa-caret-right");
 	            $(".ancestorFolder-" + ancestor).removeClass("fa-folder-open");
@@ -282,7 +300,7 @@
 	    	if( $(".twoDepthParent-" + id).css("display") === "none" ) {
 	            // 접힌 상태
 	            $(".twoDepthParent-" + id).show();
-	
+
 	            $("#twoDepthArrow-" + id).removeClass("fa-caret-right");
 	            $("#twoDepthArrow-" + id).addClass("fa-caret-down");
 	            $("#twoDepthFolder-" + id).removeClass("fa-folder");
@@ -290,7 +308,7 @@
 	        } else {
 	            // 펼친 상태
 	            $(".twoDepthParent-" + id).hide();
-	            
+
 	            var clickClass = $("#twoDepthArrow-" + id).attr("class");
 	            if(clickClass.indexOf("right") >= 0) {
 	            	// 닫힘 상태라 펼침
@@ -390,6 +408,77 @@
             return;
         }
     }
+
+	// smart tiling 데이터 등록 다이얼 로그
+	var uploadDataSmartTilingDialog = $( ".uploadDataSmartTilingDialog" ).dialog({
+		autoOpen: false,
+		width: 600,
+		height: 445,
+		modal: true,
+		resizable: false
+	});
+
+	// 데이터 속성 수정
+	function uploadSmartTilingData(dataGroupId, dataGroupName) {
+		uploadDataSmartTilingDialog.dialog( "open" );
+		// 파일 입력 초기화
+		$("#smartTilingFileName").val("");
+		// 파싱 로그 초기화
+		$("#dataSmartTilingUploadLog").html("");
+		$("#smartTilingFileDataGroupId").val(dataGroupId);
+		$("#smartTilingDataGroupName").html(dataGroupName);
+	}
+
+	// 데이터 속성 파일 upload
+	var dataSmartTilingFileUploadFlag = true;
+	function dataSmartTilingFileUpload() {
+		var fileName = $("#smartTilingFileName").val();
+		if(fileName === "") {
+			alert(JS_MESSAGE["file.name.empty"]);
+			$("#smartTilingFileName").focus();
+			return false;
+		}
+		if( fileName.lastIndexOf("json") <=0 && fileName.lastIndexOf("txt") <=0 ) {
+			alert(JS_MESSAGE["file.ext.invalid"]);
+			$("#smartTilingFileName").focus();
+			return false;
+		}
+
+		if(dataSmartTilingFileUploadFlag) {
+			dataSmartTilingFileUploadFlag = false;
+			$("#dataSmartTilingFileInfo").ajaxSubmit({
+				type: "POST",
+				headers: {"X-Requested-With": "XMLHttpRequest"},
+				dataType: "json",
+				success: function(msg){
+					if(msg.statusCode <= 200) {
+						if(msg.parseErrorCount != 0 || msg.insertErrorCount != 0) {
+							alert(JS_MESSAGE["error.exist.in.processing"]);
+						} else {
+							alert(JS_MESSAGE["update"]);
+						}
+
+						var source = $("#templateDataSmartTilingUploadLog").html();
+						var template = Handlebars.compile(source);
+						var html = template(msg);
+
+						$("#dataSmartTilingUploadLog").html("");
+		                $("#dataSmartTilingUploadLog").append(html);
+					} else {
+						alert(JS_MESSAGE[msg.errorCode]);
+	    			}
+					dataSmartTilingFileUploadFlag = true;
+				},
+				error:function(request,status,error){
+					alert(JS_MESSAGE["ajax.error.message"]);
+					dataSmartTilingFileUploadFlag = true;
+				}
+			});
+		} else {
+			alert(JS_MESSAGE["button.dobule.click"]);
+			return;
+		}
+	}
 </script>
 </body>
 </html>

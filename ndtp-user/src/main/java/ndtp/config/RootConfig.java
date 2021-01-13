@@ -27,7 +27,7 @@ import ndtp.security.Crypt;
 @Slf4j
 @MapperScan(basePackages="ndtp.persistence")
 @Configuration
-@ComponentScan(	basePackages = {"ndtp.service, ndtp.persistence"},
+@ComponentScan(	basePackages = {"ndtp.service", "ndtp.persistence"},
               includeFilters = {	@Filter(type = FilterType.ANNOTATION, value = Component.class),
                                   	@Filter(type = FilterType.ANNOTATION, value = Service.class),
                                   	@Filter(type = FilterType.ANNOTATION, value = Repository.class) },
@@ -47,6 +47,12 @@ public class RootConfig {
 	private Integer maximumPoolSize;
 	@Value("${spring.datasource.hikari.minimum-idle}")
 	private Integer minimumIdle;
+	@Value("${spring.datasource.hikari.connectionTimeout}")
+	private Integer connectionTimeout;
+	@Value("${spring.datasource.hikari.idleTimeout}")
+	private Integer idleTimeout;
+	@Value("${spring.datasource.hikari.maxLifetime}")
+	private Integer maxLifetime;
 	
 	@Bean(name="datasourceUser")
 	public DataSource dataSource() {
@@ -58,6 +64,9 @@ public class RootConfig {
 		dataSource.setPassword(Crypt.decrypt(password));
 		dataSource.setMaximumPoolSize(maximumPoolSize);
 		dataSource.setMinimumIdle(minimumIdle);
+		dataSource.setConnectionTimeout(connectionTimeout);
+		dataSource.setIdleTimeout(idleTimeout);
+		dataSource.setMaxLifetime(maxLifetime);
 		
 		return dataSource;
 	}

@@ -1,12 +1,16 @@
 package ndtp.service.impl;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+import ndtp.domain.DataType;
 import ndtp.domain.FileType;
 import ndtp.domain.UploadData;
 import ndtp.domain.UploadDataFile;
@@ -17,6 +21,7 @@ import ndtp.service.UploadDataService;
  * @author Cheon JeongDae
  *
  */
+@Slf4j
 @Service
 public class UploadDataServiceImpl implements UploadDataService {
 
@@ -53,25 +58,25 @@ public class UploadDataServiceImpl implements UploadDataService {
 		return uploadDataMapper.getUploadData(uploadData);
 	}
 	
-	/**
-	 * 업로딩 데이터 파일 총 건수
-	 * @param uploadDataFile
-	 * @return
-	 */
-	@Transactional(readOnly=true)
-	public Long getUploadDataFileTotalCount(UploadDataFile uploadDataFile) {
-		return uploadDataMapper.getUploadDataFileTotalCount(uploadDataFile);
-	}
-
-	/**
-	 * 업로딩 데이터 파일 총 용량
-	 * @param uploadDataFile
-	 * @return
-	 */
-	@Transactional(readOnly=true)
-	public Long getUploadDataFileTotalSize(UploadDataFile uploadDataFile) {
-		return uploadDataMapper.getUploadDataFileTotalSize(uploadDataFile);
-	}
+//	/**
+//	 * 업로딩 데이터 파일 총 건수
+//	 * @param uploadDataFile
+//	 * @return
+//	 */
+//	@Transactional(readOnly=true)
+//	public Long getUploadDataFileTotalCount(UploadDataFile uploadDataFile) {
+//		return uploadDataMapper.getUploadDataFileTotalCount(uploadDataFile);
+//	}
+//
+//	/**
+//	 * 업로딩 데이터 파일 총 용량
+//	 * @param uploadDataFile
+//	 * @return
+//	 */
+//	@Transactional(readOnly=true)
+//	public Long getUploadDataFileTotalSize(UploadDataFile uploadDataFile) {
+//		return uploadDataMapper.getUploadDataFileTotalSize(uploadDataFile);
+//	}
 	
 	/**
 	 * 업로딩 데이터 파일 목록
@@ -135,6 +140,8 @@ public class UploadDataServiceImpl implements UploadDataService {
 				fileName = deleteUploadDataFile.getFilePath() + deleteUploadDataFile.getFileRealName();
 			}
 			
+			// TODO 처리 불필요
+			fileName = fileName.replaceAll("&", "");
 			File file = new File(fileName);
 			if(file.exists()) {
 				file.delete();
@@ -143,4 +150,49 @@ public class UploadDataServiceImpl implements UploadDataService {
 			
 		return uploadDataMapper.deleteUploadData(uploadData);
 	}
+
+	@Transactional
+	public int updateUploadDataAndFile(UploadData uploadData) {
+		int result = 0;
+		try {
+			result = uploadDataMapper.updateUploadData(uploadData);
+			if (result > 0) {
+				List<UploadDataFile> uploadDataFileList = uploadDataMapper.getListUploadDataFile(uploadData);
+				for (UploadDataFile uploadDataFile : uploadDataFileList) {
+	
+					String fileName = uploadDataFile.getFileName();
+					String uploadExt = uploadDataFile.getFileExt();
+	
+					String[] fileNameValues = fileName.split("\\.");
+					String extension = fileNameValues[fileNameValues.length - 1];
+					
+					// 원본이 gml 파일이고 데이터 타입을 citygml 혹은 indoorgml로 처음 등록과 다르게 변경하는 경우 
+					if (DataType.GML.getValue().equalsIgnoreCase(extension) && !uploadData.getDataType().equalsIgnoreCase(uploadExt)) {
+						String originalFileName = uploadDataFile.getFileRealName();
+						String updateFileName = originalFileName.replace(uploadExt, uploadData.getDataType());
+						
+						uploadDataFile.setFileExt(uploadData.getDataType());
+						uploadDataFile.setFileRealName(updateFileName);
+						
+						// DB를 갱신
+						result += uploadDataMapper.updateUploadDataFile(uploadDataFile);
+						File uploadFile = Paths.get(uploadDataFile.getFilePath(), originalFileName).toFile();
+						
+						if (uploadFile.exists()) {
+							// 파일 확장자를 변경.
+							uploadFile.renameTo(Paths.get(uploadDataFile.getFilePath(), updateFileName).toFile());
+						}
+					}
+				}
+			}
+		} catch(DataAccessException e) {
+			log.info("@@ DataAccessException. message = {}", e.getMessage());
+		} catch(RuntimeException e) {
+			log.info("@@ RuntimeException. message = {}", e.getMessage());
+		} catch(Exception e) {
+			log.info("@@ Exception. message = {}", e.getMessage());
+		}
+		return result;
+	}
+	
 }

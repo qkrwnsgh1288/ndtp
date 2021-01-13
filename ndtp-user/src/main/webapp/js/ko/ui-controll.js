@@ -57,15 +57,37 @@ $(function() {
 			}
 			$('#contentsWrap').toggle(true);
 		} else {
+			// 데이터 변환
 			$("#converterMenu").addClass('on');
 			//$('#contentsWrap').toggle(true);
+			// 데이터 변환 탭 변경 시
+			$(".tab > li").siblings().removeClass("on");
+			if(location.href.indexOf("/data-group/list") > 0
+					|| location.href.indexOf("/data-group/modify") > 0) { 
+				$("#tabDataGroupList").addClass("on");
+			} else if (location.href.indexOf("/data-group/input") > 0) {
+				$("#tabDataGroupInput").addClass("on");
+			} else if (location.href.indexOf("/upload-data/input") > 0) {
+				$("#tabUploadDataInput").addClass("on");
+			} else if (location.href.indexOf("/upload-data/list") > 0
+					|| location.href.indexOf("/upload-data/modify") > 0) {
+				$("#tabUploadDataList").addClass("on");
+			} else if (location.href.indexOf("/converter/list") > 0) {
+				$("#tabConverterList").addClass("on");
+			} else if (location.href.indexOf("/data/list") > 0 
+					|| location.href.indexOf("/data/modify") > 0
+					|| location.href.indexOf("/data-adjust-log/modify") > 0) {
+				$("#tabDataList").addClass("on");
+			} else if (location.href.indexOf("/data-log/list") > 0) {
+				$("#tabDataLogList").addClass("on");
+			}
 		}
+		
 	}
 	
 	// 상세 메뉴 닫기
 	$('button#closeLeftBtn').click(function() {
 		//$('ul.nav li[data-nav]').removeClass('on');
-		
 		$('#contentsWrap').hide();
 		$('ul.nav li.on').removeClass('on');
 		$(this).hide();
@@ -81,7 +103,10 @@ $(function() {
         if(location.href.indexOf("upload") > 0 
         	|| location.href.indexOf("converter") > 0 
         	|| location.href.indexOf("group") > 0 
-        	|| location.href.indexOf("/data/list") > 0 || location.href.indexOf("/data/modify") > 0 || location.href.indexOf("/data-adjust-log/modify") > 0) {
+        	|| location.href.indexOf("/data/list") > 0 
+        	|| location.href.indexOf("/data/modify") > 0 
+        	|| location.href.indexOf("/data-adjust-log") > 0
+        	|| location.href.indexOf("/data-log") > 0) {
         	$(this).removeClass('on');
         	var classId = $(this).attr('class');
         	window.location="../data/map#" + classId;
@@ -90,6 +115,18 @@ $(function() {
         // 변환 클릭 이벤트시 url 변경 
         if(active === "converterContent") {
         	window.location="../upload-data/list";
+        }
+        
+        //시민참여 벗어날 시 지도 클리어.
+        if(active !== 'civilVoiceContent') {
+        	if(window.civilVoice) {
+        		civilVoice.clear();
+            	civilVoice.showContent('list');
+            	var cluster = civilVoice.cluster
+            	if(cluster && cluster.magoCluster) {
+            		civilVoice.cluster.stopRender();
+            	}
+        	}
         }
         
         $("ul.nav li[data-nav]:not(:empty)").not($(this)).each(function() {

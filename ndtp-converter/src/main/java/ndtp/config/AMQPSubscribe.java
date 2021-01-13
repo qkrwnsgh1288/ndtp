@@ -1,5 +1,6 @@
 package ndtp.config;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,12 +46,18 @@ public class AMQPSubscribe {
 			command.add(queueMessage.getOutputFolder());
 			command.add("#meshType");
 			command.add(queueMessage.getMeshType());
+			if (!StringUtils.isEmpty(queueMessage.getSkinLevel())) {
+				command.add("#skinLevel");
+				command.add(queueMessage.getSkinLevel());
+			}
 			command.add("#log");
 			command.add(queueMessage.getLogPath());
 			command.add("#indexing");
 			command.add(queueMessage.getIndexing());
 			command.add("#usf");
 			command.add(queueMessage.getUsf().toString());
+			command.add("#isYAxisUp");
+			command.add(queueMessage.getIsYAxisUp());
 			
 			log.info(" >>>>>> command = {}", command.toString());
 			
@@ -59,10 +67,15 @@ public class AMQPSubscribe {
 				
 				if(exitCode == 0) result = ConverterJobStatus.SUCCESS.name().toLowerCase();
 				else result = ConverterJobStatus.FAIL.name().toLowerCase();
+			} catch(InterruptedException e1) {
+				result = ConverterJobStatus.FAIL.name().toLowerCase();
+				log.info(" InterruptedException exception = {}", e1.getMessage());	
+			} catch(IOException e1) {
+				result = ConverterJobStatus.FAIL.name().toLowerCase();
+				log.info(" IOException exception = {}", e1.getMessage());
 			} catch (Exception e1) {
 				result = ConverterJobStatus.FAIL.name().toLowerCase();
-				log.info(" handleMessage exception = {}", e1.getMessage());
-				e1.printStackTrace();
+				log.info(" Exception exception = {}", e1.getMessage());
 			}
 			return result;
         })
@@ -106,7 +119,6 @@ public class AMQPSubscribe {
 			restTemplate.postForEntity(uri, converterJob, Map.class);
 		} catch (URISyntaxException e) {
 			log.info("데이터 converter 상태 변경 api 호출 실패 = {}", e.getMessage());
-			e.printStackTrace();
 		}
 	}
 	

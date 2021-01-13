@@ -1,6 +1,6 @@
-drop table if exists layer;
-drop table if exists layer_group;
-drop table if exists layer_file_info;
+drop table if exists layer cascade;
+drop table if exists layer_group cascade;
+drop table if exists layer_file_info cascade;
 
 create table layer_group (
 	layer_group_id				integer,
@@ -12,7 +12,7 @@ create table layer_group (
 	view_order					integer							default 1,	
 	children					integer							default 0,
 	available					boolean							default true,
-	description					varchar(1000),	
+	description					varchar(256),	
 	update_date             	timestamp with time zone,	
 	insert_date					timestamp with time zone		default now(),
 	constraint layer_group_pk 		primary key (layer_group_id)
@@ -40,9 +40,10 @@ create table layer (
 	layer_name					varchar(256)					not null,
 	user_id						varchar(32),
 	
-	sharing					varchar(30)						default 'public',
+	sharing						varchar(30)						default 'public',
 	service_type				varchar(30),	
 	layer_type					varchar(30),
+	layer_insert_type			varchar(30),
 	geometry_type				varchar(30),
 	
 	layer_fill_color			varchar(30),	
@@ -50,13 +51,15 @@ create table layer (
 	layer_line_style			numeric,	
 	layer_alpha_style			numeric,
 	
+	view_order					integer							default 1,
 	z_index						integer,
 	default_display				boolean							default false,
 	available					boolean							default true,
 	label_display				boolean							default false,
+	cache_available				boolean							default false,
 	
 	coordinate					varchar(256),
-	description					varchar(4000),
+	description					varchar(256),
 	update_date					timestamp with time zone		default now(),
 	insert_date					timestamp with time zone 		default now(),
 	constraint layer_pk 		primary key (layer_id)
@@ -71,15 +74,18 @@ comment on column layer.user_id is '사용자명';
 comment on column layer.sharing is '공유 유형. common : 공통, public : 공개, private : 개인, group : 그룹';
 comment on column layer.service_type is '서비스 타입 (wms, wfs, wcs, wps)';
 comment on column layer.layer_type is '레이어 타입 (Raster, Vector)';
+comment on column layer.layer_insert_type is '레이어 등록 타입(파일, geoserver)';
 comment on column layer.geometry_type is '도형 타입';
 comment on column layer.layer_fill_color is '외곽선 색상';
 comment on column layer.layer_line_color is '외곽선 두께';
 comment on column layer.layer_line_style is '채우기 색상';
 comment on column layer.layer_alpha_style is '투명도';
+comment on column layer.view_order is '나열 순서';
 comment on column layer.z_index is '지도위에 노출 순위(css z-index와 동일)';
 comment on column layer.default_display is '기본 표시';
 comment on column layer.available is '사용유무.';
 comment on column layer.label_display is '레이블 표시';
+comment on column layer.cache_available is '캐시 사용 유무';
 comment on column layer.coordinate is '좌표계 정보';
 comment on column layer.description is '설명';
 comment on column layer.update_date is '수정일';

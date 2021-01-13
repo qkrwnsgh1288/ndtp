@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ndtp.persistence.StructPermissionMapper">
+
+	<!-- 세션 정보 -->
+	<select id="selectStructPermission" resultType="structPermission">
+		select * from struct_permission
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="permSeq != null and permSeq != ''">
+			<![CDATA[
+				perm_seq = #{permSeq}
+			]]>
+			</if>
+			<if test="isComplete != null and isComplete != ''">
+			<![CDATA[
+				is_complete = #{isComplete}
+			]]>
+			</if>
+		</trim>
+	</select>
+
+	<!-- 세션 정보 -->
+	<update id="putPermSend" parameterType="structPermission">
+		UPDATE struct_permission SET
+		<![CDATA[
+		is_complete = #{isComplete}, suitable = #{suitable}, notsuitablereason = #{notSuitableReason}
+		where perm_seq = #{permSeq};
+		]]>
+	</update>
+
+	<select id="selectOne" parameterType="structPermission" resultType="structPermission">
+		select * from struct_permission where perm_seq = #{permSeq}
+	</select>
+	<select id="selectNew" parameterType="structPermission" resultType="structPermission">
+		select * from struct_permission where save_file_name = #{saveFileName} and save_model_file_path = #{saveModelFilePath}
+	</select>
+
+	<insert id="insertStructPermission" parameterType="structPermission">
+		<selectKey keyProperty="permSeq" resultType="int" order="BEFORE">
+			SELECt NEXTVAL('perm_sequence')
+		</selectKey>
+		INSERT INTO struct_permission(
+			perm_seq, constructor, constructor_type, perm_officer, birthday, license_num, phone_number, is_complete, latitude, longitude, save_file_path, save_file_name, origin_file_name, apply_date, save_model_file_path, save_model_file_name, altitude, heading, pitch, roll
+		) VALUES (
+			#{permSeq}, #{constructor}, #{constructorType}, #{permOfficer}, #{birthday}, #{licenseNum}, #{phoneNumber}, #{isComplete}, #{latitude}, #{longitude}, #{saveFilePath}, #{saveFileName}, #{originFileName}, NOW(), #{saveModelFilePath}, #{saveModelFileName}, #{altitude}, #{heading}, #{pitch}, #{roll}
+		)
+	</insert>
+
+	<update id="updateStructPermission" parameterType="structPermission">
+		update struct_permission set is_complete='Y' where constructor = #{constructor}
+	</update>
+	<update id="updateBatchAgenda" parameterType="structPermission">
+		UPDATE struct_permission SET batch_checked=#{batchChecked}, agenda_checked=#{agendaChecked} where perm_seq=#{permSeq}
+	</update>
+</mapper>

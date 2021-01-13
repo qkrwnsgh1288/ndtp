@@ -1,22 +1,15 @@
 package ndtp.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
+import ndtp.domain.CacheManager;
 import ndtp.domain.GeoPolicy;
-import ndtp.domain.Layer;
-import ndtp.domain.LayerGroup;
 import ndtp.domain.UserPolicy;
-import ndtp.persistence.LayerGroupMapper;
 import ndtp.persistence.UserPolicyMapper;
 import ndtp.service.GeoPolicyService;
-import ndtp.service.LayerService;
 import ndtp.service.UserPolicyService;
 
 
@@ -28,15 +21,15 @@ public class UserPolicyServiceImpl implements UserPolicyService {
 	private UserPolicyMapper userPolicyMapper;
 	@Autowired
 	private GeoPolicyService geoPolicyService;
-	@Autowired
-	private LayerService layerService;
-	@Autowired
-	private LayerGroupMapper layerGroupMapper;
+//	@Autowired
+//	private LayerService layerService;
+//	@Autowired
+//	private LayerGroupMapper layerGroupMapper;
 
     @Transactional(readOnly = true)
     public UserPolicy getUserPolicy(String userId) {
         UserPolicy userPolicy = userPolicyMapper.getUserPolicy(userId);
-        GeoPolicy geoPolicy = geoPolicyService.getGeoPolicy();
+        GeoPolicy geoPolicy = CacheManager.getGeoPolicy();
         if(userPolicy == null) {
         	userPolicy = UserPolicy.builder()
         				.initLongitude(geoPolicy.getInitLongitude())
@@ -51,7 +44,7 @@ public class UserPolicyServiceImpl implements UserPolicyService {
         				.lod4(geoPolicy.getLod4())
         				.lod5(geoPolicy.getLod5())
         				.ssaoRadius(geoPolicy.getSsaoRadius())
-        				.baseLayers(defaultLayers())
+//        				.baseLayers(defaultLayers())
         				.build();
         } else {
         	if(userPolicy.getInitLongitude() == null) userPolicy.setInitLongitude(geoPolicy.getInitLongitude());
@@ -66,6 +59,7 @@ public class UserPolicyServiceImpl implements UserPolicyService {
         	if(userPolicy.getLod4() == null) userPolicy.setLod4(geoPolicy.getLod4());
         	if(userPolicy.getLod5() == null) userPolicy.setLod5(geoPolicy.getLod5());
         	if(userPolicy.getSsaoRadius() == null) userPolicy.setSsaoRadius(geoPolicy.getSsaoRadius());
+//        	if(userPolicy.getBaseLayers() == null) userPolicy.setBaseLayers(defaultLayers());
         }
 
         return userPolicy;
@@ -98,22 +92,22 @@ public class UserPolicyServiceImpl implements UserPolicyService {
 		}
 	}
     
-    private String defaultLayers() {
-    	List<LayerGroup> layerGroupList = layerGroupMapper.getListLayerGroup();
-    	List<String> baseLayerList = new ArrayList<>();
-    	String dataStore = geoPolicyService.getGeoPolicy().getGeoserverDataStore();
-		layerGroupList.stream()
-						.forEach(group -> {
-							Layer layer = Layer.builder()
-											.layerGroupId(group.getLayerGroupId())
-											.build();
-							baseLayerList.addAll(layerService.getListDefaultDisplayLayer(layer));
-						});
-		
-		String baseLayers = baseLayerList.stream()
-				.map(layerKey -> String.valueOf(dataStore + ":" + layerKey))
-				.collect(Collectors.joining(","));
-		
-    	return baseLayers;
-    }
+//    private String defaultLayers() {
+//    	List<LayerGroup> layerGroupList = layerGroupMapper.getListLayerGroup();
+//    	List<String> baseLayerList = new ArrayList<>();
+//    	String dataStore = geoPolicyService.getGeoPolicy().getGeoserverDataStore();
+//		layerGroupList.stream()
+//						.forEach(group -> {
+//							Layer layer = Layer.builder()
+//											.layerGroupId(group.getLayerGroupId())
+//											.build();
+//							baseLayerList.addAll(layerService.getListDefaultDisplayLayer(layer));
+//						});
+//		
+//		String baseLayers = baseLayerList.stream()
+//				.map(layerKey -> String.valueOf(dataStore + ":" + layerKey))
+//				.collect(Collectors.joining(","));
+//		
+//    	return baseLayers;
+//    }
 }

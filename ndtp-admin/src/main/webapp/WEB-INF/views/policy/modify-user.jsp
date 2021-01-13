@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 	<div id="userTab">
 		<form:form id="policyUser" modelAttribute="policy" method="post" onsubmit="return false;">
-			<table class="input-table scope-row">
+			<table class="input-table scope-row" summary="환경설정 사용자 테이블 ">
+			<caption class="hiddenTag">환경설정 사용자</caption>
 				<col class="col-label l" />
 				<col class="col-input" />
 				<tr>
@@ -10,7 +11,7 @@
 						<span class="icon-glyph glyph-emark-dot color-warning"></span>
 					</th>
 					<td class="col-input">
-						<form:input path="userIdMinLength" maxlength="2" cssClass="s" />
+						<form:input path="userIdMinLength" maxlength="2" cssClass="s" onKeyPress="return numkeyCheck(event);" />
 						<span class="table-desc">이상</span>
 						<form:errors path="userIdMinLength" cssClass="error" />
 					</td>
@@ -21,7 +22,7 @@
 						<span class="icon-glyph glyph-emark-dot color-warning"></span>
 					</th>
 					<td class="col-input">
-						<form:input path="userFailSigninCount" maxlength="2" cssClass="s" />
+						<form:input path="userFailSigninCount" maxlength="2" cssClass="s" onKeyPress="return numkeyCheck(event);" />
 						<span class="table-desc">회</span>
 						<form:errors path="userFailSigninCount" cssClass="error" />
 					</td>
@@ -32,7 +33,7 @@
 						<span class="icon-glyph glyph-emark-dot color-warning"></span>
 					</th>
 					<td class="col-input">
-						<form:input path="userFailLockRelease" maxlength="3" cssClass="s" />
+						<form:input path="userFailLockRelease" maxlength="3" cssClass="s" onKeyPress="return numkeyCheck(event);" />
 						<span class="table-desc">일</span>
 						<form:errors path="userFailLockRelease" cssClass="error" />
 					</td>
@@ -43,7 +44,7 @@
 						<span class="icon-glyph glyph-emark-dot color-warning"></span>
 					</th>
 					<td class="col-input">
-						<form:input path="userLastSigninLock" maxlength="3" cssClass="s" />
+						<form:input path="userLastSigninLock" maxlength="3" cssClass="s" onKeyPress="return numkeyCheck(event);" />
 						<span class="table-desc">일</span>
 						<form:errors path="userLastSigninLock" cssClass="error" />
 					</td>
@@ -66,11 +67,11 @@
 					</th>
 					<td class="col-input radio-set">
 						<form:radiobutton label="일반(아이디/비밀번호)(기본값)" path="userSigninType" value="0" />
-						<form:radiobutton label="기업용(사번추가)" path="userSigninType" value="1" />
+						<!-- <form:radiobutton label="기업용(사번추가)" path="userSigninType" value="1" />
 						<form:radiobutton label="일반 + OTP" path="userSigninType" value="2" />
 						<form:radiobutton label="일반 + 인증서" path="userSigninType" value="3" />
 						<form:radiobutton label="OTP + 인증서" path="userSigninType" value="4" />
-						<form:radiobutton label="일반 + OTP + 인증서" path="userSigninType" value="5" />
+						<form:radiobutton label="일반 + OTP + 인증서" path="userSigninType" value="5" /> -->
 						<form:errors path="userSigninType" cssClass="error" />
 					</td>
 				</tr>

@@ -1,8 +1,17 @@
 package ndtp.domain;
 
-public enum FileType {
 
+public enum FileType {
 	DIRECTORY, 
-	FILE;
-		
+	FILE,
+	ECHODELTASHP,
+	ACCEPTBUILD,
+	ACCEPTBUILDIFC,
+	CONSTPRO,
+	CONSTPROCBUSAN,
+	CONSTPROCSEJON,
+	CONSTPROCSEJONALL,
+	CONSTPROCGEUMGANG,
+	IMGFILE;
 }
+

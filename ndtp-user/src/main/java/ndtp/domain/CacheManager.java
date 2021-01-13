@@ -18,11 +18,39 @@ public class CacheManager {
     private CacheManager() {
     }
 
+    // 2D, 3D 운영 정책
+    private GeoPolicy geoPolicy;
+    // 운영 정책
+    private Policy policy;
+    
     // 대메뉴 정보
  	private Map<Integer, Menu> menuMap = null;
  	// url과 menu_id를 매핑
  	private Map<String, Integer> menuUrlMap = null;
+ 	// 사용자 그룹별 메뉴 목록
+    private Map<Integer, List<UserGroupMenu>> userGroupMenuMap = null;
+    // 사용자 그룹별 Role 목록
+    private Map<Integer, List<String>> userGroupRoleMap = null;
  	
+    // Smart Tiling 데이터 정보
+  	private Map<Integer, List<DataInfoSimple>> smartTilingDataMap = null;
+  	
+  	public static GeoPolicy getGeoPolicy() {
+		return cacheManager.geoPolicy;
+	}
+
+	public static void setGeoPolicy(GeoPolicy geoPolicy) {
+		cacheManager.geoPolicy = geoPolicy;
+	}
+
+	public static Policy getPolicy() {
+		return cacheManager.policy;
+	}
+
+	public static void setPolicy(Policy policy) {
+		cacheManager.policy = policy;
+	}
+
 	/**
 	 * 대메뉴(1 Depth) Map, 화면 왼쪽 메뉴 표시용
 	 * @param userGroupId
@@ -30,7 +58,7 @@ public class CacheManager {
 	 */
 	public static Map<Integer, Menu> getMenuMap() {
 		if(cacheManager.menuMap == null) {
-			return new HashMap<Integer, Menu>();
+			return new HashMap<>();
 		}
 		return cacheManager.menuMap;
 	}
@@ -46,7 +74,7 @@ public class CacheManager {
 	 */
 	public static Map<String, Integer> getMenuUrlMap() {
 		if(cacheManager.menuUrlMap == null) {
-			return new HashMap<String, Integer>();
+			return new HashMap<>();
 		}
 		return cacheManager.menuUrlMap;
 	}
@@ -55,11 +83,6 @@ public class CacheManager {
 		cacheManager.menuUrlMap = menuUrlMap;
 	}
     
-    // 사용자 그룹별 메뉴 목록
-    private Map<Integer, List<UserGroupMenu>> userGroupMenuMap = null;
-    // 사용자 그룹별 Role 목록
-    private Map<Integer, List<String>> userGroupRoleMap = null;
-
     public static Map<Integer, List<UserGroupMenu>> getUserGroupMenuMap() {
         return cacheManager.userGroupMenuMap;
     }
@@ -78,4 +101,16 @@ public class CacheManager {
     public static void setUserGroupRoleMap(Map<Integer, List<String>> userGroupRoleMap) {
         cacheManager.userGroupRoleMap = userGroupRoleMap;
     }
+
+	public static Map<Integer, List<DataInfoSimple>> getSmartTilingDataMap() {
+		return cacheManager.smartTilingDataMap;
+	}
+	
+	public static List<DataInfoSimple> getSmartTilingDataGroupList(Integer dataGroupid) {
+		return cacheManager.smartTilingDataMap.get(dataGroupid);
+	}
+
+	public static void setSmartTilingDataMap(Map<Integer, List<DataInfoSimple>> smartTilingDataMap) {
+		cacheManager.smartTilingDataMap = smartTilingDataMap;
+	}
 }

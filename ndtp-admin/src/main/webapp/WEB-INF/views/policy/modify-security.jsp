@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 	<div id="securityTab">
 		<form:form id="policySecurity" modelAttribute="policy" method="post" onsubmit="return false;">
-			<table class="input-table scope-row">
+			<table class="input-table scope-row" summary="환경설정 보안 테이블">
+			<caption class="hiddenTag">환경설정 보안</caption>
 				<col class="col-label l" />
 				<col class="col-input" />
 				<tr>
@@ -21,12 +22,12 @@
 						<span class="icon-glyph glyph-emark-dot color-warning"></span>
 					</th>
 					<td class="col-input">
-						<form:input path="securitySessionTimeout" maxlength="2" cssClass="s" />
+						<form:input path="securitySessionTimeout" maxlength="2" cssClass="s" onKeyPress="return numkeyCheck(event);" />
 						<span class="table-desc">분</span>
 						<form:errors path="securitySessionTimeout" cssClass="error" />
 					</td>
 				</tr>
-				<tr>
+				<%-- <tr>
 					<th class="col-label l" scope="row">
 						<form:label path="securityUserIpCheckYn">로그인 사용자 IP 체크 유무</form:label>
 						<span class="icon-glyph glyph-emark-dot color-warning"></span>
@@ -36,8 +37,8 @@
 						<form:radiobutton label="${notuse }(기본값)" path="securityUserIpCheckYn" value="N" />
 						<form:errors path="securityUserIpCheckYn" cssClass="error" />
 					</td>
-				</tr>
-				<tr>
+				</tr> --%>
+				<%-- <tr>
 					<th class="col-label l" scope="row">
 						<form:label path="securitySessionHijacking">보안 세션 하이재킹 처리</form:label>
 						<span class="icon-glyph glyph-emark-dot color-warning"></span>
@@ -92,7 +93,7 @@
 						<form:radiobutton label="${notuse }(기본값)" path="securityApiResultSecureYn" value="N" />
 						<form:errors path="securityApiResultSecureYn" cssClass="error" />
 					</td>
-				</tr>
+				</tr> --%>
 				<tr>
 					<th class="col-label l" scope="row">
 						<form:label path="securityMaskingYn">개인정보 마스킹 처리</form:label>

@@ -8,15 +8,15 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<title>데이터 그룹 등록 | NDTP</title>
-
-	<link rel="stylesheet" href="/externlib/cesium/Widgets/widgets.css" />
-	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css" />
-	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css" />
-	<link rel="stylesheet" href="/css/${lang}/user-style.css" />
-	<link rel="stylesheet" href="/css/${lang}/style.css" />
-	<link rel="stylesheet" href="/css/fontawesome-free-5.2.0-web/css/all.min.css">
-	<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js"></script>
-	<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+	<link rel="shortcut icon" href="/images/favicon.ico?cacheVersion=${contentCacheVersion}">
+	<link rel="stylesheet" href="/externlib/cesium/Widgets/widgets.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/externlib/jquery-ui-1.12.1/jquery-ui.min.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/images/${lang}/icon/glyph/glyphicon.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/css/${lang}/user-style.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/css/${lang}/style.css?cacheVersion=${contentCacheVersion}" />
+	<link rel="stylesheet" href="/css/fontawesome-free-5.2.0-web/css/all.min.css?cacheVersion=${contentCacheVersion}"/>
+	<script type="text/javascript" src="/externlib/jquery-3.3.1/jquery.min.js?cacheVersion=${contentCacheVersion}"></script>
+	<script type="text/javascript" src="/externlib/jquery-ui-1.12.1/jquery-ui.min.js?cacheVersion=${contentCacheVersion}"></script>
 </head>
 <body>
 
@@ -33,12 +33,13 @@
 		<div style="padding: 20px 20px 0px 10px; font-size: 18px;">3D 업로딩 데이터 자동 변환</div>
 		<div class="tabs" >
 			<ul class="tab">
-				<li onclick="location.href='/data-group/list'">데이터 그룹</li>
-				<li onclick="location.href='/data-group/input'" class="on">데이터 그룹 등록</li>
-				<li onclick="location.href='/upload-data/input'">업로딩 데이터</li>
-			   	<li onclick="location.href='/upload-data/list'">업로딩 데이터 목록</li>
-			  	<li onclick="location.href='/converter/list'">업로딩 데이터 변환 목록</li>
-			  	<li onclick="location.href='/data/list'">데이터 목록</li>
+				<li id="tabDataGroupList"><a href="/data-group/list">데이터 그룹</a></li>
+				<li id="tabDataGroupInput"><a href="/data-group/input">데이터 그룹 등록</a></li>
+				<li id="tabUploadDataInput"><a href="/upload-data/input">업로딩 데이터</a></li>
+			   	<li id="tabUploadDataList"><a href="/upload-data/list">업로딩 데이터 목록</a></li>
+			  	<li id="tabConverterList"><a href="/converter/list">업로딩 데이터 변환 목록</a></li>
+			  	<li id="tabDataList"><a href="/data/list">데이터 목록</a></li>
+			  	<li id="tabDataLogList"><a href="/data-log/list">데이터 변경 이력</a></li>
 			</ul>
 		</div>
 		<form:form id="dataGroup" modelAttribute="dataGroup" method="post" onsubmit="return false;">
@@ -57,7 +58,7 @@
 			</tr>
 			<tr>
 				<th class="col-label" scope="row">
-					<form:label path="dataGroupKey">데이터 그룹 Key(영문)</form:label>
+					<form:label path="dataGroupKey">데이터 그룹 Key(영문,숫자,-,_)</form:label>
 					<span class="icon-glyph glyph-emark-dot color-warning"></span>
 				</th>
 				<td class="col-input">
@@ -183,23 +184,23 @@
 <!-- 상위 그룹 선택 다이얼 로그 -->
 <%@ include file="/WEB-INF/views/data-group/parent-data-group-dialog.jsp" %>
 
-<script type="text/javascript" src="/js/${lang}/common.js"></script>
-<script type="text/javascript" src="/js/${lang}/message.js"></script>
-<script type="text/javascript" src="/js/${lang}/map-controll.js"></script>
-<script type="text/javascript" src="/js/${lang}/ui-controll.js"></script>
+<script type="text/javascript" src="/js/${lang}/common.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/message.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/map-controll.js?cacheVersion=${contentCacheVersion}"></script>
+<script type="text/javascript" src="/js/${lang}/ui-controll.js?cacheVersion=${contentCacheVersion}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 	});
 
 	// 입력값이 변경되면 중복체크, 영문+숫자
-	$("#dataGroupKey").on("keyup", function(event) {
+	/* $("#dataGroupKey").on("keyup", function(event) {
 		$("#duplication").val(null);
 		if (!(event.keyCode >=37 && event.keyCode<=40)) {
 			var inputValue = $(this).val();
 			$(this).val(inputValue.replace(/[^a-z0-9]/gi,''));
 		}
-	});
-
+	}); */
+	
 	// 데이터 그룹 중복 확인
 	$( "#duplicationButtion" ).on( "click", function() {
 		var dataGroupKey = $("#dataGroupKey").val();
@@ -208,6 +209,13 @@
 			$("#dataGroupKey").focus();
 			return false;
 		}
+		
+		var regDataGroupKey = /^[a-zA-Z0-9-_]+$/;
+		if (!regDataGroupKey.test(document.getElementById("dataGroupKey").value)) {
+			alert("데이터 그룹키(한글불가)가 올바르지 않습니다.");
+			return false;
+		}
+		
 		var formData = "dataGroupKey=" + dataGroupKey;
 		$.ajax({
 			url: "/data-groups/duplication",
@@ -268,6 +276,9 @@
 				$("#duration").focus();
 				return false;
 			}
+		}
+		if(!locationValidation($("#longitude").val(), $("#latitude").val(), $("#altitude").val())) {
+			return false;
 		}
 	}
 
@@ -340,7 +351,7 @@
 
 	// 지도에서 찾기
 	$( "#mapButtion" ).on( "click", function() {
-		var url = "/map/find-point";
+		var url = "/map/find-point?referrer=data-group-input";
 		var width = 800;
 		var height = 700;
 

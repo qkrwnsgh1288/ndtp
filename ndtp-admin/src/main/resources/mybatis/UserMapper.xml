@@ -90,7 +90,15 @@
 			OFFSET #{offset} LIMIT #{limit}
 		) X
 	</select>
-
+	
+	<!-- 사용자 정보 -->
+	<select id="getListUserByGroupId" parameterType="int" resultType="string">
+		/* getListUserByGroupId */
+		SELECT user_id
+		FROM user_info
+		WHERE user_group_id = #{userGroupId}
+	</select>
+	
 	<!-- 사용자 정보 -->
 	<select id="getUser" parameterType="string" resultType="userInfo">
 		/* getUser */
@@ -167,6 +175,23 @@
 			update_date = NOW()
 		WHERE user_id = #{userId}
 	</update>
+	
+	<!-- 사용자 기본 정보 중 비밀번호 정보 수정 -->
+	<update id="updatePassword" parameterType="userInfo">
+		/* updatePassword */
+		UPDATE user_info
+		SET password = #{password},
+			update_date = NOW(),
+			last_password_change_date = NOW(),
+			<if test="dbStatus != null and dbStatus == '2'.toString()">
+			fail_login_count = 0,
+			</if>
+			<if test="dbStatus != null and dbStatus == '3'.toString()">
+			last_login_date = NOW(),
+			</if>
+			status = #{status}
+		WHERE user_id = #{userId}
+	</update>
 
 	<!-- 사용자 상태 수정 -->
 	<update id="updateUserStatus" parameterType="userInfo">
@@ -189,7 +214,7 @@
 	<!-- 사용자 삭제 -->
 	<delete id="deleteUser" parameterType="string">
 		/* deleteUser */
-		DELETE FROM user_info WHERE user_id = #{userId}
+		DELETE FROM user_info WHERE user_id = #{value}
 	</delete>
 
 </mapper>

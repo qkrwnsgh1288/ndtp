@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ndtp.persistence.SimuMapper">
+	<!-- 세션 정보 -->
+	<select id="getSimCityPlanFileList" resultType="simFileInfo">
+		select sim_file_seq, origin_file_name, save_file_name, save_file_path, create_dt, save_file_type from sim_file_master where save_file_type = 'ECHODELTASHP' limit 1;
+	</select>
+
+	<!-- 세션 정보 -->
+	<select id="getSimMasterList" parameterType="simFileInfo" resultType="simFileInfo">
+		SELECT sim_file_seq, origin_file_name, save_file_name, save_file_path, save_file_type, create_dt,
+		       lon, lat, alt, cons_type, city_type, cons_ratio, objectid FROM sim_file_master
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="saveFileType != null">
+			<![CDATA[
+				save_file_type = #{saveFileType}
+			]]>
+			</if>
+			<if test="consType != null">
+			<![CDATA[
+				AND cons_type = #{consType}
+			]]>
+			</if>
+		</trim>
+	</select>
+
+	<insert id="insertSimCityPlanFile" parameterType="simFileInfo">
+		<selectKey keyProperty="simFileSeq" resultType="int" order="BEFORE">
+			SELECt NEXTVAL('sim_file_sequence')
+		</selectKey>
+		INSERT INTO sim_file_master(
+			sim_file_seq, origin_file_name, save_file_name, save_file_path, create_dt, save_file_type
+		) VALUES (
+			#{simFileSeq}, #{originFileName}, #{saveFileName}, #{saveFilePath}, NOW(), #{saveFileType} 
+		)
+	</insert>
+
+	<insert id="insertConsProcFile" parameterType="simFileInfo">
+		<selectKey keyProperty="simFileSeq" resultType="int" order="BEFORE">
+			SELECt NEXTVAL('sim_file_sequence')
+		</selectKey>
+		INSERT INTO public.sim_file_master
+		(sim_file_seq, origin_file_name, save_file_name, save_file_path, create_dt, save_file_type, cons_type, cons_ratio)
+		VALUES (
+		#{simFileSeq}, #{originFileName}, #{saveFileName}, #{saveFilePath}, NOW(), #{saveFileType}, #{consType}, #{consRatio}
+		)
+	</insert>
+
+	<insert id="insertSimCityPlanFileResult" parameterType="cityPlanResult">
+		<selectKey keyProperty="cityPlanResultSeq" resultType="int" order="BEFORE">
+			SELECt NEXTVAL('city_plan_result_sequence')
+		</selectKey>
+			INSERT INTO public.city_plan_result
+			(city_plan_result_seq, city_plan_target_area, city_plan_std_floor_cov, floor_coverate_ratio, city_plan_std_build_cov, build_coverate_ratio, sim_file_master_img_num, create_dt)
+			VALUES(#{cityPlanResultSeq}, #{cityPlanTargetArea}, #{cityPlanStdFloorCov}, #{floorCoverateRatio},  #{cityPlanStdBuildCov}, #{buildCoverateRatio},  #{simFileMasterImgNum}, now());
+	</insert>
+
+	<!-- 세션 정보 -->
+	<select id="getConsDataInfo" parameterType="consDataInfo" resultType="consDataInfo">
+		SELECT data_name, lon, lat, alt, heading, pitch, roll, step, ratio FROM cons_data_info WHERE data_name = #{dataName} LIMIT 1
+	</select>
+
+
+</mapper>

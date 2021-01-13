@@ -1,143 +1,145 @@
-//package com.gaia3d.parser.impl;
-//
-//import java.math.BigDecimal;
-//import java.nio.file.Files;
-//import java.nio.file.Paths;
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//
-//import com.fasterxml.jackson.databind.JsonNode;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.gaia3d.domain.DataInfo;
-//import com.gaia3d.domain.FileInfo;
-//import com.gaia3d.domain.FileParseLog;
-//import com.gaia3d.parser.DataFileParser;
-//
-//public class DataFileJsonParser implements DataFileParser {
-//
-//	@Override
-//	public Map<String, Object> parse(Integer projectId, FileInfo fileInfo) {
-//		
-//		int totalCount = 0;
-//		int parseSuccessCount = 0;
-//		int parseErrorCount = 0;
-//		List<DataInfo> dataInfoList = new ArrayList<>();
-//		
-//		DataAttributeFileParseLog fileParseLog = new DataAttributeFileParseLog();
-//		fileParseLog.setFile_info_id(fileInfo.getFile_info_id());
-//		fileParseLog.setLog_type(DataAttributeFileParseLog.FILE_PARSE_LOG);		
-//		
-//		try {
-//			byte[] jsonData = Files.readAllBytes(Paths.get(fileInfo.getFile_path() + fileInfo.getFile_real_name()));
-//
-//			ObjectMapper objectMapper = new ObjectMapper();
-//			//read JSON like DOM Parser
-//			JsonNode jsonNode = objectMapper.readTree(jsonData);
-//			
+package ndtp.parser.impl;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ndtp.domain.DataFileInfo;
+import ndtp.domain.DataGroup;
+import ndtp.domain.DataInfo;
+import ndtp.parser.DataFileParser;
+
+public class DataFileJsonParser implements DataFileParser {
+
+	@Override
+	public Map<String, Object> parse(Integer dataGroupId, DataFileInfo fileInfo) {
+		
+		int totalCount = 0;
+		int parseSuccessCount = 0;
+		int parseErrorCount = 0;
+		
+		DataGroup dataGroup = new DataGroup();
+		List<DataInfo> dataInfoList = new ArrayList<>();
+		try {
+			byte[] jsonData = Files.readAllBytes(Paths.get(fileInfo.getFilePath() + fileInfo.getFileRealName()));
+			String encodingData = new String(jsonData, StandardCharsets.UTF_8);
+			
+			ObjectMapper objectMapper = new ObjectMapper();
+			//read JSON like DOM Parser
+			JsonNode jsonNode = objectMapper.readTree(encodingData);
+			
 //			String dataName = jsonNode.path("data_name").asText();
 //			String dataKey = jsonNode.path("data_key").asText();
-//			String latitude = jsonNode.path("latitude").asText();
-//			String longitude = jsonNode.path("longitude").asText();
-//			String height = jsonNode.path("height").asText();
-//			String heading = jsonNode.path("heading").asText();
-//			String pitch = jsonNode.path("pitch").asText();
-//			String roll = jsonNode.path("roll").asText();
-//			JsonNode attributesNode = jsonNode.path("attributes");
-//			JsonNode childrenNode = jsonNode.path("children");
-//			
-//			DataInfo dataInfo = new DataInfo();
-//			dataInfo.setProject_id(projectId);
-//			dataInfo.setData_name(dataName);
-//			dataInfo.setData_key(dataKey);
-//			if(latitude != null && !"".equals(latitude)) dataInfo.setLatitude(new BigDecimal(latitude));
-//			if(longitude != null && !"".equals(longitude)) dataInfo.setLongitude(new BigDecimal(longitude));
-//			if(height != null && !"".equals(height)) dataInfo.setHeight(new BigDecimal(height));
-//			if(heading != null && !"".equals(heading)) dataInfo.setHeading(new BigDecimal(heading));
-//			if(pitch != null && !"".equals(pitch)) dataInfo.setPitch(new BigDecimal(pitch));
-//			if(roll != null && !"".equals(roll)) dataInfo.setRoll(new BigDecimal(roll));
-//			dataInfo.setAttributes(attributesNode.toString());
-//			dataInfo.setParent(0l);
-//			dataInfo.setDepth(1);
-//			dataInfo.setView_order(1);
-//			if(dataInfo.getLatitude() != null && dataInfo.getLatitude().floatValue() != 0f &&
-//					dataInfo.getLongitude() != null && dataInfo.getLongitude().floatValue() != 0f) {
-//				dataInfo.setLocation("POINT(" + dataInfo.getLongitude() + " " + dataInfo.getLatitude() + ")");
-//			}
-//			
-//			dataInfoList.add(dataInfo);
-//			
-//			if(childrenNode.isArray() && childrenNode.size() != 0) {
-//				dataInfoList.addAll(parseChildren(projectId, dataInfo.getData_key(),  null, dataInfo.getDepth(), childrenNode));
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new RuntimeException("Data 일괄 등록 Json 파일 파싱 오류!");
-//		}
-//		
-//		Map<String, Object> result = new HashMap<>();
-//		result.put("dataInfoList", dataInfoList);
-//		result.put("totalCount", dataInfoList.size());
-//		result.put("parseSuccessCount", dataInfoList.size());
-//		result.put("parseErrorCount", 0);
-//		return result;
-//	}
-//	
-//	/**
-//	 * 자식 data 들을 재귀적으로 파싱
-//	 * @param projectId
-//	 * @param dataInfoList
-//	 * @param parentDataKey
-//	 * @param depth
-//	 * @param childrenNode
-//	 * @return
-//	 */
-//	private List<DataInfo> parseChildren(Integer projectId, String parentDataKey, List<DataInfo> dataInfoList, int depth, JsonNode childrenNode) {
-//		if(dataInfoList == null) dataInfoList = new ArrayList<>();
-//		
-//		depth++;
-//		int viewOrder = 1;
-//		for(JsonNode jsonNode : childrenNode) {
-//			String dataName = jsonNode.path("data_name").asText();
-//			String dataKey = jsonNode.path("data_key").asText();
-//			String latitude = jsonNode.path("latitude").asText();
-//			String longitude = jsonNode.path("longitude").asText();
-//			String height = jsonNode.path("height").asText();
-//			String heading = jsonNode.path("heading").asText();
-//			String pitch = jsonNode.path("pitch").asText();
-//			String roll = jsonNode.path("roll").asText();
-//			JsonNode attributes = jsonNode.path("attributes");
-//			JsonNode childrene = jsonNode.path("children");
-//			
-//			DataInfo dataInfo = new DataInfo();
-//			dataInfo.setProject_id(projectId);
-//			dataInfo.setData_name(dataName);
-//			dataInfo.setData_key(dataKey);
-//			dataInfo.setParent_data_key(parentDataKey);
-//			if(latitude != null && !"".equals(latitude)) dataInfo.setLatitude(new BigDecimal(latitude));
-//			if(longitude != null && !"".equals(longitude)) dataInfo.setLongitude(new BigDecimal(longitude));
-//			if(height != null && !"".equals(height)) dataInfo.setHeight(new BigDecimal(height));
-//			if(heading != null && !"".equals(heading)) dataInfo.setHeading(new BigDecimal(heading));
-//			if(pitch != null && !"".equals(pitch)) dataInfo.setPitch(new BigDecimal(pitch));
-//			if(roll != null && !"".equals(roll)) dataInfo.setRoll(new BigDecimal(roll));
-//			dataInfo.setAttributes(attributes.toString());
-//			dataInfo.setDepth(depth);
-//			dataInfo.setView_order(viewOrder);
-//			if(dataInfo.getLatitude() != null && dataInfo.getLatitude().floatValue() != 0f &&
-//					dataInfo.getLongitude() != null && dataInfo.getLongitude().floatValue() != 0f) {
-//				dataInfo.setLocation("POINT(" + dataInfo.getLongitude() + " " + dataInfo.getLatitude() + ")");
-//			}
-//			
-//			dataInfoList.add(dataInfo);
-//			
-//			if(childrene.isArray() && childrene.size() != 0) {
-//				parseChildren(projectId, dataInfo.getData_key(), dataInfoList, depth, childrene);
-//			}
-//			
-//			viewOrder++;
-//		}
-//		
-//		return dataInfoList;
-//	}
-//}
+			String longitude = jsonNode.path("longitude").asText().trim();
+			String latitude = jsonNode.path("latitude").asText().trim();
+			String altitude = jsonNode.path("height").asText().trim();
+			String mappingType = jsonNode.path("mappingType").asText();
+			JsonNode metainfo = jsonNode.path("metainfo");
+			JsonNode childrenNode = jsonNode.path("datas");
+			
+			dataGroup.setDataGroupId(dataGroupId);
+//			dataGroup.setDataGroupName(dataName);
+//			dataGroup.setDataGroupKey(dataKey);
+			if(!StringUtils.isEmpty(longitude)) {
+				longitude = longitude.replace("null", "");
+				if(!StringUtils.isEmpty(longitude)) dataGroup.setLongitude(new BigDecimal(longitude));
+			}
+			if(!StringUtils.isEmpty(latitude)) {
+				latitude = latitude.replace("null", "");
+				if(!StringUtils.isEmpty(latitude)) dataGroup.setLatitude(new BigDecimal(latitude));
+			}
+			if(!StringUtils.isEmpty(altitude)) {
+				altitude = altitude.replace("null", "");
+				if(!StringUtils.isEmpty(altitude)) dataGroup.setAltitude(new BigDecimal(altitude));
+			}
+			if(dataGroup.getLongitude() != null && dataGroup.getLatitude() != null) {
+				dataGroup.setLocation("POINT(" + dataGroup.getLongitude() + " " + dataGroup.getLatitude() + ")");
+			}
+			dataGroup.setDepth(1);
+			dataGroup.setMetainfo(metainfo.toString());
+			
+			if(childrenNode.isArray() && childrenNode.size() != 0) {
+				dataInfoList.addAll(parseChildren(null, 0, childrenNode));
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("Data 일괄 등록 Json 파일 파싱 오류! message = " + e.getMessage());
+		}
+		
+		Map<String, Object> result = new HashMap<>();
+		result.put("dataGroup", dataGroup);
+		result.put("dataInfoList", dataInfoList);
+		result.put("totalCount", dataInfoList.size());
+		result.put("parseSuccessCount", dataInfoList.size());
+		result.put("parseErrorCount", 0);
+		return result;
+	}
+	
+	/**
+	 * 자식 data 들을 재귀적으로 파싱
+	 * @param dataInfoList
+	 * @param depth
+	 * @param childrenNode
+	 * @return
+	 */
+	private List<DataInfo> parseChildren(List<DataInfo> dataInfoList, int depth, JsonNode childrenNode) {
+		if(dataInfoList == null) dataInfoList = new ArrayList<>();
+		
+		depth++;
+		int viewOrder = 1;
+		for(JsonNode jsonNode : childrenNode) {
+			Long dataId = jsonNode.path("dataId").asLong();
+			String dataName = jsonNode.path("dataName").asText();
+			String dataKey = jsonNode.path("dataKey").asText();
+			String longitude = jsonNode.path("longitude").asText().trim();
+			String latitude = jsonNode.path("latitude").asText().trim();
+			String altitude = jsonNode.path("altitude").asText().trim();
+			String heading = jsonNode.path("heading").asText().trim();
+			String pitch = jsonNode.path("pitch").asText().trim();
+			String roll = jsonNode.path("roll").asText().trim();
+			String mappingType = jsonNode.path("mappingType").asText();
+			JsonNode metainfo = jsonNode.path("metainfo");
+			JsonNode childrene = jsonNode.path("children");
+			
+			DataInfo dataInfo = new DataInfo();
+			dataInfo.setDataId(dataId);
+			dataInfo.setDataName(dataName);
+			dataInfo.setDataKey(dataKey);
+			if(!StringUtils.isEmpty(longitude)) dataInfo.setLongitude(new BigDecimal(longitude));
+			if(!StringUtils.isEmpty(latitude)) dataInfo.setLatitude(new BigDecimal(latitude));
+			if(!StringUtils.isEmpty(altitude)) dataInfo.setAltitude(new BigDecimal(altitude));
+			if(dataInfo.getLongitude() != null && dataInfo.getLatitude() != null) {
+				dataInfo.setLocation("POINT(" + dataInfo.getLongitude() + " " + dataInfo.getLatitude() + ")");
+			}
+			if(!StringUtils.isEmpty(heading)) dataInfo.setHeading(new BigDecimal(heading));
+			if(!StringUtils.isEmpty(pitch)) dataInfo.setPitch(new BigDecimal(pitch));
+			if(!StringUtils.isEmpty(roll)) dataInfo.setRoll(new BigDecimal(roll));
+			
+			dataInfo.setMappingType(mappingType);
+			dataInfo.setMetainfo(metainfo.toString());
+			dataInfo.setChildrenDepth(depth);
+			dataInfo.setChildrenViewOrder(viewOrder);
+			// TODO ancestor 같은것도 넣어 줘야 하는데..... 귀찮아서
+			
+			dataInfoList.add(dataInfo);
+			
+			if(childrene.isArray() && childrene.size() != 0) {
+				parseChildren(dataInfoList, depth, childrene);
+			}
+			
+			viewOrder++;
+		}
+		
+		return dataInfoList;
+	}
+}

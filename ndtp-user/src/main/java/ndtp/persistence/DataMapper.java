@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import ndtp.domain.DataGroup;
 import ndtp.domain.DataInfo;
+import ndtp.domain.DataInfoSimple;
 
 /**
  * Data
@@ -37,7 +38,7 @@ public interface DataMapper {
 //	Long getDataObjectAttributeTotalCount(DataInfoObjectAttribute dataInfoObjectAttribute);
 	
 	/**
-	 * Data 전체 목록
+	 * 데이터 그룹에 속하는 전체 데이터 목록
 	 * @param dataInfo
 	 * @return
 	 */
@@ -51,11 +52,18 @@ public interface DataMapper {
 	List<DataInfo> getListData(DataInfo dataInfo);
 	
 	/**
-	 * 공유 유형별 데이터 통계
-	 * @param userId
+	 * Smart Tiling용 데이터 그룹에 포함되는 모든 데이터를 취득
+	 * @param dataGroupId
 	 * @return
 	 */
-	List<DataInfo> getDataTotalCountBySharing(String userId);
+	List<DataInfoSimple> getListAllDataByDataGroupId(Integer dataGroupId);
+	
+	/**
+	 * 공유 유형별 데이터 통계
+	 * @param dataInfo
+	 * @return
+	 */
+	List<DataInfo> getDataTotalCountBySharing(DataInfo dataInfo);
 	
 	/**
 	 * DataGroupId를 제외한 Data 목록
@@ -104,7 +112,7 @@ public interface DataMapper {
 //	 * @param dataId
 //	 * @return
 //	 */
-//	DataInfoAttribute getDataAttribute(Long dataId);
+//	DataAttribute getDataAttribute(Long dataId);
 //	
 //	/**
 //	 * Data Object Attribute 정보 취득
@@ -133,7 +141,7 @@ public interface DataMapper {
 //	 * @param data_key
 //	 * @return
 //	 */
-//	DataInfoAttribute getDataIdAndDataAttributeIDByDataKey(String data_key);
+//	DataAttribute getDataIdAndDataAttributeIDByDataKey(String data_key);
 //	
 //	/**
 //	 * Data Object 조회
@@ -151,10 +159,10 @@ public interface DataMapper {
 	
 //	/**
 //	 * Data 속성 등록
-//	 * @param dataInfoAttribute
+//	 * @param dataAttribute
 //	 * @return
 //	 */
-//	int insertDataAttribute(DataInfoAttribute dataInfoAttribute);
+//	int insertDataAttribute(DataAttribute dataAttribute);
 //	
 //	/**
 //	 * Data Object 속성 등록
@@ -172,10 +180,10 @@ public interface DataMapper {
 	
 //	/**
 //	 * Data 속성 수정
-//	 * @param dataInfoAttribute
+//	 * @param dataAttribute
 //	 * @return
 //	 */
-//	int updateDataAttribute(DataInfoAttribute dataInfoAttribute);
+//	int updateDataAttribute(DataAttribute dataAttribute);
 //	
 	/**
 	 * Data 테이블의 Data 그룹 정보 변경
