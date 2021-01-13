@@ -1,4 +1,4 @@
-CREATE DATABASE ndtp
+CREATE DATABASE scdt
 WITH OWNER = postgres
 	ENCODING = 'UTF8'
 	TEMPLATE = template0
