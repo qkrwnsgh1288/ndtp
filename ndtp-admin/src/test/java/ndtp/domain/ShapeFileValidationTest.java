@@ -9,7 +9,7 @@ import java.util.List;
 import org.geotools.data.shapefile.dbf.DbaseFileHeader;
 import org.geotools.data.shapefile.dbf.DbaseFileReader;
 import org.geotools.data.shapefile.files.ShpFiles;
-//import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class ShapeFileValidationTest {
@@ -46,7 +46,7 @@ public class ShapeFileValidationTest {
             e.printStackTrace();
         } 
 	}
-/*
+
 	@Test
 	public void count() {
 		LayerFileInfo file0 = new LayerFileInfo();
@@ -72,6 +72,4 @@ public class ShapeFileValidationTest {
 		System.out.println("validCount ======================== " + validCount);
 		System.out.println("ShapeFileExt enum size ======= " + ShapeFileExt.values().length);
 	}
-*/
-
 }

@@ -1,9 +1,9 @@
 package ndtp.utils;
 
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 class PasswordTest {
-/*
+
 	@Test
 	@DisplayName("BCrypt 비밀번호 테스트")
 	void bcryptTest() {
@@ -41,6 +41,4 @@ class PasswordTest {
 		log.info("encodePassword = {}", encodePassword);
 		assertEquals(bCryptPasswordEncoder.matches("test", "$2a$10$7Y4jEH.GYaAaWuZxVt6Eq.EOUQBxbBk/I.7B3cURSR7BCuku3scjq"), true);
 	}
-	*/
-
 }

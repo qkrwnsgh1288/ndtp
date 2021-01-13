@@ -82,7 +82,7 @@ public class ServletConfig implements WebMvcConfigurer {
 	public InternalResourceViewResolver viewResolver() {
 		log.info(" @@@ ServletConfig viewResolver @@@");
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-		viewResolver.setPrefix("/WEB-INF/views/");
+		viewResolver.setPrefix("/WEB-INF/views");
 		viewResolver.setSuffix(".jsp");
 		viewResolver.setOrder(3);
 		
@@ -128,18 +128,9 @@ public class ServletConfig implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		log.info(" @@@ ServletConfig addResourceHandlers @@@");
-		
-		// F4D converter file 경로
-		String os = System.getProperty("os.name").toLowerCase();
 
-		if (os.contains("mac")) {
-			registry.addResourceHandler("/f4d/**").addResourceLocations("file:/Users/junho/data/mago3d/f4d/");
-			registry.addResourceHandler("/data/simulation-rest/**").addResourceLocations("file:/Users/junho/data/mago3d/building_obj/");
-		} else {
-			registry.addResourceHandler("/f4d/**").addResourceLocations("file:" + propertiesConfig.getDataServiceDir());
-			registry.addResourceHandler("/data/simulation-rest/**").addResourceLocations("file:" + propertiesConfig.getServiceFileBuildingobjDir());
-		}
-
+		registry.addResourceHandler("/f4d/**").addResourceLocations("file:" + propertiesConfig.getDataServiceDir());
+		registry.addResourceHandler("/data/simulation-rest/**").addResourceLocations("file:" + propertiesConfig.getServiceFileBuildingobjDir());
 //		registry.addResourceHandler("/f4d/sample/**").addResourceLocations("/sample/f4d/");
 		registry.addResourceHandler("/f4d/sample/**").addResourceLocations("file:" + propertiesConfig.getGuideDataServiceDir());
 		registry.addResourceHandler("/css/**").addResourceLocations("/css/");

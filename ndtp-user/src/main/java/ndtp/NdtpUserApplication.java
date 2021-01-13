@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import lombok.extern.slf4j.Slf4j;
 import ndtp.filter.XSSFilter;
 import ndtp.listener.Gaia3dHttpSessionBindingListener;
-import org.springframework.context.annotation.ComponentScan;
 
 @Slf4j
 @SpringBootApplication

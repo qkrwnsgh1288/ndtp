@@ -3,10 +3,9 @@ package ndtp.utils;
 import java.io.File;
 import java.math.BigDecimal;
 
-//import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test;
 
 class FileUtilsTest {
-/*
 
 	@Test
 	void test() {
@@ -39,6 +38,5 @@ class FileUtilsTest {
 		
 		System.out.println(filePath);
 	}
-*/
 
 }

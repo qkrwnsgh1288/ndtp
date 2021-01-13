@@ -353,11 +353,9 @@ var SpatialAnalysis = function(magoInstance) {
 	    }
 	    startLoading();
 
-		var xml = requestBodyRadialLineOfSight(layerDEM, observerPoint, observerOffset, radius, sides, extent);
-		// var xml = requestBodyRadialLineOfSight(selectedLayer, observerPoint, observerOffset, radius, sides);
+		var xml = requestBodyRadialLineOfSight(selectedLayer, observerPoint, observerOffset, radius, sides);
 
 		var resource = requestPostResource(xml);
-
 	    resource.then(function (res) {
 	        var promise = Cesium.GeoJsonDataSource.load(JSON.parse(res));
 	        promise.then(function (ds) {

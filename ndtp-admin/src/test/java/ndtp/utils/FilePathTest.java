@@ -3,17 +3,13 @@ package ndtp.utils;
 
 import java.io.File;
 import java.nio.file.Paths;
-/*
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-*/
 
+import org.junit.jupiter.api.Test;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 class FilePathTest {
-/*
 
 	@Test
 	void test() {
@@ -23,7 +19,7 @@ class FilePathTest {
 		String dataGroupPath = "basic/";
 		
 		String[] directors = dataGroupPath.split("/");
-		String fullName = "C:\\data\\mago3d\\f4d\\";
+		String fullName = "F:\\data\\mago3d\\f4d\\";
 		
 		boolean result = true;
 		for(String directoryName : directors) {
@@ -32,6 +28,5 @@ class FilePathTest {
 			log.info("----------- fullName = {}", fullName);
 		}
 	}
-*/
 
 }

@@ -10,17 +10,17 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-//import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 class AttributeInsertSqlTest {
 
-	String inputDirectory = "C:\\data\\mago3d\\smart-tiling-attribute";
-	String insertSqlFile = "C:\\data\\mago3d\\sql\\insert.txt";
-	String updateSqlFile = "C:\\data\\mago3d\\sql\\update.txt";
-	/*
+	String inputDirectory = "F:\\data\\mago3d\\smart-tiling-attribute";
+	String insertSqlFile = "F:\\data\\mago3d\\sql\\insert.txt";
+	String updateSqlFile = "F:\\data\\mago3d\\sql\\update.txt";
+
 	@Test
 	void test() throws Exception {
 		File rootDirectory = new File(inputDirectory);
@@ -53,7 +53,7 @@ class AttributeInsertSqlTest {
 			}
         }
 	}
-	*/
+
 	private Long getDataId(String dataKey) throws Exception {
 		Long dataId = 0l;
 		

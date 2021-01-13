@@ -19,6 +19,7 @@ var KotSlider = function (inputId) {
 }
 
 KotSlider.prototype.init = function () {
+
 	var that = this;
     var slider = document.getElementById(this.id);
 

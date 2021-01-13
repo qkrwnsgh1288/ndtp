@@ -310,7 +310,6 @@ public class LayerServiceImpl implements LayerService {
     
     /**
      * shp파일 정보를 db 정보 기준으로 export
-     * 추가수정
      */
     @Transactional
     public void exportOgr2Ogr(LayerFileInfo layerFileInfo, Layer layer) throws Exception {
@@ -322,7 +321,6 @@ public class LayerServiceImpl implements LayerService {
         String osType = propertiesConfig.getOsType().toUpperCase();
         String dbName = Crypt.decrypt(url);
         dbName = dbName.substring(dbName.lastIndexOf("/") + 1);
-
         String driver = "PG:host=localhost dbname=" + dbName + " user=" + Crypt.decrypt(username) + " password=" + Crypt.decrypt(password);
         GeoPolicy geoPolicy = geoPolicyService.getGeoPolicy();
         String layerSourceCoordinate = geoPolicy.getLayerSourceCoordinate();

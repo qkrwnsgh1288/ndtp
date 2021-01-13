@@ -18607,66 +18607,7 @@ CesiumViewerInit.prototype.init = function()
 	//GEOSERVER BASE LAYER, GEOSERVER TERRAIN SET
 	this.providerBuild();
 
-    this.options.selectionIndicator = false;
-
-	//PSD, 빼야함.
-	if (this.policy.cesiumIonToken && this.policy.cesiumIonToken.length > 0) 
-	{
-		Cesium.Ion.defaultAccessToken = this.policy.cesiumIonToken;
-	}
-	var terrainType = this.policy.terrainType;
-	var terrainValue = this.policy.terrainValue;
-	if (terrainType !== CesiumViewerInit.TERRAINTYPE.GEOSERVER && !this.options.terrainProvider) 
-	{
-		this.options.terrainProvider = new Cesium.EllipsoidTerrainProvider();
-		switch (terrainType) 
-		{
-		case CesiumViewerInit.TERRAINTYPE.CESIUM_ION_DEFAULT :{
-			if (this.policy.cesiumIonToken && this.policy.cesiumIonToken.length > 0) 
-			{
-				this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
-					url: Cesium.IonResource.fromAssetId(1)
-				});
-			}
-			break;
-		}
-		case CesiumViewerInit.TERRAINTYPE.CESIUM_ION_CDN :{
-			if (this.policy.cesiumIonToken || this.policy.cesiumIonToken.length > 0) 
-			{
-				this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
-					url: Cesium.IonResource.fromAssetId(parseInt(terrainValue))
-				});
-			}
-			break;
-		}
-		case CesiumViewerInit.TERRAINTYPE.CESIUM_CUSTOMER :{
-			this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
-				url: terrainValue
-			});
-			break;
-		}
-		}
-	}
-	
-	if (!this.options.imageryProvider)
-	{
-		this.options.imageryProvider = new Cesium.ArcGisMapServerImageryProvider({
-			url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
-		});
-	}
-
-    this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
-        url: 'http://211.106.171.246:39998/tilesets/terrain/'
-    });
-
-    /*
-    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxODQ0NTUxYi1mODg3LTQxZTEtYmU2Zi00NzQ0ODI3YjI1ZDIiLCJpZCI6MTUxODYsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyJdLCJpYXQiOjE1Njc0MDU5MDJ9.gqA_lEtPeiKI_Tn6WbBKfcaSaiHmj0f1GmcD0VBtmPc';
-
-    this.options.terrainProvider = new Cesium.CesiumTerrainProvider({
-        url: Cesium.IonResource.fromAssetId(88773)
-    });*/
-
-    this.options.shouldAnimate = false;
+	this.options.shouldAnimate = false;
 	this.viewer = new Cesium.Viewer(this.targetId, this.options);
 
 	this.postProcessDataProvider();
@@ -19501,7 +19442,6 @@ F4dController.prototype.addSmartTileGroup = function(f4dObject)
 	} 
 	else 
 	{
-	    debugger;
 		var groupId = f4dObject.data_key || f4dObject.dataGroupId;
 		var groupDataFolder;
 		var groupKey;
@@ -20349,6 +20289,46 @@ FrustumVolumeControl.prototype.calculateBoundingFrustums = function(camera)
 		}
 	}
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 'use strict';
 
@@ -24991,263 +24971,6 @@ MagoManager.prototype.managePickingProcess = function()
 	this.selectionFbo.unbind();
 	gl.enable(gl.CULL_FACE);
 };
-
-    MagoManager.prototype.managePickingProcessPassive = function(buildingFileName, nodeId)
-    {
-        this.magoPolicy.objectMoveMode = CODE.moveMode.ALL;
-        var gl = this.getGl();
-
-        if (this.selectionFbo === undefined)
-        { this.selectionFbo = new FBO(gl, this.sceneState.drawingBufferWidth, this.sceneState.drawingBufferHeight); }
-
-        this.bPicking = true;
-
-        if (this.isCameraMoved || this.bPicking) //
-        {
-            this.selectionFbo.bind(); // framebuffer for color selection.***
-            gl.enable(gl.DEPTH_TEST);
-            gl.depthFunc(gl.LEQUAL);
-            gl.depthRange(0, 1);
-            gl.disable(gl.CULL_FACE);
-            if (this.isLastFrustum)
-            {
-                // this is the farest frustum, so init selection process.***
-                gl.clearColor(1, 1, 1, 1); // white background.***
-                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // clear buffer.***
-                this.selectionManager.clearCandidates();
-            }
-
-            this.renderer.renderGeometryColorCoding(this.visibleObjControlerNodes);
-            this.swapRenderingFase();
-
-            if (this.currentFrustumIdx === 0)
-            {
-                this.isCameraMoved = false;
-
-                //TODO : MOVEEND EVENT TRIGGER
-                //PSEUDO CODE FOR CLUSTER
-                //if (this.modeler && this.modeler.objectsArray)
-                //{
-                //	for (var i=0, len=this.modeler.objectsArray.length;i<len;i++)
-                //	{
-                //		var obj = this.modeler.objectsArray[i];
-                //		if (!obj instanceof Cluster) { continue; }
-                //
-                //		if (!obj.dirty && !obj.isMaking) { obj.setDirty(true); }
-                //	}
-                //}
-            }
-        }
-
-        if (this.currentFrustumIdx === 0)
-        {
-            if ( this.bPicking === true)
-            {
-                // this is the closest frustum.***
-                var selectionManager = this.selectionManager;
-                var selectedGeneralObject = selectionManager.currentGeneralObjectSelected ? true : false;
-                this.bPicking = false;
-                // this.arrayAuxSC.length = 0;
-                // selectionManager.clearCurrents();
-                var bSelectObjects = true;
-
-                // this.objectSelected = this.getSelectedObjects(gl, this.mouse_x, this.mouse_y, this.arrayAuxSC, bSelectObjects);
-                // this.objectSelected = obj;
-
-                for (var idx in selectionManager.buildingsMap){
-                    if (selectionManager.buildingsMap[idx].buildingFileName === buildingFileName) {
-                        this.arrayAuxSC[0] = selectionManager.buildingsMap[idx];
-                        break;
-                    }
-                }
-                this.arrayAuxSC[1] = undefined;
-                this.arrayAuxSC[2] = undefined;
-                for (var idx in selectionManager.nodesMap){
-                    if (selectionManager.nodesMap[idx].data.nodeId === nodeId) {
-                        this.arrayAuxSC[3] = selectionManager.nodesMap[idx];
-                        break;
-                    }
-                }
-
-
-                var auxBuildingSelected = this.arrayAuxSC[0];
-                var auxOctreeSelected = this.arrayAuxSC[1];
-                var auxNodeSelected = this.arrayAuxSC[3];
-
-                var mode = this.magoPolicy.getObjectMoveMode();
-
-                if (mode === CODE.moveMode.ALL)
-                {
-                    if (auxBuildingSelected && auxNodeSelected)
-                    {
-                        this.emit(MagoManager.EVENT_TYPE.SELECTEDF4D, {
-                            type      : MagoManager.EVENT_TYPE.SELECTEDF4D,
-                            f4d       : auxNodeSelected,
-                            timestamp : new Date()
-                        });
-                    }
-                    else if ((this.buildingSelected && !auxBuildingSelected) && (this.nodeSelected && !auxNodeSelected))
-                    {
-                        this.emit(MagoManager.EVENT_TYPE.DESELECTEDF4D, {
-                            type: MagoManager.EVENT_TYPE.DESELECTEDF4D
-                        });
-                    }
-                }
-                else if (mode === CODE.moveMode.OBJECT)
-                {
-                    if (auxOctreeSelected && this.objectSelected)
-                    {
-                        this.emit(MagoManager.EVENT_TYPE.SELECTEDF4DOBJECT, {
-                            type      : MagoManager.EVENT_TYPE.SELECTEDF4DOBJECT,
-                            octree    : auxBuildingSelected,
-                            object    : this.objectSelected,
-                            timestamp : new Date()
-                        });
-                    }
-                    else if (this.octreeSelected && !auxOctreeSelected)
-                    {
-                        this.emit(MagoManager.EVENT_TYPE.DESELECTEDF4DOBJECT, {
-                            type: MagoManager.EVENT_TYPE.DESELECTEDF4DOBJECT
-                        });
-                    }
-                }
-
-                this.buildingSelected = auxBuildingSelected;
-                this.octreeSelected = auxOctreeSelected;
-                this.nodeSelected = auxNodeSelected;
-                if (this.nodeSelected)
-                { this.rootNodeSelected = this.nodeSelected.getRoot(); }
-                else
-                { this.rootNodeSelected = undefined; }
-
-                this.arrayAuxSC.length = 0;
-                if (this.buildingSelected !== undefined)
-                {
-                    this.displayLocationAndRotation(this.buildingSelected);
-                    this.selectedObjectNotice(this.buildingSelected);
-                }
-                if (this.objectSelected !== undefined)
-                {
-                    //this.displayLocationAndRotation(currentSelectedBuilding);
-                    //this.selectedObjectNotice(currentSelectedBuilding);
-                    //console.log("objectId = " + selectedObject.objectId);
-                }
-
-                if (selectionManager.currentGeneralObjectSelected)
-                {
-                    this.emit(MagoManager.EVENT_TYPE.SELECTEDGENERALOBJECT, {
-                        type          : MagoManager.EVENT_TYPE.SELECTEDGENERALOBJECT,
-                        generalObject : selectionManager.currentGeneralObjectSelected,
-                        timestamp     : new Date()
-                    });
-                }
-                else if (selectedGeneralObject && !selectionManager.currentGeneralObjectSelected)
-                {
-                    this.emit(MagoManager.EVENT_TYPE.DESELECTEDGENERALOBJECT, {
-                        type: MagoManager.EVENT_TYPE.DESELECTEDGENERALOBJECT
-                    });
-                }
-
-                // Test flyTo by topology.******************************************************************************
-                var selCandidatesEdges = selectionManager.getSelectionCandidatesFamily("networkEdges");
-                var selCandidatesNodes = selectionManager.getSelectionCandidatesFamily("networkNodes");
-                var flyed = false;
-                if (selCandidatesEdges)
-                {
-                    var edgeSelected = selCandidatesEdges.currentSelected;
-                    if (edgeSelected && edgeSelected.vtxSegment)
-                    {
-                        // calculate the 2 positions of the edge.***
-                        var camPos = this.sceneState.camera.position;
-                        var vtxSeg = edgeSelected.vtxSegment;
-                        var pos1 = new Point3D();
-                        var pos2 = new Point3D();
-                        pos1.copyFrom(vtxSeg.startVertex.point3d);
-                        pos2.copyFrom(vtxSeg.endVertex.point3d);
-                        pos1.add(0.0, 0.0, 1.7); // add person height.***
-                        pos2.add(0.0, 0.0, 1.7); // add person height.***
-
-
-                        // calculate pos1 & pos2 to worldCoordinate.***
-                        // Need the building tMatrix.***
-                        var network = edgeSelected.networkOwner;
-                        var node = network.nodeOwner;
-                        var geoLocDataManager = node.data.geoLocDataManager;
-                        var geoLoc = geoLocDataManager.getCurrentGeoLocationData();
-                        var tMat = geoLoc.tMatrix;
-
-                        // To positions must add "pivotPointTraslation" if exist.***
-                        // If building moved to bboxCenter, for example, then exist "pivotPointTraslation".***
-                        var pivotTranslation = geoLoc.pivotPointTraslationLC;
-                        if (pivotTranslation)
-                        {
-                            pos1.add(pivotTranslation.x, pivotTranslation.y, pivotTranslation.z);
-                            pos2.add(pivotTranslation.x, pivotTranslation.y, pivotTranslation.z);
-                        }
-
-                        var worldPos1 = tMat.transformPoint3D(pos1, undefined);
-                        var worldPos2 = tMat.transformPoint3D(pos2, undefined);
-
-                        // select the farestPoint to camera.***
-                        var dist1 = camPos.squareDistToPoint(worldPos1);
-                        var dist2 = camPos.squareDistToPoint(worldPos2);
-                        var pointSelected;
-                        if (dist1<dist2)
-                        {
-                            pointSelected = worldPos2;
-                        }
-                        else
-                        { pointSelected = worldPos1; }
-
-                        // now flyTo pointSelected.***
-                        this.flyToTopology(pointSelected, 2);
-                        flyed = true;
-                    }
-                }
-                if (!flyed && selCandidatesNodes)
-                {
-                    var nodeSelected = selCandidatesNodes.currentSelected;
-                    if (nodeSelected)
-                    {
-                        // calculate the 2 positions of the edge.***
-                        var camPos = this.sceneState.camera.position;
-                        var pos1 = new Point3D(nodeSelected.position.x, nodeSelected.position.y, nodeSelected.position.z);
-                        pos1.add(0.0, 0.0, 1.7); // add person height.***
-
-
-                        // calculate pos1 & pos2 to worldCoordinate.***
-                        // Need the building tMatrix.***
-                        var network = nodeSelected.networkOwner;
-                        var node = network.nodeOwner;
-                        var geoLocDataManager = node.data.geoLocDataManager;
-                        var geoLoc = geoLocDataManager.getCurrentGeoLocationData();
-                        var tMat = geoLoc.tMatrix;
-
-                        // To positions must add "pivotPointTraslation" if exist.***
-                        // If building moved to bboxCenter, for example, then exist "pivotPointTraslation".***
-                        var pivotTranslation = geoLoc.pivotPointTraslationLC;
-                        if (pivotTranslation)
-                        {
-                            pos1.add(pivotTranslation.x, pivotTranslation.y, pivotTranslation.z);
-                        }
-
-                        var worldPos1 = tMat.transformPoint3D(pos1, undefined);
-
-                        // now flyTo pointSelected.***
-                        this.flyToTopology(worldPos1, 2);
-                        flyed = true;
-                    }
-                }
-                // End Test flyTo by topology.******************************************************************************
-
-            }
-
-            this.selectionColor.init(); // selection colors manager.***
-        }
-
-        this.selectionFbo.unbind();
-        gl.enable(gl.CULL_FACE);
-    };
 
 /**
  * Provisional function.
@@ -57649,7 +57372,7 @@ var TinTerrainManager = function()
 	this.tinTerrainsQuadTreeAmerica; // Use if this imageryType = CODE.imageryType.CRS84.
 	this.tinTerrainQuadTreeMercator; // Use if this imageryType = CODE.imageryType.WEB_MERCATOR.
 	
-	this.geoServURL = "http://ds3d10.57:9090/geoserver/gwc/service/wmts";
+	this.geoServURL = "http://localhost:9090/geoserver/gwc/service/wmts";
 	
 	// Elevation model or plain ellipsoid.
 	// terrainType = 0 -> terrainPlainModel.

@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-//import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,7 @@ class ConvertJsonTest {
 		private List<DataInfo> datas;
 		private String dataGroupKey;
 	}
-	/*
+
 	@Test
 	void test() {
 		try {
@@ -77,5 +77,5 @@ class ConvertJsonTest {
 		}
 
 	}
-*/
+
 }

@@ -43,8 +43,8 @@ public class SimulationRestController {
 	private final CivilVoiceService civilVoiceService;
 	private final CivilVoiceCommentService civilVoiceCommentService;
 	private final SimuServiceImpl simServiceImpl;
-	String PREFIX_URL = "C:\\data\\mago3d\\normal-upload-data\\";
-	String SAVE_PATH = "C:\\data\\mago3d\\normal-upload-data\\";
+	String PREFIX_URL = "F:\\data\\mago3d\\normal-upload-data\\";
+	String SAVE_PATH = "F:\\data\\mago3d\\normal-upload-data\\";
 
 	public SimulationRestController(CivilVoiceService civilVoiceService, CivilVoiceCommentService civilVoiceCommentService, SimuServiceImpl simServiceImpl) {
 		this.civilVoiceService = civilVoiceService;
@@ -57,7 +57,7 @@ public class SimulationRestController {
 	public Object select() {
 		SimFileMaster sfm =  this.simServiceImpl.getSimFileMaster();
 //		String resultFullPath = sfm.getSaveFilePath() + sfm.getSaveFileName();
-		String resultFullPath = "C://data/Apartment_Building_26_obj/schoolphill.geojson";
+		String resultFullPath = "F://data/Apartment_Building_26_obj/schoolphill.geojson";
 
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("mac")) {
@@ -180,7 +180,7 @@ public class SimulationRestController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Object cityPlanModelSelect(String FileName, String preDir) {
 //		String path1 = FileName.substring(0, FileName.lastIndexOf("."));
-    	String resultFullPath = "C:\\data\\mago3d\\objects\\" + preDir + "\\" + FileName;
+    	String resultFullPath = "F:\\data\\mago3d\\objects\\" + preDir + "\\" + FileName;
     	String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("mac")) {
 			resultFullPath = "/Users/junho/data/mago3d/objects/" + preDir + "/" + FileName;
@@ -199,7 +199,7 @@ public class SimulationRestController {
 	@RequestMapping(value = "/cityPlanModelSelect2", method = RequestMethod.GET)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public Object cityPlanModelSelect2(String FileName, String preDir, String preDir2) {
-		String resultFullPath = "C:\\data\\mago3d\\building_obj\\" + preDir + "\\" + preDir2 + "\\" + FileName;
+		String resultFullPath = "F:\\data\\mago3d\\building_obj\\" + preDir + "\\" + preDir2 + "\\" + FileName;
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("mac")) {
 			resultFullPath = "/Users/junho/data/mago3d/building_obj/" + preDir + "/" + preDir2 + "/" + FileName;
@@ -217,7 +217,7 @@ public class SimulationRestController {
 	@RequestMapping(value = "/cityPlanModelSelect3", method = RequestMethod.GET)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public Object cityPlanModelSelect3(String FileName, String preDir) {
-		String resultFullPath = "C:\\data\\mago3d\\building_obj\\" + preDir + "\\" + FileName;
+		String resultFullPath = "F:\\data\\mago3d\\building_obj\\" + preDir + "\\" + FileName;
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("mac")) {
 			resultFullPath = "/Users/junho/data/mago3d/building_obj/" + preDir + "/" + FileName;
@@ -236,8 +236,8 @@ public class SimulationRestController {
 	@RequestMapping(value = "/getAccepBuildF4dJsonFile", method = RequestMethod.GET)
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public Object getAccepBuildF4dJsonFile(String fileName) {
-//    	String resultFullPath = "C:\\data\\Apartment_Building_26_obj\\Apartment_Building_26_obj.gltf";
-		String resultFullPath = "C:\\data\\Apartment_Building_26_obj\\" + fileName;
+//    	String resultFullPath = "F:\\data\\Apartment_Building_26_obj\\Apartment_Building_26_obj.gltf";
+		String resultFullPath = "F:\\data\\Apartment_Building_26_obj\\" + fileName;
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("mac")) {
 //			resultFullPath = "/Users/junho/data/mago3d/building_obj/Apartment_Building_26_obj.gltf";
@@ -266,7 +266,7 @@ public class SimulationRestController {
 		// 세종/부산, 면단계인지 정보를 통해 파일을 가져온다.
 
 		// 가져온 파일에서 LonLats.json만을 추출한다.
-		String resultFullPath = "C:\\data\\Apartment_Building_26_obj\\" + fileName;
+		String resultFullPath = "F:\\data\\Apartment_Building_26_obj\\" + fileName;
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.contains("mac")) {
 			resultFullPath = "/Users/junho/data/mago3d/building_obj/CesiumMilkTruck.gltf";

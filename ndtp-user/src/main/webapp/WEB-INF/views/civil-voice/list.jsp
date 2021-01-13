@@ -22,18 +22,6 @@
 			<ul id="civilVoicePagination" class="pagination"></ul>
 		</div>
 </div>
-<style>
-	.button-group-align {
-		height: auto;
-	}
-</style>
-
-
-
-
-
-
-
 <!-- E: 시민참여 목록 -->
 <%@ include file="/WEB-INF/views/civil-voice/detail.jsp" %>
 <%@ include file="/WEB-INF/views/civil-voice/input.jsp" %>
