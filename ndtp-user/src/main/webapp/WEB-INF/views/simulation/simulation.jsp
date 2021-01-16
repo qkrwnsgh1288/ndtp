@@ -411,40 +411,101 @@
 		<p>지자체 문화재 현상변경지원<span class="collapse-icon">icon</span></p>
 		<div class="listContents">
 			<ul class="analysisGroup">
-				<li>
-					<div style="display: flex;align-items: center;justify-content: space-between;">
-						<label>문화재 확인</label>
-						<button type="button" class="btnTextF">실행</button>
-					</div>
-					<div style="display: flex;align-items: center;justify-content: space-between;">
-						<label for="">현상변경 허가 대상지 확인</label>
-						<button type="button" class="btnTextF">실행</button>
-					</div>
-					<div style="display: flex;align-items: center;justify-content: space-between;">
-						<label for="">현상변경 허가 대상지 확인</label>
-						<button type="button" class="btnTextF">실행</button>
-					</div>
+				<li style="display:block;">
+					<label for="addrSearchCH" style="width:50px;">주소: </label>
+					<input id="addrSearchCH" type="text" style="width: 190px;">
+					<button type="button" id="addrSearchBtnCH" class="btnTextF" style="float: right; margin-top: 5px;">검색</button>
+				</li>
+				<li style="display:block;">
+					<label for="SearchCH" style="width:50px;">문화재 보기: </label>
+					<button type="button" id="SearchCH" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
+				</li>
+				<li style="display:block;">
+					<label for="permitAreaBtn" style="width:50px;">허가 대상 범위: </label>
+					<button type="button" id="permitAreaBtn" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
+					<select id="permitAreaVisible" name="iotDataStatus" style="width:150px; ">
+						<option value="0">활성</option>
+						<option value="1">비활성</option>
+					</select>
+				</li>
+				<li style="display:block;">
+					<label for="delBuildBtn" style="width:50px;">건물 제거: </label>
+					<button type="button" id="delBuildBtn" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
+				</li>
+				<li style="display:block;">
+					<label for="addBuildBtn" style="width:50px;">건물 추가: </label>
+					<button type="button" id="addBuildBtn" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
+				</li>
+				<li style="display:block;">
+					<label for="permitAreaSim" style="width:50px;">현상 변경 시뮬레이션: </label>
+					<button type="button" id="permitAreaSim" class="btnTextF" style="float: right; margin-top: 5px;">실행</button>
 				</li>
 			</ul>
 		</div>
 	</li>
 	<li>
-		<p>지자체 소규모 재개발지원<span class="collapse-icon">icon</span></p>
+		<p>지자체 재개발 지원<span class="collapse-icon">icon</span></p>
 		<div class="listContents">
 			<ul class="analysisGroup">
-				<li>
-					<div style="display: flex;align-items: center;justify-content: space-between;">
-						<label>문화재 확인</label>
-						<button type="button" class="btnTextF">실행</button>
+				<li style="display:block;">
+					<label for="addrSearchRD" style="width:50px;">주소: </label>
+					<input id="addrSearchRD" type="text" style="width: 190px;">
+					<button type="button" id="addrSearchBtnRD" class="btnTextF" style="float: right; margin-top: 5px;">검색</button>
+				</li>
+				<li style="display:block;">
+					<div class="list">
+						<table class="list-table scope-col">
+							<caption>지자체 영역 선택</caption>
+							<colgroup>
+								<col class="col-name">
+								<col class="col-name">
+								<col class="col-name">
+								<col class="col-name">
+								<col class="col-name">
+								<col class="col-name">
+							</colgroup>
+							<thead>
+							<tr>
+								<th scope="col" class="col-name"></th>
+								<th scope="col" class="col-name">영역</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr align="center">
+								<td class="col-checkbox">
+									<input type="checkbox"/>
+								</td>
+								<td>A 블록</td>
+							</tr>
+							<tr align="center">
+								<td class="col-checkbox">
+									<input type="checkbox"/>
+								</td>
+								<td>B 블록</td>
+							</tr>
+							<tr align="center">
+								<td class="col-checkbox">
+									<input type="checkbox"/>
+								</td>
+								<td>C 블록</td>
+							</tr>
+							<tr align="center">
+								<td class="col-checkbox">
+									<input type="checkbox"/>
+								</td>
+								<td>D 블록</td>
+							</tr>
+							</tbody>
+						</table>
 					</div>
-					<div style="display: flex;align-items: center;justify-content: space-between;">
-						<label for="">현상변경 허가 대상지 확인</label>
-						<button type="button" class="btnTextF">실행</button>
-					</div>
-					<div style="display: flex;align-items: center;justify-content: space-between;">
-						<label for="">현상변경 허가 대상지 확인</label>
-						<button type="button" class="btnTextF">실행</button>
-					</div>
+				</li>
+				<li style="display:block;">
+					<label for="buildOldAnals" style="width:50px;">건물 노후도 분석: </label>
+					<button type="button" id="buildOldAnals" class="btnTextF" style="float: right; margin-top: 5px;">실행</button>
+				</li>
+				<li style="display:block;">
+					<label for="regulationsChkBtn" style="width:50px;">건물 규제 사항 확인: </label>
+					<button type="button" id="regulationsChkBtn" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
 				</li>
 			</ul>
 		</div>
@@ -493,6 +554,52 @@
 				</form>
 				<div style="margin-top:5px; float: right">
 					<button id="upload_constructionProcess" class="btnTextF" style="margin-left:5px" title="업로드">업로드</button>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<!-- 문화제(CH) 건물 업로드 -->
+<div id="CHUploadDialog" title="건물 업로드">
+	<div class="listContents">
+		<ul class="analysisGroup">
+			<li>
+				<form id="uploadCHForm" name="file_upload" style="width:100%" target="dummyConsProcessFrame">
+					<div>
+						<input type="file" name="files" style="width:80%" multiple>
+					</div>
+				</form>
+				<div style="margin-top:5px; float: right">
+					<button id="uploadCHBtn" class="btnTextF" style="margin-left:5px" title="업로드">업로드</button>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<!-- 문화제(CH) 현상변경 신청 -->
+<div id="CHReportUploadDialog" title="문화제 현상 변경 신청">
+	<div class="listContents">
+		<ul class="analysisGroup">
+			<li>
+				<form id="uploadReportCHForm" name="file_upload" style="width:100%" target="dummyConsProcessFrame">
+					<div>신청인</div>
+					<div>성명 : 홍길동</div>
+					<div>주소 : 부산시 강서구 명지 1동 1-15</div>
+					<div>연락처 : 010-555-5555</div>
+
+					<div>대상문화제</div>
+					<div>명칭 : 금정산성</div>
+					<div>종류 : 국가지정문화재</div>
+					<div>지정(등록)번호 : 사적 제 215호</div>
+
+					<div>
+						<input type="file" name="files" style="width:80%" multiple>
+					</div>
+				</form>
+				<div style="margin-top:5px; float: right">
+					<button id="uploadReportCHBtn" class="btnTextF" style="margin-left:5px" title="업로드">업로드</button>
 				</div>
 			</li>
 		</ul>

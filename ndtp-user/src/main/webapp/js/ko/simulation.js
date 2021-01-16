@@ -3369,6 +3369,318 @@ var Simulation = function(magoInstance, viewer, $) {
         });
 	};
 
+	/**
+	 * 2021-01-16 API
+	 */
+
+	/**
+	 * 특정 위치로 이동
+	 * @param lon
+	 * @param lat
+	 * @param alt
+	 */
+	function flyTo(lon, lat, alt) {
+		_viewer.camera.flyTo({
+			destination : Cesium.Cartesian3.fromDegrees(lon, lat, alt)
+		});
+	}
+
+	/**
+	 * 라벨 딸린 폴리곤 생성
+	 * @param result [lon, lat, ... ]
+	 * @param color Cesium.Color.YELLOW
+	 */
+	function drawLabelPolygon(labelText, result, color) {
+		const polyPosi = new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(result));
+		const polygonEntitiy = viewer.entities.add({
+			polygon : {
+				hierarchy : polyPosi,
+				material : color,
+				perPositionHeight: true,
+				outline : true,
+				outlineColor : color,
+				clampToGround: true
+			},
+			label: {
+				text: labelText,
+				scale :0.5,
+				font: "normal normal bolder 22px Helvetica",
+				fillColor: Cesium.Color.BLACK,
+				outlineColor: Cesium.Color.WHITE,
+				outlineWidth: 1,
+				//scaleByDistance : new Cesium.NearFarScalar(500, 1.2, 1200, 0.0),
+				heightReference : Cesium.HeightReference.CLAMP_TO_GROUND,
+				style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+				//translucencyByDistance : new Cesium.NearFarScalar(1200, 1.0, 2000, 0.0),
+				distanceDisplayCondition : new Cesium.DistanceDisplayCondition(0.0, 2000)
+			}
+		});
+		return polygonEntitiy;
+	}
+
+	/**
+	 * Point 객체 생성, ellipse 기본 invisible
+	 * @param labelText 라벨 텍스트
+	 * @param lon 위도
+	 * @param lat 경도
+	 * @param alt 고도도	 * @param color
+	 * @returns {*}
+	 */
+	function drawLabelPoint(labelText, lon, lat, color) {
+		let worldPosition = Cesium.Cartesian3.fromDegrees(lon, lat);
+		const pointEntitiy = viewer.entities.add({
+			position: worldPosition,
+			point: {
+				color: color,
+				pixelSize: 10,
+				outlineColor: Cesium.Color.YELLOW,
+				outlineWidth: 2,
+				disableDepthTestDistance: Number.POSITIVE_INFINITY,
+				heightReference: opt?.heightReference ?? Cesium.HeightReference.CLAMP_TO_GROUND
+			},
+			ellipse: {
+				semiMinorAxis: 200000.0,
+				semiMajorAxis: 200000.0,
+				material: Cesium.Color.fromRandom({ alpha: 0.5 }),
+				show: false,
+				heightReference: opt?.heightReference ?? Cesium.HeightReference.CLAMP_TO_GROUND
+			},
+			label: {
+				text: labelText,
+				scale :0.5,
+				font: "normal normal bolder 22px Helvetica",
+				fillColor: Cesium.Color.BLACK,
+				outlineColor: Cesium.Color.WHITE,
+				outlineWidth: 1,
+				//scaleByDistance : new Cesium.NearFarScalar(500, 1.2, 1200, 0.0),
+				heightReference : Cesium.HeightReference.CLAMP_TO_GROUND,
+				style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+				//translucencyByDistance : new Cesium.NearFarScalar(1200, 1.0, 2000, 0.0),
+				distanceDisplayCondition : new Cesium.DistanceDisplayCondition(0.0, 2000)
+			}
+		});
+		return pointEntitiy;
+	}
+
+	/**
+	 * 1. 영토로 이동
+	 * 2. 폴리곤 표시
+	 * 3. 주소 라벨 표시
+	 */
+	$('#addrSearchBtnCH').click(function() {
+		// 1.
+		flyTo(128.91106729407082,  35.09558962505989, 4000);
+
+		//2. 3.
+		const pos = [128.92232988571374, 35.09836372908023, 128.92284805327168, 35.098306244647, 128.92291915684004, 35.09822089796658,
+		128.92287391259066, 35.09795239578484, 128.9227984830998,  35.09789943173056, 128.92227070282547, 35.09794082699364]
+		drawLabelPolygon('ㅁㅁㅁㅁ', pos, Cesium.Color.YELLOW);
+	})
+
+
+	/**
+	 *	1. 줌 아웃
+	 *  2. 문화재 표시
+	 *  3. 	문화재 클릭 시 문화재 정보 표시(해당 모달은 활성 비활성)
+	 */
+	const CHArr = [];
+	$('#SearchCH').click(function() {
+		const CH = {
+			'문화제-우': [128.92415734011402, 35.099766052939],
+			'문화제-아래': [128.91558909801554, 35.092528067288306],
+			'문화제-위': [128.92660845059427, 35.11026614910661],
+			'문화제-가까운': [128.90322098161187, 35.10895028785612],
+			'문화제-중간': [128.90939479526745, 35.09527807090374]
+		}
+		let str = '문화제-우';
+		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1], Cesium.Color.RED));
+		str = '문화제-아래';
+		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1], Cesium.Color.RED));
+		str = '문화제-위';
+		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1], Cesium.Color.RED));
+		str = '문화제-가까운';
+		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1], Cesium.Color.RED));
+		str = '문화제-중간';
+		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1], Cesium.Color.RED));
+	});
+
+	/**
+	 * 1. 활성 => 원형 형태로 표시(높이정보 표출 가능하면 같이 표시)
+	 * 1. 비활성 => 원형 형태로 표시(비활성)
+	 */
+	$('#permitAreaBtn').click(function() {
+		debugger;
+		if($('#permitAreaVisible').val() === 0) {
+			CHArr.forEach(p => p.ellipse.show = true);
+		} else {
+			CHArr.forEach(p => p.ellipse.show = false);
+		}
+	});
+
+	/**
+	 * 1. 해당 폴리곤 내 건물 숨기기
+	 */
+	$('#delBuildBtn').click(function() {
+
+		// const buildings = shadowSystem.getPickLayerBuilding(lonlats);
+		// buildings.forEach(p => p.attributes.isVisible = false);
+	});
+
+	/**
+	 * 1. 업로드 팝업창 생성
+	 * 2. 위치선택
+	 * 3. 건물업로드
+	 */
+	$('#addBuildBtn').click(function() {
+		CHUploadDialog.dialog("open");
+	});
+
+	/**
+	 * 1. case 1.
+	 *   -> 현상변경 허가 대상 아님 알림
+	 * 1. case 2.
+	 *   -> 현상변경 허가 대상임.
+	 *   -> 확인 누를 시 형상변경 신청 모달 슝
+	 */
+	$('#permitAreaSim').click(function() {
+		const flag = 0;
+		if(flag === 0) {
+			alert('현상변경 허가 대상이 아님');
+		} else {
+			const confirmQ = confirm("허가 대상입니다. 허가 신청 하시겠습니까?");
+			if(confirmQ) {
+				CHReportUploadDialog.dialog('open');
+			} else {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+
+	/**
+	 * 두가지 케이스로 나뉨
+	 * 1. 허가 변경 대상일때
+	 * 2. 허가 변경 대상이 아닐때
+	 * @type {Window.jQuery|*}
+	 */
+	const CHUploadDialog = $('#CHUploadDialog').dialog({
+		autoOpen: false,
+		modal: true,
+		overflow : "auto",
+		resizable: false,
+		buttons: [
+			{
+				text: "확인",
+				click: function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		]
+	});
+
+	/**
+	 * 문화제 형상변경 레포트 제출
+	 * @type {Window.jQuery|*}
+	 */
+	const CHReportUploadDialog = $('#CHReportUploadDialog').dialog({
+		autoOpen: false,
+		modal: true,
+		overflow : "auto",
+		resizable: false,
+		buttons: [
+			{
+				text: "확인",
+				click: function() {
+					$( this ).dialog( "close" );
+					alert('문화재 현상변경 허가 신청이 완료되었습니다.');
+				}
+			}
+		]
+	});
+
+	/**
+	 * 현상 변경 모달 관련 객체 구현
+	 * 확인 누르면 해당 팝업 꺼지면 됨.
+	 */
+	const permitAreaConfirmModal = {
+
+	}
+
+	/**
+	 * 명지 1동 영역 가시화(shp 있는지 확인)
+	 */
+	$('#addrSearchBtnRD').click(function() {
+		// const fileName = "Parcel6-4.geojson";
+		const fileName = "6-4_disApart.geojson";
+		const obj = {
+			width : 5,
+			leadTime : 0,
+			trailTime : 100,
+			resolution : 5,
+			strokeWidth: 0,
+			stroke: Cesium.Color.AQUA.withAlpha(0.0),
+			fill: Cesium.Color.AQUA.withAlpha(0.8),
+			clampToGround: true
+		};
+		let url = "/data/simulation-rest/drawGeojson?fileName=" + fileName;
+
+		Cesium.GeoJsonDataSource.load(url, obj).then(function(dataSource) {
+			let entitis = dataSource.entities._entities._array;
+
+			for(let index in entitis) {
+				let entitiyObj = entitis[index];
+				let registeredEntity = _viewer.entities.add(entitiyObj);
+				registeredEntity.name = "sejong_apartmentComplex1";
+
+				registeredEntity.polygon.extrudedHeightReference = 2;
+				// registeredEntity.polygon.heightReference = 1;
+
+				Cesium.knockout.getObservable(viewModel, 'standardFloorCount').subscribe(
+					function(newValue) {
+						registeredEntity.polygon.extrudedHeight = newValue * 4;
+					}
+				);
+				allObject[val].terrain = registeredEntity;
+			}
+
+			_viewer.selectedEntity = allObject[pickedName].terrain;
+		}, function(err) {
+			console.log(err);
+		});
+	});
+
+	/**
+	 * 선택 됬을때 해당 영역 폴리곤 활성화
+	 * 선택 해제 됬을때 해당 영역 폴리곤 비활성화
+	 */
+	$('').change(function(e) {
+		const statusChecked = $(e.currentTarget).is(':checked');
+		if(statusChecked) {
+
+		} else {
+
+		}
+		debugger;
+	});
+
+	/**
+	 * 1. A, B, C가 선택 되었다면 1.png 호출
+	 * 2. B, C, D가 선택 되었다면 2.png 호출
+	 */
+	$('#buildOldAnals').click(function() {
+
+	});
+
+	/**
+	 * 1. A, B, C가 선택 되었다면 1.png 호출
+	 * 2. B, C, D가 선택 되었다면 2.png 호출
+	 */
+	$('#buildOldAnals').click(function() {
+
+	});
+
+
+
+
 
 };
 
