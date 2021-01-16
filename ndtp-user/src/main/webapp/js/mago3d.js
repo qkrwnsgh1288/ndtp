@@ -34708,29 +34708,91 @@ SmartTile.prototype.parseSmartTileF4d = function(dataArrayBuffer, magoManager)
 		var dataGroupId = (new Int32Array(dataArrayBuffer.slice(bytesReaded, bytesReaded+4)))[0]; bytesReaded += 4;
 		var endMark = (new Int8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded+1)))[0]; bytesReaded += 1;
 
+        if (endMark > 0) {
+            var dataKeyLength = new Uint16Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 2))[0];
+            bytesReaded += 2;
+            var dataKey = enc.decode(new Int8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + dataKeyLength)));
+            bytesReaded += dataKeyLength;
+            var dataNameLength = new Uint16Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 2))[0];
+            bytesReaded += 2;
+            var dataName = enc.decode(new Int8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + dataNameLength)));
+            bytesReaded += dataNameLength;
+            endMark = new Int8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 1))[0];
+            bytesReaded += 1;
+        } // Now, read attributtes.
+
 		var externInfo = {};
-		while (endMark > 0)
-		{
-			// There are more data.
-			if (endMark === 5) // the next data is string type data.***
-			{
-				// read the stringKey.
-				var dataKeyLength = (new Uint16Array(dataArrayBuffer.slice(bytesReaded, bytesReaded+2)))[0]; bytesReaded += 2;
-				var dataKey = enc.decode(new Int8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded+ dataKeyLength))) ;bytesReaded += dataKeyLength;
-				
-				// read the string value.
-				var dataValueLength = (new Uint16Array(dataArrayBuffer.slice(bytesReaded, bytesReaded+2)))[0]; bytesReaded += 2;
-				var charArray = new Uint8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded+ dataValueLength)); bytesReaded += dataValueLength;
-				//var dataValue = enc.decode(new Int8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded+ dataValueLength))) ;bytesReaded += dataValueLength;
-				var decoder = new TextDecoder('utf-8');
-				var dataValueUtf8 = decoder.decode(charArray);
-				
-				// Put the readed data into externInfo.***
-				externInfo[dataKey] = dataValueUtf8;
-			}
-			
-			endMark = (new Int8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded+1)))[0]; bytesReaded += 1;
-		}
+        while (endMark > 0) {
+            // There are more data.
+            // 0 = there are not next data.***
+            // 1 = bool
+            // 2 = char
+            // 3 = short
+            // 4 = int
+            // 5 = string
+            // 6 = float
+            // 50 = keyValueDatasList.
+            // 1rst, read the stringKey.
+            var dataKeyLength = new Uint16Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 2))[0];
+            bytesReaded += 2;
+            var dataKey = enc.decode(new Int8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + dataKeyLength)));
+            bytesReaded += dataKeyLength;
+
+            if (endMark === 1) // the next data is bool type data.***
+            {
+                // read the bool value.
+                var boolValue = new Uint8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 1))[0];
+                bytesReaded += 1; // Put the readed data into externInfo.***
+
+                externInfo[dataKey] = boolValue ? true : false;
+            } else if (endMark === 2) // the next data is char type data.***
+            {
+                // read the char value.
+                var charValue = new Uint8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 1))[0];
+                bytesReaded += 1; //if(dataKey === 'heightReference') {
+                //	charValue = HeightReference.getValueByOrdinal(charValue);
+                //}
+                // Put the readed data into externInfo.***
+
+                externInfo[dataKey] = charValue;
+            } else if (endMark === 3) // the next data is short type data.***
+            {
+                // read the short value.
+                var shortValue = new Uint16Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 2))[0];
+                bytesReaded += 2; // Put the readed data into externInfo.***
+
+                externInfo[dataKey] = shortValue;
+            } else if (endMark === 4) // the next data is int type data.***
+            {
+                // read the int value.
+                var intValue = new Uint32Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 4))[0];
+                bytesReaded += 4; // Put the readed data into externInfo.***
+
+                externInfo[dataKey] = intValue;
+            } else if (endMark === 5) // the next data is string type data.***
+            {
+                // read the string value.
+                var dataValueLength = new Uint16Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 2))[0];
+                bytesReaded += 2;
+                var charArray = new Uint8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + dataValueLength));
+                bytesReaded += dataValueLength; //var dataValue = enc.decode(new Int8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded+ dataValueLength))) ;bytesReaded += dataValueLength;
+
+                var decoder = new TextDecoder('utf-8');
+                var dataValueUtf8 = decoder.decode(charArray); // Put the readed data into externInfo.***
+
+                externInfo[dataKey] = dataValueUtf8;
+            } else if (endMark === 6) // the next data is float type data.***
+            {
+                // read the float value.
+                var floatValue = new Float32Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 4))[0];
+                bytesReaded += 4; // Put the readed data into externInfo.***
+
+                externInfo[dataKey] = floatValue;
+            }
+
+            endMark = new Int8Array(dataArrayBuffer.slice(bytesReaded, bytesReaded + 1))[0];
+            bytesReaded += 1;
+        }
 
 		if (!attributes.isReference) 
 		{

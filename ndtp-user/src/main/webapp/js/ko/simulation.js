@@ -141,7 +141,7 @@ var Simulation = function(magoInstance, viewer, $) {
 	function F4DLoadEnd(evt) {
 		const _projectsMap = MAGO3D_INSTANCE.getMagoManager().hierarchyManager.projectsMap;
 		for(const obj of evt.f4d){
-			const rootNode = _projectsMap[obj.data.projectFolderName];
+			const rootNode = _projectsMap[obj.data.dataGroupId];
 			const node = rootNode[obj.data.nodeId];
 			const dataId = node.data.nodeId;
 			if(rootNode.attributes.consType === 'CONSTPROCSEJON') {
