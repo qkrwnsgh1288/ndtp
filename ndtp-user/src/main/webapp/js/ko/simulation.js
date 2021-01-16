@@ -726,6 +726,7 @@ var Simulation = function(magoInstance, viewer, $) {
 				console.log("아무것도 선택되지 않았습니다.");
 		}
 	});
+
 	$("#curLocation").change((value) => {
 		let val = value.target.value;
 		let height = 2000;
@@ -734,6 +735,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			destination : Cesium.Cartesian3.fromDegrees(locationList[val][0], locationList[val][1], height)
 		});
 	});
+
 	$("#selectPiece").change((value) => {
 		let val = value.target.value;
 		switch (val) {
@@ -939,6 +941,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			console.log("val is empty or undefined");
 		}
 	});
+
 	$("#districtType").change((value) => {
 		let val = value.target.value;
 		if (pickedName === "") {
@@ -1232,6 +1235,7 @@ var Simulation = function(magoInstance, viewer, $) {
 	$("#inputBuildingHeight").change(()=> {
 		floorAreaRatioCalc();
 	});
+
 	$("#inputCustomizing").change(() => {
 		floorAreaRatioCalc();
 	});
@@ -1254,6 +1258,7 @@ var Simulation = function(magoInstance, viewer, $) {
 		}
 		$("#curBuildingToLandRatio").val(result.toFixed(2));
 	}
+
 	// 용적율 계산 및 view (연면적 / 대지면적)
 	function floorAreaRatioCalc() {
 		if (pickedName === "") {
@@ -1280,6 +1285,7 @@ var Simulation = function(magoInstance, viewer, $) {
 		});
 		return sum;
 	}
+
 	function settingDistrictDisplay() {
 		if (allObject[pickedName].terrain.show) {
 			$("#districtDisplay").val("enable");
@@ -1287,6 +1293,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			$("#districtDisplay").val("disable");
 		}
 	}
+
 	function settingBuildingShadow() {
 		if (allObject[pickedName].shadowView) {
 			$("#buildingShadow").val("enable");
@@ -1593,6 +1600,7 @@ var Simulation = function(magoInstance, viewer, $) {
             drawingMode = 'line';
 		}
     });
+
 	$("#objectSelect").change(value => {
 		runAllocBuildStat = value.target.value;
 
@@ -3360,6 +3368,8 @@ var Simulation = function(magoInstance, viewer, $) {
             }
         });
 	};
+
+
 };
 
 const f4dDataGenMaster = {

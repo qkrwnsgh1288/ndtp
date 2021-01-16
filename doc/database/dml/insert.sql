@@ -72,7 +72,7 @@ values
     (1002, '1', '0', '데이터', 'DATA', 1002, 0, 1, 2, '/data/map', null, 'dataMenu', 'dataContent', 'data', 'Y', 'Y', 'Y'),
     (1003, '1', '0', '변환', 'CONVERTER', 1003, 0, 1, 3, '/upload-data/list', null, 'converterMenu', 'converterContent', 'converter', 'Y', 'Y', 'Y'),
     (1004, '1', '0', '공간분석', 'SPATIAL', 1004, 0, 1, 4, '/spatial', null, 'spatialMenu', 'spatialContent', 'spatial', 'Y', 'Y', 'Y'),
-    (1005, '1', '0', '시뮬레이션', 'SIMULATION', 1005, 0, 1, 5, '/simulation', null, 'simulationMenu', 'simulationContent', 'simulation', 'Y', 'Y', 'Y'),
+    (1005, '1', '0', '서비스', 'SIMULATION', 1005, 0, 1, 5, '/simulation', null, 'simulationMenu', 'simulationContent', 'simulation', 'Y', 'Y', 'Y'),
     (1006, '1', '0', '시민참여', 'CIVIL VOICE', 1006, 0, 1, 6, '/civil-voice/list', null, 'civilVoiceMenu', 'civilVoiceContent', 'civilVoice', 'Y', 'Y', 'Y'),
     (1007, '1', '0', '레이어', 'LAYER', 1007, 0, 1, 7, '/layer/list', null, 'layerMenu', 'layerContent', 'layer', 'Y', 'Y', 'Y'),
     (1008, '1', '0', '환경설정', 'USER POLICY', 1008, 0, 1, 8, '/user-policy/modify', null, 'userPolicyMenu', 'userPolicyContent', 'userPolicy', 'Y', 'Y', 'Y');
@@ -101,14 +101,14 @@ insert into geopolicy(	geopolicy_id)
 -- Role
 insert into role(role_id, role_name, role_key, role_target, role_type, use_yn, default_yn)
 values
-    (1, '[관리자 전용] 관리자 페이지 SIGN IN 권한', 'ADMIN_SIGNIN', '1', '0', 'Y', 'Y'),
-    (2, '[관리자 전용] 관리자 페이지 사용자 관리 권한', 'ADMIN_USER_MANAGE', '1', '0', 'Y', 'Y'),
-    (3, '[관리자 전용] 관리자 페이지 Layer 관리 권한', 'ADMIN_LAYER_MANAGE', '1', '0', 'Y', 'Y'),
+(1, '[관리자 전용] 관리자 페이지 SIGN IN 권한', 'ADMIN_SIGNIN', '1', '0', 'Y', 'Y'),
+(2, '[관리자 전용] 관리자 페이지 사용자 관리 권한', 'ADMIN_USER_MANAGE', '1', '0', 'Y', 'Y'),
+(3, '[관리자 전용] 관리자 페이지 Layer 관리 권한', 'ADMIN_LAYER_MANAGE', '1', '0', 'Y', 'Y'),
 
-	(4, '[사용자 전용] 사용자 페이지 SIGN IN 권한', 'USER_SIGNIN', '0', '0', 'Y', 'Y'),
-	(5, '[사용자 전용] 사용자 페이지 DATA 등록 권한', 'USER_DATA_CREATE', '0', '0', 'Y', 'Y'),
-	(6, '[사용자 전용] 사용자 페이지 DATA 조회 권한', 'USER_DATA_READ', '0', '0', 'Y', 'Y');
-
+(4, '[사용자 전용] 사용자 페이지 SIGN IN 권한', 'USER_SIGNIN', '0', '0', 'Y', 'Y'),
+(5, '[사용자 전용] 사용자 페이지 DATA 등록 권한', 'USER_DATA_CREATE', '0', '0', 'Y', 'Y'),
+(6, '[사용자 전용] 사용자 페이지 DATA 조회 권한', 'USER_DATA_READ', '0', '0', 'Y', 'Y'),
+(7, '[사용자 전용] 사용자 페이지 시민참여 관리 권한', 'USER_CIVIL_VOICE_MANAGE', '0', '0', 'Y', 'Y');
 
 
 -- 사용자 그룹별 메뉴
@@ -178,6 +178,8 @@ values
 	(NEXTVAL('user_group_menu_seq'), 2, 1007, 'Y'),
 	(NEXTVAL('user_group_menu_seq'), 2, 1008, 'Y');
 
+
+
 insert into user_group_role(user_group_role_id, user_group_id, role_id)
 values
 	(NEXTVAL('user_group_role_seq'), 1, 1),
@@ -202,28 +204,6 @@ values
 	(NEXTVAL('widget_seq'), 'civilVoiceWidget', 6, 'admin' ),
 	(NEXTVAL('widget_seq'), 'userAccessLogWidget', 7, 'admin' ),
 	(NEXTVAL('widget_seq'), 'dbcpStatusWidget', 8, 'admin' );
-
-
--- 운영 정책
-insert into policy(	policy_id, password_exception_char)
-			values( 1, '<>&''"');
-
--- 2D, 3D 운영 정책
-insert into geopolicy(	geopolicy_id)
-			values( 1 );
-
--- Role
-insert into role(role_id, role_name, role_key, role_target, role_type, use_yn, default_yn)
-values
-    (1, '[관리자 전용] 관리자 페이지 SIGN IN 권한', 'ADMIN_SIGNIN', '1', '0', 'Y', 'Y'),
-    (2, '[관리자 전용] 관리자 페이지 사용자 관리 권한', 'ADMIN_USER_MANAGE', '1', '0', 'Y', 'Y'),
-    (3, '[관리자 전용] 관리자 페이지 Layer 관리 권한', 'ADMIN_LAYER_MANAGE', '1', '0', 'Y', 'Y'),
-
-	(4, '[사용자 전용] 사용자 페이지 SIGN IN 권한', 'USER_SIGNIN', '0', '0', 'Y', 'Y'),
-	(5, '[사용자 전용] 사용자 페이지 DATA 등록 권한', 'USER_DATA_CREATE', '0', '0', 'Y', 'Y'),
-	(6, '[사용자 전용] 사용자 페이지 DATA 조회 권한', 'USER_DATA_READ', '0', '0', 'Y', 'Y'),
-	(7, '[사용자 전용] 사용자 페이지 시민참여 관리 권한', 'USER_CIVIL_VOICE_MANAGE', '0', '0', 'Y', 'Y');
-
 
 INSERT INTO data_group (
 	data_group_id, data_group_key, data_group_name, data_group_path, data_group_target, sharing, user_id,

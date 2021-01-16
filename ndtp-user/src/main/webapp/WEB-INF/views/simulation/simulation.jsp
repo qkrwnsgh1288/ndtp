@@ -46,7 +46,7 @@
 <ul class="listDrop">
 	<li class="on">
 		<p>좌표 정보<span class="collapse-icon">icon</span></p>
-		<div class="listContents" id="solarAnalysis">
+		<div class="listContents">
 			<ul class="analysisGroup">
 				<li>
 					<label for="">위도</label>
@@ -57,19 +57,19 @@
 					<label id="monitorHeight" for="">OO</label>
 				</li>
 				<li>
-					<label for="">위치 정보 모니터링</label>
-					<input id="locaMonitorChk" type="checkbox" class="btnText">
+					<label for="locaMonitorChk">위치 정보 모니터링</label>
+					<input id="locaMonitorChk" name="locaMonitorChk" type="checkbox" class="btnText">
 				</li>
 			</ul>
 		</div>
 	</li>
 	<li>
-		<p>경관 분석(일조분석)<span class="collapse-icon">icon</span></p>
+		<p>경관 분석(일조분석) 서비스<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="solarAnalysis">
 			<ul class="analysisGroup">
 				<li style="display:none;">
-					<label for="">관찰자 위치</label>
-					<input class="" type="text" placeholder="" value=""/>
+					<label >관찰자 위치</label>
+					<input  type="text" placeholder="" value=""/>
 					<button type="button" class="btnText drawObserverPoint">위치지정</button>
 				</li>
 				<li>
@@ -103,7 +103,7 @@
 		</div>
 	</li>
 	<li>
-		<p>건설 공정<span class="collapse-icon">icon</span></p>
+		<p>건설 공정 서비스<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="constructionProcess">
 			<ul class="analysisGroup">
 				<li>
@@ -160,8 +160,8 @@
 		</div>
 	</li>
 	<li style="display: none;">
-		<p>도시 계획<span class="collapse-icon">icon</span></p>
-		<div class="listContents" id="">
+		<p>도시 계획 서비스<span class="collapse-icon">icon</span></p>
+		<div class="listContents">
 			<ul class="analysisGroup">
 				<li>
 					<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
@@ -203,7 +203,7 @@
 	</li>
 	<li>
 		<p>도시 계획<span class="collapse-icon">icon</span></p>
-		<div class="listContents" id="">
+		<div class="listContents">
 			<ul class="analysisGroup">
 				<li >
 					<div id="smulationToolbar">
@@ -319,7 +319,7 @@
 		</div>
 	</li>
 	<li>
-		<p id="forEvent">건축인 허가 신청<span class="collapse-icon">icon</span></p>
+		<p id="forEvent">건축인 허가 신청 서비스<span class="collapse-icon">icon</span></p>
 		<div class="listContents" id="">
 			<ul class="analysisGroup">
 				<li id="addrSearchLi">
@@ -359,8 +359,8 @@
 		</div>
 	</li>
 	<li>
-		<p id="forEvent">자율주행 시뮬레이션<span class="collapse-icon">icon</span></p>
-		<div class="listContents" id="">
+		<p>자율주행 서비스<span class="collapse-icon">icon</span></p>
+		<div class="listContents">
 			<ul class="analysisGroup">
 				<li>
 					<div>
@@ -383,8 +383,8 @@
 		</div>
 	</li>
 	<li>
-		<p id="forEvent">원격조종 시뮬레이션<span class="collapse-icon">icon</span></p>
-		<div class="listContents" id="">
+		<p>원격조종 서비스<span class="collapse-icon">icon</span></p>
+		<div class="listContents">
 			<ul class="analysisGroup">
 				<li>
 					<div>
@@ -402,6 +402,48 @@
 						<div style = "margin:5px">
 							<button type="button" id="iotAutoRemote" title="Iot시뮬레이션" class="btnTextF" style="">확인</button>
 						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</li>
+	<li>
+		<p>지자체 문화재 현상변경지원<span class="collapse-icon">icon</span></p>
+		<div class="listContents">
+			<ul class="analysisGroup">
+				<li>
+					<div style="display: flex;align-items: center;justify-content: space-between;">
+						<label>문화재 확인</label>
+						<button type="button" class="btnTextF">실행</button>
+					</div>
+					<div style="display: flex;align-items: center;justify-content: space-between;">
+						<label for="">현상변경 허가 대상지 확인</label>
+						<button type="button" class="btnTextF">실행</button>
+					</div>
+					<div style="display: flex;align-items: center;justify-content: space-between;">
+						<label for="">현상변경 허가 대상지 확인</label>
+						<button type="button" class="btnTextF">실행</button>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</li>
+	<li>
+		<p>지자체 소규모 재개발지원<span class="collapse-icon">icon</span></p>
+		<div class="listContents">
+			<ul class="analysisGroup">
+				<li>
+					<div style="display: flex;align-items: center;justify-content: space-between;">
+						<label>문화재 확인</label>
+						<button type="button" class="btnTextF">실행</button>
+					</div>
+					<div style="display: flex;align-items: center;justify-content: space-between;">
+						<label for="">현상변경 허가 대상지 확인</label>
+						<button type="button" class="btnTextF">실행</button>
+					</div>
+					<div style="display: flex;align-items: center;justify-content: space-between;">
+						<label for="">현상변경 허가 대상지 확인</label>
+						<button type="button" class="btnTextF">실행</button>
 					</div>
 				</li>
 			</ul>
