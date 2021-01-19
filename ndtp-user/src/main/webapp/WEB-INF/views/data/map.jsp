@@ -552,7 +552,7 @@
 		var cesiumViewerOption = {};
 		cesiumViewerOption.infoBox = false;
 		cesiumViewerOption.navigationHelpButton = false;
-		cesiumViewerOption.selectionIndicator = true;
+		cesiumViewerOption.selectionIndicator = false;
 		cesiumViewerOption.homeButton = false;
 		cesiumViewerOption.fullscreenButton = false;
 		cesiumViewerOption.geocoder = false;

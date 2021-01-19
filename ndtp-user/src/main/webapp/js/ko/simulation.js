@@ -1841,7 +1841,7 @@ var Simulation = function(magoInstance, viewer, $) {
         
         handler.setInputAction(function (event) {
             var earthPosition = _viewer.scene.pickPosition(event.position);
-
+            debugger;
         	if(locaMonitor) {
                 var ellipsoid = _viewer.scene.globe.ellipsoid;
                 var cartographic = ellipsoid.cartesianToCartographic(earthPosition);
@@ -1860,6 +1860,8 @@ var Simulation = function(magoInstance, viewer, $) {
 				arrIotLonlat.drone.push(lonlat);
         	}
 			// console.log('1. 폴리곤 : ', longitudeString, latitudeString);
+
+			const pickPos = _viewer.scene.pick(event.position);
 
             if (Cesium.defined(earthPosition)) {
                 var cartographic = Cesium.Cartographic.fromCartesian(earthPosition);
@@ -1884,8 +1886,7 @@ var Simulation = function(magoInstance, viewer, $) {
     	                        }
     	                    });
                         }
-                    }
-                    else {
+                    } else {
                         //this._labels.push(drawLabel(tempPosition));
                     }
                     this._polylines.push(createPoint(tempPosition));
@@ -2092,16 +2093,17 @@ var Simulation = function(magoInstance, viewer, $) {
                     }
 //                    _viewer._selectedEntity = pickedFeature.id.polygon;
                 } else {
+					debugger;
 					var pickedFeature = viewer.scene.pick(event.position);
-
 					if(pickedFeature) {
 						if(pickedFeature.id.type === "delta") {
 
 						} else {
-							pickedName = pickedFeature.id.name;
-							allObject[pickedName].terrain = pickedFeature.id;
-							allObject[pickedName].plottage = getArea(allObject[pickedName].terrain.polygon._hierarchy._value.positions);
-							$("#selectDistrict").val(allObject[pickedName].terrain.name).trigger("change");
+							// 2021-01-18 주석 처리 kdh
+							// pickedName = pickedFeature.id.name;
+							// allObject[pickedName].terrain = pickedFeature.id;
+							// allObject[pickedName].plottage = getArea(allObject[pickedName].terrain.polygon._hierarchy._value.positions);
+							// $("#selectDistrict").val(allObject[pickedName].terrain.name).trigger("change");
 							// $("#districtDisplay").val("enable").trigger("change");
 						}
 					} else {
@@ -2184,7 +2186,34 @@ var Simulation = function(magoInstance, viewer, $) {
 //						getCommentList(pickedFeature.id);
 					}
 				}*/
-            }
+            } else {
+            	if(pickPos === undefined)
+            		return;
+				const primitiveObj = _viewer.scene.pick(event.position).primitive;
+				if(primitiveObj) {
+					if(primitiveObj._text.includes('문화제')) {
+						$('#CHStdDialog').empty();
+						$('#CHStdDialog').append('<img src="/images/lx/CHStdDialog_img.png" />');
+						CHInfoDialog.dialog('open');
+					} else {
+						$('#buildOldInfo').empty();
+						if(primitiveObj._text.includes('A')) {
+							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_A.png" />');
+							buildOldInfoDialog.dialog('open');
+						} else if(primitiveObj._text.includes('B')) {
+							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_B.png" />');
+							buildOldInfoDialog.dialog('open');
+						}  else if(primitiveObj._text.includes('C')) {
+							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_C.png" />');
+							buildOldInfoDialog.dialog('open');
+						}  else if(primitiveObj._text.includes('D')) {
+							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_D.png" />');
+							buildOldInfoDialog.dialog('open');
+						}
+					}
+				}
+			}
+
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         handler.setInputAction(function (event) {
@@ -3390,16 +3419,28 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * @param result [lon, lat, ... ]
 	 * @param color Cesium.Color.YELLOW
 	 */
-	function drawLabelPolygon(labelText, result, color) {
+	function drawLabelPolygon(labelText, result, labelPos, color, pointShow) {
+		debugger;
 		const polyPosi = new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(result));
+		let worldPosition = Cesium.Cartesian3.fromDegrees(labelPos[0], labelPos[1]);
 		const polygonEntitiy = viewer.entities.add({
+			name: 'labelAndPolygon',
+			position: worldPosition,
 			polygon : {
 				hierarchy : polyPosi,
-				material : color,
-				perPositionHeight: true,
+				material : Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#0080FF'), 0.7),
 				outline : true,
 				outlineColor : color,
-				clampToGround: true
+				outlineWidth: 1,
+				heightReference : Cesium.HeightReference.CLAMP_TO_GROUND,
+			},point: {
+				color: Cesium.Color.BLUE,
+				pixelSize: 10,
+				outlineColor: Cesium.Color.YELLOW,
+				outlineWidth: 2,
+				show: pointShow,
+				disableDepthTestDistance: Number.POSITIVE_INFINITY,
+				heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
 			},
 			label: {
 				text: labelText,
@@ -3431,24 +3472,26 @@ var Simulation = function(magoInstance, viewer, $) {
 		const pointEntitiy = viewer.entities.add({
 			position: worldPosition,
 			point: {
-				color: color,
+				color: Cesium.Color.RED,
 				pixelSize: 10,
 				outlineColor: Cesium.Color.YELLOW,
 				outlineWidth: 2,
 				disableDepthTestDistance: Number.POSITIVE_INFINITY,
-				heightReference: opt?.heightReference ?? Cesium.HeightReference.CLAMP_TO_GROUND
+				heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
 			},
 			ellipse: {
-				semiMinorAxis: 200000.0,
-				semiMajorAxis: 200000.0,
-				material: Cesium.Color.fromRandom({ alpha: 0.5 }),
+				semiMinorAxis: 500.0,
+				semiMajorAxis: 500.0,
+				extrudedHeight: 10,
+				// extrudedHeightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+				material: color,
 				show: false,
-				heightReference: opt?.heightReference ?? Cesium.HeightReference.CLAMP_TO_GROUND
+				heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
 			},
 			label: {
 				text: labelText,
 				scale :0.5,
-				font: "normal normal bolder 22px Helvetica",
+				font: "normal normal bolder 32px Helvetica",
 				fillColor: Cesium.Color.BLACK,
 				outlineColor: Cesium.Color.WHITE,
 				outlineWidth: 1,
@@ -3474,7 +3517,8 @@ var Simulation = function(magoInstance, viewer, $) {
 		//2. 3.
 		const pos = [128.92232988571374, 35.09836372908023, 128.92284805327168, 35.098306244647, 128.92291915684004, 35.09822089796658,
 		128.92287391259066, 35.09795239578484, 128.9227984830998,  35.09789943173056, 128.92227070282547, 35.09794082699364]
-		drawLabelPolygon('ㅁㅁㅁㅁ', pos, Cesium.Color.YELLOW);
+		const labelPos = [128.922595970782, 35.098132184531316];
+		drawLabelPolygon('부산광역시 강서구 명지 1동 125-1', pos, labelPos, Cesium.Color.YELLOW);
 	})
 
 
@@ -3493,15 +3537,20 @@ var Simulation = function(magoInstance, viewer, $) {
 			'문화제-중간': [128.90939479526745, 35.09527807090374]
 		}
 		let str = '문화제-우';
-		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1], Cesium.Color.RED));
+		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
+			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#FFC000'), 0.5)));
 		str = '문화제-아래';
-		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1], Cesium.Color.RED));
+		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
+			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#6699FF'), 0.5)));
 		str = '문화제-위';
-		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1], Cesium.Color.RED));
+		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
+			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#92D050'), 0.5)));
 		str = '문화제-가까운';
-		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1], Cesium.Color.RED));
+		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
+			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#FFC000'), 0.5)));
 		str = '문화제-중간';
-		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1], Cesium.Color.RED));
+		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
+			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#92D050'), 0.5)));
 	});
 
 	/**
@@ -3510,10 +3559,12 @@ var Simulation = function(magoInstance, viewer, $) {
 	 */
 	$('#permitAreaBtn').click(function() {
 		debugger;
-		if($('#permitAreaVisible').val() === 0) {
+		if($('#permitAreaVisible').val() === "0") {
 			CHArr.forEach(p => p.ellipse.show = true);
+			CHStdDialog.dialog('open');
 		} else {
 			CHArr.forEach(p => p.ellipse.show = false);
+			CHStdDialog.dialog('close');
 		}
 	});
 
@@ -3521,7 +3572,12 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * 1. 해당 폴리곤 내 건물 숨기기
 	 */
 	$('#delBuildBtn').click(function() {
-
+		const polyPos = [128.92232988571374, 35.09836372908023,
+			128.92284805327168, 35.098306244647,
+			128.92291915684004, 35.09822089796658,
+			128.92287391259066, 35.09795239578484,
+			128.9227984830998,  35.09789943173056,
+			128.92227070282547, 35.09794082699364]
 		// const buildings = shadowSystem.getPickLayerBuilding(lonlats);
 		// buildings.forEach(p => p.attributes.isVisible = false);
 	});
@@ -3531,6 +3587,7 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * 2. 위치선택
 	 * 3. 건물업로드
 	 */
+	let acceptCHBuild = 0;
 	$('#addBuildBtn').click(function() {
 		CHUploadDialog.dialog("open");
 	});
@@ -3543,7 +3600,7 @@ var Simulation = function(magoInstance, viewer, $) {
 	 *   -> 확인 누를 시 형상변경 신청 모달 슝
 	 */
 	$('#permitAreaSim').click(function() {
-		const flag = 0;
+		const flag = 1;
 		if(flag === 0) {
 			alert('현상변경 허가 대상이 아님');
 		} else {
@@ -3557,6 +3614,41 @@ var Simulation = function(magoInstance, viewer, $) {
 	});
 
 	/**
+	 * 문화제(CH) 정보 확인
+	 * @type {Window.jQuery|*}
+	 */
+	const CHInfoDialog = $('#CHInfoDialog').dialog({
+		autoOpen: false,
+		modal: false,
+		width: 'auto',
+		position: {
+			my: 'right top',
+			at: 'right top',
+			of: '.cesium-viewer',
+		},
+		overflow : "auto",
+		resizable: false
+	});
+
+
+	/**
+	 * 문화제(CH) 현상변경 기준 확인
+	 * @type {Window.jQuery|*}
+	 */
+	const CHStdDialog = $('#CHStdDialog').dialog({
+		autoOpen: false,
+		modal: false,
+		width: 'auto',
+		position: {
+			my: 'right top',
+			at: 'right top',
+			of: '.cesium-viewer',
+		},
+		overflow : "auto",
+		resizable: false
+	});
+
+	/**
 	 * 두가지 케이스로 나뉨
 	 * 1. 허가 변경 대상일때
 	 * 2. 허가 변경 대상이 아닐때
@@ -3566,11 +3658,12 @@ var Simulation = function(magoInstance, viewer, $) {
 		autoOpen: false,
 		modal: true,
 		overflow : "auto",
-		resizable: false,
+		width: 'auto',
 		buttons: [
 			{
-				text: "확인",
+				text: "업로드",
 				click: function() {
+					alert('업로드 완료되었습니다')
 					$( this ).dialog( "close" );
 				}
 			}
@@ -3609,6 +3702,9 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * 명지 1동 영역 가시화(shp 있는지 확인)
 	 */
 	$('#addrSearchBtnRD').click(function() {
+		// 1.
+		flyTo(128.91106729407082,  35.09558962505989, 4000);
+
 		// const fileName = "Parcel6-4.geojson";
 		const fileName = "6-4_disApart.geojson";
 		const obj = {
@@ -3648,40 +3744,171 @@ var Simulation = function(magoInstance, viewer, $) {
 		});
 	});
 
-	/**
-	 * 선택 됬을때 해당 영역 폴리곤 활성화
-	 * 선택 해제 됬을때 해당 영역 폴리곤 비활성화
-	 */
-	$('').change(function(e) {
-		const statusChecked = $(e.currentTarget).is(':checked');
-		if(statusChecked) {
-
-		} else {
-
+	const RDDataSet = {
+		'A': {
+			pos: [ 128.912178591057, 35.09855814414664,
+				128.91729293707849, 35.09809580670798,
+				128.91700353718468, 35.09615310006939,
+				128.912266113864, 35.09660438995324,
+				128.9117612032536, 35.098492073809375],
+			labelPos: [128.9145907437806, 35.09726709280932],
+			obj: undefined
+		},
+		'B': {
+			pos: [ 128.9175205749139, 35.097422660784005,
+				128.9197382131847, 35.09729048324301,
+				128.91957615071738, 35.0958482515687,
+				128.91729315766403, 35.09613976342742],
+			labelPos: [128.91848335316095, 35.09688134746233],
+			obj: undefined
+		},
+		'C' : {
+			pos: [ 128.9200114776874, 35.097224484280794,
+				128.92251945604988, 35.09697230698103,
+				128.92227855572168, 35.095583328148486,
+				128.91978525260652, 35.095808591916146 ],
+			labelPos: [128.92108508540045, 35.09649521645504],
+			obj: undefined
+		},
+		'D' : {
+			pos: [ 128.91726057139132, 35.09567683557667,
+				128.91946342638516, 35.09553072219181,
+				128.9192234985212, 35.09418520056146,
+				128.9173916878741, 35.09376336291401,
+				128.9171013270266, 35.09389419686408 ],
+			labelPos: [128.9182875277607, 35.09488735732798],
+			obj: undefined
 		}
-		debugger;
+	}
+
+	/**
+	 * 선택 됬을활성화
+	 * 선택 해제 됬을때 해당 영역 폴때 해당 영역 폴리곤 리곤 비활성화
+	 */
+	$('#RDBlockTable tr').change(function(e) {
+		const statusChecked = $(e.currentTarget).find('input').is(':checked');
+		const val = $(e.currentTarget).find('input').attr('name');
+		if(statusChecked) {
+			debugger;
+			const pos = RDDataSet[val].pos;
+			const labelPos = RDDataSet[val].labelPos;
+			RDDataSet[val].obj = drawLabelPolygon(val + '블록', pos, labelPos, Cesium.Color.YELLOW, 'hide');
+		} else {
+			if(RDDataSet[val].obj !== undefined){
+				_viewer.entities.remove(RDDataSet[val].obj);
+				RDDataSet[val].obj = undefined;
+			}
+		}
 	});
 
 	/**
-	 * 1. A, B, C가 선택 되었다면 1.png 호출
-	 * 2. B, C, D가 선택 되었다면 2.png 호출
+	 * 1. A에 대해서 분석했을경우
+	 * 2. B에 대해서 분석했을경우
+	 * 2. C에 대해서 분석했을경우
+	 * 2. A B C에 대해서 분석했을경우 => 적합 부적합 여부 확인
+	 * 2. B C D에 대해서 분석했을경우 => 적합 부적합 여부 확인
 	 */
 	$('#buildOldAnals').click(function() {
-
+		let code = '';
+		for(const obj of $('#RDBlockTable tr input')) {
+			if($(obj).is(':checked')) {
+				code += $(obj).attr('name');
+			}
+		}
+		if(code === 'ABC') {
+			alert('ABC');
+			$('#buildOldAnalsDialogNO').empty();
+			$('#buildOldAnalsDialogNO').append('<img src="/images/lx/buildOldAnalsABC_NO.png"/>');
+			buildOldAnalsDialogNO.dialog('open');
+		} else if(code === 'BCD') {
+			alert('BCD');
+			$('#buildOldAnalsDialogOK').empty();
+			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsBCD_YES.png"/>');
+			buildOldAnalsDialogOK.dialog('open');
+		}
 	});
 
 	/**
-	 * 1. A, B, C가 선택 되었다면 1.png 호출
-	 * 2. B, C, D가 선택 되었다면 2.png 호출
+	 * 1. 건축 규제 사항 가시화
 	 */
-	$('#buildOldAnals').click(function() {
-
+	$('#regulationsChkBtn').click(function() {
+		buildOldAnalsRegulationsDialog.dialog('open');
 	});
 
+	/**
+	 * 건물 노후도 분석
+	 * @type {Window.jQuery|*}
+	 */
+	const buildOldInfoDialog = $('#buildOldInfo').dialog({
+		autoOpen: false,
+		modal: false,
+		overflow : "auto",
+		width: "auto",
+		resizable: false
+	});
 
+	/**
+	 * 건물 노후도 분석 NO
+	 * @type {Window.jQuery|*}
+	 */
+	const buildOldAnalsDialogNO = $('#buildOldAnalsDialogNO').dialog({
+		autoOpen: false,
+		modal: false,
+		overflow : "auto",
+		width: "auto",
+		resizable: false
+	});
 
+	/**
+	 * 건물 노후도 분석 OK
+	 * @type {Window.jQuery|*}
+	 */
+	const buildOldAnalsDialogOK = $('#buildOldAnalsDialogOK').dialog({
+		autoOpen: false,
+		modal: false,
+		overflow : "auto",
+		width: "auto"
+	});
 
+	/**
+	 * 문화제 형상변경 레포트 제출
+	 * @type {Window.jQuery|*}
+	 */
+	const buildOldAnalsRegulationsDialog = $('#buildOldAnalsRegulations').dialog({
+		autoOpen: false,
+		modal: false,
+		overflow : "auto",
+		width: "auto",
+		buttons: [
+			{
+				text: "제출",
+				click: function() {
+					$( this ).dialog( "close" );
+					buildOldAnalsReportDialog.dialog('open');
+				}
+			}
+		]
+	});
 
+	/**
+	 * 문화제 형상변경 레포트 제출
+	 * @type {Window.jQuery|*}
+	 */
+	const buildOldAnalsReportDialog = $('#buildOldAnalsReportDialog').dialog({
+		autoOpen: false,
+		modal: false,
+		overflow : "auto",
+		width: "auto",
+		buttons: [
+			{
+				text: "확인",
+				click: function() {
+					$( this ).dialog( "close" );
+					alert('문화재 현상변경 허가 신청이 완료되었습니다.');
+				}
+			}
+		]
+	});
 };
 
 const f4dDataGenMaster = {

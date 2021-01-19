@@ -412,32 +412,32 @@
 		<div class="listContents">
 			<ul class="analysisGroup">
 				<li style="display:block;">
-					<label for="addrSearchCH" style="width:50px;">주소: </label>
+					<label for="addrSearchCH" style="width:50px;">주소 </label>
 					<input id="addrSearchCH" type="text" style="width: 190px;">
 					<button type="button" id="addrSearchBtnCH" class="btnTextF" style="float: right; margin-top: 5px;">검색</button>
 				</li>
 				<li style="display:block;">
-					<label for="SearchCH" style="width:50px;">문화재 보기: </label>
+					<label for="SearchCH" style="width:150px;">문화재 보기 </label>
 					<button type="button" id="SearchCH" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
 				</li>
 				<li style="display:block;">
-					<label for="permitAreaBtn" style="width:50px;">허가 대상 범위: </label>
+					<label for="permitAreaBtn" style="width:150px;">허가 대상 범위 </label>
 					<button type="button" id="permitAreaBtn" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
-					<select id="permitAreaVisible" name="iotDataStatus" style="width:150px; ">
+					<select id="permitAreaVisible" name="iotDataStatus" style="width:70px; ">
 						<option value="0">활성</option>
 						<option value="1">비활성</option>
 					</select>
 				</li>
 				<li style="display:block;">
-					<label for="delBuildBtn" style="width:50px;">건물 제거: </label>
+					<label for="delBuildBtn" style="width:150px;">건물 제거 </label>
 					<button type="button" id="delBuildBtn" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
 				</li>
 				<li style="display:block;">
-					<label for="addBuildBtn" style="width:50px;">건물 추가: </label>
+					<label for="addBuildBtn" style="width:150px;">건물 추가 </label>
 					<button type="button" id="addBuildBtn" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
 				</li>
 				<li style="display:block;">
-					<label for="permitAreaSim" style="width:50px;">현상 변경 시뮬레이션: </label>
+					<label for="permitAreaSim" style="width:150px;">현상 변경 시뮬레이션 </label>
 					<button type="button" id="permitAreaSim" class="btnTextF" style="float: right; margin-top: 5px;">실행</button>
 				</li>
 			</ul>
@@ -453,58 +453,54 @@
 					<button type="button" id="addrSearchBtnRD" class="btnTextF" style="float: right; margin-top: 5px;">검색</button>
 				</li>
 				<li style="display:block;">
-					<div class="list">
-						<table class="list-table scope-col">
-							<caption>지자체 영역 선택</caption>
+					<label for="addrSearchRD" style="width:150px;">지자체 영역 선택</label>
+					<div class="list basicTable">
+						<table id="RDBlockTable" class="list-table scope-col">
 							<colgroup>
-								<col class="col-name">
-								<col class="col-name">
-								<col class="col-name">
-								<col class="col-name">
-								<col class="col-name">
+								<col class="col-checkbox">
 								<col class="col-name">
 							</colgroup>
 							<thead>
 							<tr>
-								<th scope="col" class="col-name"></th>
+								<th scope="col" class="col-name">선택</th>
 								<th scope="col" class="col-name">영역</th>
 							</tr>
 							</thead>
 							<tbody>
 							<tr align="center">
-								<td class="col-checkbox">
-									<input type="checkbox"/>
+								<td class="col-checkbox" style="width: 30px !important; cursor: pointer !important;">
+									<input name="A" type="checkbox" style="width: 30px !important; cursor: pointer !important;"/>
 								</td>
-								<td>A 블록</td>
+								<td for="A" style="text-align: center;">A 블록</td>
 							</tr>
 							<tr align="center">
-								<td class="col-checkbox">
-									<input type="checkbox"/>
+								<td class="col-checkbox" style="width: 30px !important; cursor: pointer !important;">
+									<input name="B" type="checkbox" style="width: 30px !important; cursor: pointer !important;" />
 								</td>
-								<td>B 블록</td>
+								<td for="B" style="text-align: center;">B 블록</td>
 							</tr>
 							<tr align="center">
-								<td class="col-checkbox">
-									<input type="checkbox"/>
+								<td class="col-checkbox" style="width: 30px !important; cursor: pointer !important;">
+									<input name="C" type="checkbox" style="width: 30px !important; cursor: pointer !important;"/>
 								</td>
-								<td>C 블록</td>
+								<td for="C" style="text-align: center;">C 블록</td>
 							</tr>
 							<tr align="center">
-								<td class="col-checkbox">
-									<input type="checkbox"/>
+								<td class="col-checkbox" style="width: 30px !important; cursor: pointer !important;">
+									<input name="D" type="checkbox" style="width: 30px !important; cursor: pointer !important;"/>
 								</td>
-								<td>D 블록</td>
+								<td for="D" style="text-align: center;">D 블록</td>
 							</tr>
 							</tbody>
 						</table>
 					</div>
 				</li>
 				<li style="display:block;">
-					<label for="buildOldAnals" style="width:50px;">건물 노후도 분석: </label>
+					<label for="buildOldAnals" style="width:150px;">건물 노후도 분석: </label>
 					<button type="button" id="buildOldAnals" class="btnTextF" style="float: right; margin-top: 5px;">실행</button>
 				</li>
 				<li style="display:block;">
-					<label for="regulationsChkBtn" style="width:50px;">건물 규제 사항 확인: </label>
+					<label for="regulationsChkBtn" style="width:150px;">건물 규제 사항 확인: </label>
 					<button type="button" id="regulationsChkBtn" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
 				</li>
 			</ul>
@@ -559,9 +555,24 @@
 		</ul>
 	</div>
 </div>
+<style>
+	.block-st {
+		display: block;
+		width: 100%;
+	}
+</style>
+<!-- 1. 문화제(CH) 정보 확인 -->
+<div id="CHInfoDialog" title="문화제 정보">
+	<img src="/images/lx/CHInfoDialog_img.png" />
+</div>
 
-<!-- 문화제(CH) 건물 업로드 -->
-<div id="CHUploadDialog" title="건물 업로드">
+<!-- 2. 문화제(CH) 현상변경 허용기준 -->
+<div id="CHStdDialog" title="문화제 형상변경 허용 기준">
+	<img src="/images/lx/CHStdDialog_img.png" />
+</div>
+
+<!-- 3. 문화제(CH) 건물 업로드 -->
+<div id="CHUploadDialog" style="display: none;" title="건물 업로드">
 	<div class="listContents">
 		<ul class="analysisGroup">
 			<li>
@@ -570,41 +581,49 @@
 						<input type="file" name="files" style="width:80%" multiple>
 					</div>
 				</form>
-				<div style="margin-top:5px; float: right">
-					<button id="uploadCHBtn" class="btnTextF" style="margin-left:5px" title="업로드">업로드</button>
-				</div>
 			</li>
 		</ul>
 	</div>
 </div>
 
-<!-- 문화제(CH) 현상변경 신청 -->
-<div id="CHReportUploadDialog" title="문화제 현상 변경 신청">
-	<div class="listContents">
-		<ul class="analysisGroup">
-			<li>
-				<form id="uploadReportCHForm" name="file_upload" style="width:100%" target="dummyConsProcessFrame">
-					<div>신청인</div>
-					<div>성명 : 홍길동</div>
-					<div>주소 : 부산시 강서구 명지 1동 1-15</div>
-					<div>연락처 : 010-555-5555</div>
+<!-- 3. 문화제(CH) 현상변경 허가 신청 -->
+<div id="CHReportUploadDialog" title="문화제 현상 변경 신청" style="display: none;">
+	<img src="/images/lx/CHUploadDialog_img.png"/>
+</div>
 
-					<div>대상문화제</div>
-					<div>명칭 : 금정산성</div>
-					<div>종류 : 국가지정문화재</div>
-					<div>지정(등록)번호 : 사적 제 215호</div>
+<!-- 지자체 재개발 지원 건물 노후도 분석 -->
+<div id="buildOldInfo" title="건축물 노후도 정보" style="display: none;">
 
-					<div>
-						<input type="file" name="files" style="width:80%" multiple>
-					</div>
-				</form>
-				<div style="margin-top:5px; float: right">
-					<button id="uploadReportCHBtn" class="btnTextF" style="margin-left:5px" title="업로드">업로드</button>
-				</div>
-			</li>
-		</ul>
+</div>
+
+<!-- 지자체 재개발 지원 건물 노후도 분석 No okay -->
+<div id="buildOldAnalsDialogNO" title="문화제 현상 변경 신청" style="display: none;">
+
+</div>
+
+<!-- 지자체 재개발 지원 건물 노후도 분석 okay -->
+<div id="buildOldAnalsDialogOK" title="문화제 현상 변경 신청" style="display: none;">
+
+</div>
+
+<!-- 지자체 재개발 지원 건물 노후도 분석 -->
+<div id="buildOldAnalsRegulations" title="건축 규제 사항" style="display: none;">
+	<div>
+		<img src="/images/lx/buildOldAnalsRegulations_A.png"/>
+	</div>
+	<div>
+		<img src="/images/lx/buildOldAnalsRegulations_B.png"/>
+	</div>
+	<div>
+		<img src="/images/lx/buildOldAnalsRegulations_C.png"/>
 	</div>
 </div>
+
+<!-- 지자체 재개발 지원 레포트 작성 -->
+<div id="buildOldAnalsReportDialog" title="문화제 현상 변경 신청" style="display: none;">
+	<img src="/images/lx/buildOldAnalsReportDialog.png" style="height: 750px"/>
+</div>
+
 <script>
 	$("#addrSearchBtn").click(() => {
 		let val = document.getElementById("addrSearch").value;
