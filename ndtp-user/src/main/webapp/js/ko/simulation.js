@@ -3416,6 +3416,27 @@ var Simulation = function(magoInstance, viewer, $) {
 			destination : Cesium.Cartesian3.fromDegrees(lon, lat, alt)
 		});
 	}
+	/**
+	 * 라벨 딸린 폴리곤 생성
+	 * @param result [lon, lat, ... ]
+	 * @param color Cesium.Color.YELLOW
+	 */
+	function drawPolygon(result, color) {
+		debugger;
+		const polyPosi = new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(result));
+		const polygonEntitiy = viewer.entities.add({
+			name: 'Polygon',
+			polygon : {
+				hierarchy : polyPosi,
+				material : Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#0080FF'), 0.7),
+				outline : true,
+				outlineColor : color,
+				outlineWidth: 1,
+				heightReference : Cesium.HeightReference.CLAMP_TO_GROUND,
+			}
+		});
+		return polygonEntitiy;
+	}
 
 	/**
 	 * 라벨 딸린 폴리곤 생성
@@ -3463,6 +3484,31 @@ var Simulation = function(magoInstance, viewer, $) {
 	}
 
 	/**
+	 * 라벨 딸린 폴리곤 생성
+	 * @param result [lon, lat, ... ]
+	 * @param color Cesium.Color.YELLOW
+	 */
+	function drawLabelPolyLine(labelText, result, labelPos, color, pointShow) {
+		debugger;
+		const polyPosi = Cesium.Cartesian3.fromDegreesArray(result);
+		let worldPosition = Cesium.Cartesian3.fromDegrees(labelPos[0], labelPos[1]);
+		const polygonEntitiy = viewer.entities.add({
+			name: 'labelAndPolygon',
+			position: worldPosition,
+			polyline : {
+				positions : polyPosi,
+				width: 10.0,
+				material: new Cesium.PolylineGlowMaterialProperty({
+					color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#0080FF'), 0.7),
+					glowPower: 0.25,
+				}),
+				clampToGround : true
+			}
+		});
+		return polygonEntitiy;
+	}
+
+	/**
 	 * Point 객체 생성, ellipse 기본 invisible
 	 * @param labelText 라벨 텍스트
 	 * @param lon 위도
@@ -3495,9 +3541,11 @@ var Simulation = function(magoInstance, viewer, $) {
 				text: labelText,
 				scale :0.5,
 				font: "normal normal bolder 32px Helvetica",
-				fillColor: Cesium.Color.BLACK,
-				outlineColor: Cesium.Color.WHITE,
+				fillColor: Cesium.Color.WHITE,
+				outlineColor: Cesium.Color.BLACK,
+				pixelOffset: new Cesium.Cartesian2(0, -15),
 				outlineWidth: 1,
+				showBackground: true,
 				//scaleByDistance : new Cesium.NearFarScalar(500, 1.2, 1200, 0.0),
 				heightReference : Cesium.HeightReference.CLAMP_TO_GROUND,
 				style: Cesium.LabelStyle.FILL_AND_OUTLINE,
@@ -3533,25 +3581,25 @@ var Simulation = function(magoInstance, viewer, $) {
 	const CHArr = [];
 	$('#SearchCH').click(function() {
 		const CH = {
-			'문화제-우': [128.92415734011402, 35.099766052939],
-			'문화제-아래': [128.91558909801554, 35.092528067288306],
-			'문화제-위': [128.92660845059427, 35.11026614910661],
-			'문화제-가까운': [128.90322098161187, 35.10895028785612],
-			'문화제-중간': [128.90939479526745, 35.09527807090374]
+			'대웅전': [128.92415734011402, 35.099766052939],
+			'가달고분군': [128.91558909801554, 35.092528067288306],
+			'운수사대웅전석조여래삼존좌상': [128.92660845059427, 35.11026614910661],
+			'마하사대웅전석조석가여래삼존상': [128.90322098161187, 35.10895028785612],
+			'범방동삼층석탑': [128.90939479526745, 35.09527807090374]
 		}
-		let str = '문화제-우';
+		let str = '대웅전';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
 			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#FFC000'), 0.5)));
-		str = '문화제-아래';
+		str = '가달고분군';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
 			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#6699FF'), 0.5)));
-		str = '문화제-위';
+		str = '운수사대웅전석조여래삼존좌상';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
 			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#92D050'), 0.5)));
-		str = '문화제-가까운';
+		str = '마하사대웅전석조석가여래삼존상';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
 			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#FFC000'), 0.5)));
-		str = '문화제-중간';
+		str = '범방동삼층석탑';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
 			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#92D050'), 0.5)));
 	});
@@ -3561,7 +3609,6 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * 1. 비활성 => 원형 형태로 표시(비활성)
 	 */
 	$('#permitAreaBtn').click(function() {
-		debugger;
 		if($('#permitAreaVisible').val() === "0") {
 			CHArr.forEach(p => p.ellipse.show = true);
 			CHStdDialog.dialog('open');
@@ -3711,43 +3758,14 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * 명지 1동 영역 가시화(shp 있는지 확인)
 	 */
 	$('#addrSearchBtnRD').click(function() {
-		// 1.
-		flyTo(128.91106729407082,  35.09558962505989, 4000);
+		flyTo(128.92358061334286,  35.09658421283378, 400);
 
-		// const fileName = "Parcel6-4.geojson";
-		const fileName = "6-4_disApart.geojson";
-		const obj = {
-			width : 5,
-			leadTime : 0,
-			trailTime : 100,
-			resolution : 5,
-			strokeWidth: 0,
-			stroke: Cesium.Color.AQUA.withAlpha(0.0),
-			fill: Cesium.Color.AQUA.withAlpha(0.8),
-			clampToGround: true
-		};
-		let url = "/data/simulation-rest/drawGeojson?fileName=" + fileName;
-
-		Cesium.GeoJsonDataSource.load(url, obj).then(function(dataSource) {
-			let entitis = dataSource.entities._entities._array;
-
-			for(let index in entitis) {
-				let entitiyObj = entitis[index];
-				let registeredEntity = _viewer.entities.add(entitiyObj);
-				registeredEntity.name = "sejong_apartmentComplex1";
-
-				registeredEntity.polygon.extrudedHeightReference = 2;
-				// registeredEntity.polygon.heightReference = 1;
-
-				Cesium.knockout.getObservable(viewModel, 'standardFloorCount').subscribe(
-					function(newValue) {
-						registeredEntity.polygon.extrudedHeight = newValue * 4;
-					}
-				);
-				allObject[val].terrain = registeredEntity;
-			}
-
-			_viewer.selectedEntity = allObject[pickedName].terrain;
+		$('#RDBlockTableWrap').css('display','block');
+		const arr = ['A', 'B', 'C', 'D'];
+		arr.forEach( val => {
+			const pos = RDDataSet[val].pos;
+			const labelPos = RDDataSet[val].labelPos;
+			drawLabelPolygon(val + '블록', pos, labelPos, Cesium.Color.YELLOW, 'show');
 		}, function(err) {
 			console.log(err);
 		});
@@ -3755,37 +3773,23 @@ var Simulation = function(magoInstance, viewer, $) {
 
 	const RDDataSet = {
 		'A': {
-			pos: [ 128.912178591057, 35.09855814414664,
-				128.91729293707849, 35.09809580670798,
-				128.91700353718468, 35.09615310006939,
-				128.912266113864, 35.09660438995324,
-				128.9117612032536, 35.098492073809375],
-			labelPos: [128.9145907437806, 35.09726709280932],
+			pos: [ 128.92286313282142,35.09623792485613,128.92288320379362,35.0965249952445,128.9229146126929,35.09669597032622,128.92294518391924,35.096919970704256,128.92294819468185,35.09705102120408,128.9229984596564,35.09709555997607,128.92308009560836,35.09711794915246,128.92316546356187,35.09712291545426,128.92324718032629,35.0971123373693,128.92331659116385,35.09706750089937,128.92330659232195,35.0969673148803,128.92327442383683,35.09683703238631,128.92326479834458,35.096626363202475,128.9232588537873,35.09651157152239,128.92321394088535,35.09634426562736,128.9232099228395,35.09626518193682,128.92319118613563,35.09617083369295,128.92313610816572,35.096138785882275,128.92302382603194,35.09615305035299,128.92293208039163,35.096164705736484,128.92286064099707,35.09621312265405],
+			labelPos: [128.92302900257383, 35.09659801047408],
 			obj: undefined
 		},
 		'B': {
-			pos: [ 128.9175205749139, 35.097422660784005,
-				128.9197382131847, 35.09729048324301,
-				128.91957615071738, 35.0958482515687,
-				128.91729315766403, 35.09613976342742],
-			labelPos: [128.91848335316095, 35.09688134746233],
+			pos: [ 128.92338565901804,35.09706773430042,128.92350113067644,35.0970702971916,128.92356309014718,35.09706664521402,128.92364608713345,35.09705592196285,128.92367912663767,35.09702544543695,128.9236910818514,35.097001882906305,128.92368992392323,35.09694400864525,128.92366970140364,35.09674150721185,128.9236169660363,35.09646600082224,128.92358384527552,35.09628037874547,128.9235836992449,35.09621841082308,128.9235499775887,35.09613271973166,128.92352087765022,35.09610910653836,128.92344425528663,35.096109679120865,128.92333590353823,35.09611964196252,128.92328101969017,35.096139690088556,128.9232476845632,35.09622901876805,128.9232623657737,35.09631984804447,128.92329716620625,35.09644603811728,128.92331617845792,35.09660540683707,128.9233239483952,35.09674534257132,128.92335185242467,35.09686866318699,128.92334358208953,35.09696779966049,128.92336240560746,35.097030634108464 ],
+			labelPos: [ 128.9235187813271, 35.09660906399056 ],
 			obj: undefined
 		},
 		'C' : {
-			pos: [ 128.9200114776874, 35.097224484280794,
-				128.92251945604988, 35.09697230698103,
-				128.92227855572168, 35.095583328148486,
-				128.91978525260652, 35.095808591916146 ],
-			labelPos: [128.92108508540045, 35.09649521645504],
+			pos: [ 128.92373017317018,35.09690396573429,128.9237628530014,35.09700472632331,128.9237819229651,35.09703184077928,128.92382215781024,35.097033204943294,128.92391540430233,35.09703058718993,128.92399155802946,35.097018299207384,128.92402554812494,35.09701135805428,128.92405229545997,35.09698738904935,128.92407325121616,35.09695944423035,128.92407538510844,35.09693070321919,128.92406997611982,35.096834387675834,128.92403915533808,35.09667839259068,128.92401943862438,35.09655016415876,128.92401097425616,35.09644998212558,128.92398817949956,35.09631766499398,128.9239676540802,35.09618283574321,128.92396077880565,35.096121870515525,128.92393903767632,35.09609501809651,128.9239188032807,35.09608118898036,128.92387018102693,35.09607609260123,128.92381312035468,35.0960672244575,128.92369729159282,35.096082524118856,128.923653448715,35.09609679885021,128.92362406998762,35.09612096635366,128.92361618887702,35.09619234528366,128.9236216311901,35.096291781718456,128.9236479550286,35.09641872306531,128.92366408185043,35.096533540049634,128.92368601860014,35.09665193035453,128.92370481170775,35.09676460691885,128.9237272885668,35.096857057493395,128.92374038808575,35.09691948055904 ],
+			labelPos: [128.92385377953613, 35.09655457368915],
 			obj: undefined
 		},
 		'D' : {
-			pos: [ 128.91726057139132, 35.09567683557667,
-				128.91946342638516, 35.09553072219181,
-				128.9192234985212, 35.09418520056146,
-				128.9173916878741, 35.09376336291401,
-				128.9171013270266, 35.09389419686408 ],
-			labelPos: [128.9182875277607, 35.09488735732798],
+			pos: [ 128.92406779678743,35.096041057849085,128.9240302507371,35.09606691500088,128.92400648978105,35.09611048757382,128.92399799324775,35.096163776253995,128.92400681953194,35.096279472714585,128.92402352663407,35.096377404402496,128.92403805740307,35.09649921276621,128.92405011082988,35.0965773181848,128.92406921168043,35.096661246125194,128.92407871889506,35.096761000291366,128.9240963611735,35.096846589061684,128.92410468289737,35.09691362031841,128.924129795606,35.096957454627045,128.92416056664342,35.09698123633211,128.9242021539618,35.096986129437276,128.92427946984938,35.096982863235596,128.92434562029362,35.096974699430966,128.9244230796125,35.09696436867454,128.9244430299057,35.09693946371988,128.9244512614572,35.096898531235944,128.92444044591585,35.09683076518047,128.92442120952757,35.09672606967708,128.92441208778064,35.09663519805575,128.9243917420762,35.096484522837066,128.92438117613673,35.09635797250267,128.92434415114855,35.09615118553303,128.92433743382514,35.09607183742688,128.92432614000302,35.09605203741164,128.92431483232227,35.09603527439028,128.9242805068328,35.096023657998195,128.92425932873465,35.096023363109275,128.9241711005013,35.096031923123476,128.92411106791383,35.096036611284056,128.9240669995018,35.096043936138685,128.9240328725884,35.09606313169131 ],
+			labelPos: [128.92425348268983, 35.0965696293733],
 			obj: undefined
 		}
 	}
@@ -3801,7 +3805,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			debugger;
 			const pos = RDDataSet[val].pos;
 			const labelPos = RDDataSet[val].labelPos;
-			RDDataSet[val].obj = drawLabelPolygon(val + '블록', pos, labelPos, Cesium.Color.YELLOW, 'hide');
+			RDDataSet[val].obj = drawLabelPolyLine(val + '블록', pos, labelPos, Cesium.Color.YELLOW, 'hide');
 		} else {
 			if(RDDataSet[val].obj !== undefined){
 				_viewer.entities.remove(RDDataSet[val].obj);

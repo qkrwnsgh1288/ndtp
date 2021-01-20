@@ -452,7 +452,7 @@
 					<input id="addrSearchRD" type="text" style="width: 190px;">
 					<button type="button" id="addrSearchBtnRD" class="btnTextF" style="float: right; margin-top: 5px;">검색</button>
 				</li>
-				<li style="display:block;">
+				<li style="display:none;" id="RDBlockTableWrap">
 					<label for="addrSearchRD" style="width:150px;">지자체 영역 선택</label>
 					<div class="list basicTable">
 						<table id="RDBlockTable" class="list-table scope-col">
