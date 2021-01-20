@@ -110,15 +110,15 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	
-	testImplementation 'org.junit.jupiter:junit-jupiter-api'
-	testCompile 'org.junit.jupiter:junit-jupiter-params'
-	testRuntime 'org.junit.jupiter:junit-jupiter-engine'
-    implementation 'org.junit.platform:junit-platform-runner:1.6.0'
-    implementation 'org.junit.platform:junit-platform-launcher:1.6.0'
-    implementation 'org.junit.jupiter:junit-jupiter:5.6.0'
-    implementation 'org.junit.platform:junit-platform-commons:1.6.0'
+//	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+//	testCompile 'org.junit.jupiter:junit-jupiter-params'
+//	testRuntime 'org.junit.jupiter:junit-jupiter-engine'
+//    implementation 'org.junit.platform:junit-platform-runner:1.6.0'
+//    implementation 'org.junit.platform:junit-platform-launcher:1.6.0'
+//    implementation 'org.junit.jupiter:junit-jupiter:5.6.0'
+//    implementation 'org.junit.platform:junit-platform-commons:1.6.0'
     
-    implementation 'org.junit:junit-bom:5.6.0'
+//    implementation 'org.junit:junit-bom:5.6.0'
     
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
