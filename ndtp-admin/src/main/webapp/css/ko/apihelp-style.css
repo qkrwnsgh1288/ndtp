@@ -36,7 +36,7 @@ letter-spacing: -1px;
 color: #fff;
 cursor: pointer;
 font-weight: normal;
-background: url(/images/ko/logo.png) no-repeat 0 0;
+/*background: url(/images/ko/logo.png) no-repeat 0 0;*/
 }
 .user {
 position: absolute;
