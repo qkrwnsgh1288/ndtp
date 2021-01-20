@@ -369,7 +369,6 @@ var Simulation = function(magoInstance, viewer, $) {
 		magoInstance.getViewer().clock.currentTime = jd;
 		magoManager.sceneState.sunSystem.setDate(date);
 	};
-	
 	$('#constUploadBtn').click(function() {
 		constProcUploadDialog.dialog("open");
 		$('#cons_proc_lon').text($('#monitorLon').val());
@@ -1833,6 +1832,7 @@ var Simulation = function(magoInstance, viewer, $) {
         activeShapePoints = [];
     }
 
+	let monitorlll = '';
     function startDrawPolyLine() {
         handler = new Cesium.ScreenSpaceEventHandler(_viewer.canvas);
         var dynamicPositions = new Cesium.CallbackProperty(function () {
@@ -1852,6 +1852,8 @@ var Simulation = function(magoInstance, viewer, $) {
             	$('#monitorLon').text(longitudeString);
             	$('#monitorLat').text(latitudeString);
             	$("#monitorHeight").text(height);
+				monitorlll += longitudeString + ',' + latitudeString + ',';
+				console.info(monitorlll);
             	var lonlat = {
             		lon: longitudeString,
 					lat: latitudeString,
@@ -2218,6 +2220,7 @@ var Simulation = function(magoInstance, viewer, $) {
 
         handler.setInputAction(function (event) {
             var earthPosition = _viewer.scene.pickPosition(event.position);
+			monitorlll = '';
         	console.log('2. 폴리곤 : ', earthPosition);
             terminateShape();
             _polygons.push(nowPolygon);
@@ -3613,6 +3616,12 @@ var Simulation = function(magoInstance, viewer, $) {
 		}
 	});
 
+	function hideBuild(dataGroupId, dataName) {
+		setNodeAttributeAPI(MAGO3D_INSTANCE, 54, 'F4D_'+dataName, {
+			isVisible : true
+		});
+	}
+
 	/**
 	 * 문화제(CH) 정보 확인
 	 * @type {Window.jQuery|*}
@@ -3678,7 +3687,7 @@ var Simulation = function(magoInstance, viewer, $) {
 		autoOpen: false,
 		modal: true,
 		overflow : "auto",
-		resizable: false,
+		width: 'auto',
 		buttons: [
 			{
 				text: "확인",
@@ -3816,12 +3825,10 @@ var Simulation = function(magoInstance, viewer, $) {
 			}
 		}
 		if(code === 'ABC') {
-			alert('ABC');
 			$('#buildOldAnalsDialogNO').empty();
 			$('#buildOldAnalsDialogNO').append('<img src="/images/lx/buildOldAnalsABC_NO.png"/>');
 			buildOldAnalsDialogNO.dialog('open');
 		} else if(code === 'BCD') {
-			alert('BCD');
 			$('#buildOldAnalsDialogOK').empty();
 			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsBCD_YES.png"/>');
 			buildOldAnalsDialogOK.dialog('open');
@@ -3843,8 +3850,12 @@ var Simulation = function(magoInstance, viewer, $) {
 		autoOpen: false,
 		modal: false,
 		overflow : "auto",
-		width: "auto",
-		resizable: false
+		width: "276px",
+		position: {
+			my: 'right top',
+			at: 'right top',
+			of: '.cesium-viewer',
+		},
 	});
 
 	/**
@@ -3855,8 +3866,12 @@ var Simulation = function(magoInstance, viewer, $) {
 		autoOpen: false,
 		modal: false,
 		overflow : "auto",
-		width: "auto",
-		resizable: false
+		width: "276px",
+		position: {
+			my: 'right top',
+			at: 'right top',
+			of: '.cesium-viewer',
+		},
 	});
 
 	/**
@@ -3867,7 +3882,12 @@ var Simulation = function(magoInstance, viewer, $) {
 		autoOpen: false,
 		modal: false,
 		overflow : "auto",
-		width: "auto"
+		width: "276px",
+		position: {
+			my: 'right top',
+			at: 'right top',
+			of: '.cesium-viewer',
+		},
 	});
 
 	/**
@@ -3878,7 +3898,12 @@ var Simulation = function(magoInstance, viewer, $) {
 		autoOpen: false,
 		modal: false,
 		overflow : "auto",
-		width: "auto",
+		width: "276px",
+		position: {
+			my: 'right top',
+			at: 'right top',
+			of: '.cesium-viewer',
+		},
 		buttons: [
 			{
 				text: "제출",

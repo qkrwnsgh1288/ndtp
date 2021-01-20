@@ -6,7 +6,7 @@
 <%@page import="java.util.HashMap"%>
 
 <header>
-	<h1>국가 디지털트윈 플랫폼 시범 서비스</h1>
+	<h1></h1>
 
 	<div class="gnb">
 		<%

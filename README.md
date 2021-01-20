@@ -1,5 +1,5 @@
 # NDTP
-<strong>NDTP(National Digital Twin Platform Pilot Service)는  지속 가능한 확장형 시범도시(세종, 부산)의 디지털트윈 플랫폼 파일럿 서비스입니다.</strong>
+<strong>NDTP()는  지속 가능한 확장형 시범도시(세종, 부산)의 디지털트윈 플랫폼 파일럿 서비스입니다.</strong>
 
 
 ## 사업 개요	

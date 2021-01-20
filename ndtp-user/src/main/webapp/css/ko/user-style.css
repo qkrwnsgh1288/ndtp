@@ -39,7 +39,7 @@ letter-spacing: -1px;
 color: #fff;
 cursor: pointer;
 font-weight: normal;
-background: url(/images/ko/logo.png) no-repeat 0 0;
+/*background: url(/images/ko/logo.png) no-repeat 0 0;*/
 }
 
 .gnb {
@@ -756,7 +756,7 @@ width: 62%;
 }
 .search-text > button {
 width: 30%;
-height: 100%;
+height: auto;
 margin: 0;
 padding: 9px;
 line-height: 1.5em;

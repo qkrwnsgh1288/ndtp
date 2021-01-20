@@ -597,12 +597,12 @@
 </div>
 
 <!-- 지자체 재개발 지원 건물 노후도 분석 No okay -->
-<div id="buildOldAnalsDialogNO" title="문화제 현상 변경 신청" style="display: none;">
+<div id="buildOldAnalsDialogNO" title="지자체 재개발 노후도 분석 결과" style="display: none;">
 
 </div>
 
 <!-- 지자체 재개발 지원 건물 노후도 분석 okay -->
-<div id="buildOldAnalsDialogOK" title="문화제 현상 변경 신청" style="display: none;">
+<div id="buildOldAnalsDialogOK" title="지자체 재개발 노후도 분석 결과" style="display: none;">
 
 </div>
 

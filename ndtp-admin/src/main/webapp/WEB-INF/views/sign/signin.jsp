@@ -44,7 +44,7 @@
 				<div class="panel row">
 					<h2 class="sign-title"><span class="text-sub">Administrator</span><br /><span class="text-main">SIGN IN</span></h2>
 					<div class="sign-inputs">
-						<div class="sign-desc" style="font-size: 16px; margin-top: 10px; margin-right: 25px;">National Digital Twin Platform Pilot Service</div>
+						<div class="sign-desc" style="font-size: 16px; margin-top: 10px; margin-right: 25px;"></div>
 						
 						<form:form id="signinForm" modelAttribute="signinForm" method="post" action="/sign/process-signin">
 							<label for="userId"><span class="icon-glyph glyph-users"></span></label>
@@ -60,7 +60,7 @@
 				</div>
 			</div>
 			<div class="" style="text-align: center; margin-top: 50px;">
-				NDTP (c) LX LH Vaiv Gaia3D, Inc All Rights Reserved
+				Vaiv, Gaia3D, Inc All Rights Reserved
 			</div>
  		</div>
 	</div>
