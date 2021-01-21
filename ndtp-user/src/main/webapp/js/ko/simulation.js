@@ -3591,6 +3591,16 @@ var Simulation = function(magoInstance, viewer, $) {
 		let worldPosition = Cesium.Cartesian3.fromDegrees(lon, lat);
 		let r1 = 0;
 		let r2 = 0;
+		// 노 파 빨
+		let img = "/images/lx/Red-XL.png";
+		if(color === '#FFC000') {
+			img = "/images/lx/Red-XL.png";
+		} else if(color === '#6699FF') {
+			img = "/images/lx/Blue-XL.png";
+		} else if(color === '#92D050') {
+			img = "/images/lx/Green-XL.png";
+		}
+		let cesiumColor = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(color), 0.5);
 		const pointEntitiy = viewer.entities.add({
 			position: worldPosition,
 			point: {
@@ -3623,11 +3633,13 @@ var Simulation = function(magoInstance, viewer, $) {
 				}, false),
 				// height: 10 + 1,
 				material: new Cesium.ImageMaterialProperty({
-					image: "/images/lx/colors2.png",
+					image: img,
 					repeat: new Cesium.Cartesian2(1.0, 1.0),
 					transparent: true,
 					color: Cesium.Color.WHITE.withAlpha(1),
 				}),
+				outline: true,
+				outlineColor: cesiumColor,
 				extrudedHeight: 10,
 				show: false,
 				// extrudedHeightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
@@ -3684,19 +3696,19 @@ var Simulation = function(magoInstance, viewer, $) {
 		}
 		let str = '대웅전';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#FFC000'), 0.5), 1000));
+			'#FFC000', 1000));
 		str = '가달고분군';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#6699FF'), 0.5), 700));
+			'#6699FF', 700));
 		str = '운수사대웅전석조여래삼존좌상';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#92D050'), 0.5), 350));
+			'#92D050', 350));
 		str = '마하사대웅전석조석가여래삼존상';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#FFC000'), 0.5), 1000));
+			'#FFC000', 1000));
 		str = '범방동삼층석탑';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#92D050'), 0.5), 350));
+			'#92D050', 350));
 	});
 
 	/**
