@@ -2199,17 +2199,20 @@ var Simulation = function(magoInstance, viewer, $) {
 						CHInfoDialog.dialog('open');
 					} else {
 						$('#buildOldInfo').empty();
-						if(primitiveObj._text.includes('A')) {
+						if(primitiveObj._text.includes('대웅전')) {
 							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_A.png" />');
 							buildOldInfoDialog.dialog('open');
-						} else if(primitiveObj._text.includes('B')) {
+						} else if(primitiveObj._text.includes('가달고분군')) {
 							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_B.png" />');
 							buildOldInfoDialog.dialog('open');
-						}  else if(primitiveObj._text.includes('C')) {
+						}  else if(primitiveObj._text.includes('범방동삼층석탑')) {
 							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_C.png" />');
 							buildOldInfoDialog.dialog('open');
-						}  else if(primitiveObj._text.includes('D')) {
+						}  else if(primitiveObj._text.includes('운수사대웅전석조여래삼존좌상')) {
 							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_D.png" />');
+							buildOldInfoDialog.dialog('open');
+						} else if(primitiveObj._text.includes('마하사대웅전석조석가여래삼존상')) {
+							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_E.png" />');
 							buildOldInfoDialog.dialog('open');
 						}
 					}
@@ -3444,7 +3447,6 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * @param color Cesium.Color.YELLOW
 	 */
 	function drawLabelPolygon(labelText, result, labelPos, color, pointShow) {
-		debugger;
 		const polyPosi = new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(result));
 		let worldPosition = Cesium.Cartesian3.fromDegrees(labelPos[0], labelPos[1]);
 		const polygonEntitiy = viewer.entities.add({
@@ -3469,10 +3471,12 @@ var Simulation = function(magoInstance, viewer, $) {
 			label: {
 				text: labelText,
 				scale :0.5,
-				font: "normal normal bolder 22px Helvetica",
-				fillColor: Cesium.Color.BLACK,
-				outlineColor: Cesium.Color.WHITE,
+				font: "normal normal bolder 28px Helvetica",
+				fillColor: Cesium.Color.WHITE,
+				outlineColor: Cesium.Color.BLACK,
+				pixelOffset: new Cesium.Cartesian2(0, -15),
 				outlineWidth: 1,
+				showBackground: true,
 				//scaleByDistance : new Cesium.NearFarScalar(500, 1.2, 1200, 0.0),
 				heightReference : Cesium.HeightReference.CLAMP_TO_GROUND,
 				style: Cesium.LabelStyle.FILL_AND_OUTLINE,
@@ -3489,7 +3493,77 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * @param color Cesium.Color.YELLOW
 	 */
 	function drawLabelPolyLine(labelText, result, labelPos, color, pointShow) {
-		debugger;
+
+		/**
+		 * Material
+		 */
+		function PolylineTrailLinkMaterialProperty(color, duration) {
+			this._definitionChanged = new Cesium.Event();
+			this._color = undefined;
+			this._colorSubscription = undefined;
+			this.color = color;
+			this.duration = duration;
+			this._time = (new Date()).getTime();
+		}
+
+		Object.defineProperties(PolylineTrailLinkMaterialProperty.prototype, {
+			isConstant: {
+				get: function () {
+					return false;
+				}
+			},
+			definitionChanged: {
+				get: function () {
+					return this._definitionChanged;
+				}
+			},
+			color: Cesium.createPropertyDescriptor('color')
+		});
+
+		PolylineTrailLinkMaterialProperty.prototype.getType = function (time) {
+			return 'PolylineTrailLink';
+		}
+		PolylineTrailLinkMaterialProperty.prototype.getValue = function (time, result) {
+			if (!Cesium.defined(result)) {
+				result = {};
+			}
+			result.color = Cesium.Property.getValueOrClonedDefault(this._color, time, Cesium.Color.WHITE, result.color);
+			result.image = Cesium.Material.PolylineTrailLinkImage;
+			result.time = (((new Date()).getTime() - this._time) % this.duration) / this.duration;
+			return result;
+		}
+		PolylineTrailLinkMaterialProperty.prototype.equals = function (other) {
+			return this === other || (other instanceof PolylineTrailLinkMaterialProperty && Property.equals(this._color, other._color))
+		};
+
+		Cesium.PolylineTrailLinkMaterialProperty = PolylineTrailLinkMaterialProperty;
+		Cesium.Material.PolylineTrailLinkType = 'PolylineTrailLink';
+		Cesium.Material.PolylineTrailLinkImage = "/images/lx/colors1.png";
+		Cesium.Material.PolylineTrailLinkSource =
+			"czm_material czm_getMaterial(czm_materialInput materialInput)\n\
+            {\n\
+                czm_material material = czm_getDefaultMaterial(materialInput);\n\
+                vec2 st = materialInput.st;\n\
+                vec4 colorImage = texture2D(image, vec2(fract(-(st.t + time)), st.t));\n\
+                material.alpha = colorImage.a * color.a;\n\
+                material.diffuse = (colorImage.rgb+color.rgb)/2.0;\n\
+                return material;\n\
+            }"
+
+		Cesium.Material._materialCache.addMaterial(Cesium.Material.PolylineTrailLinkType, {
+			fabric: {
+				type: Cesium.Material.PolylineTrailLinkType,
+				uniforms: {
+					color: new Cesium.Color(1.0, 0.0, 0.0, 0.5),
+					image: Cesium.Material.PolylineTrailLinkImage,
+					time: 0
+				},
+				source: Cesium.Material.PolylineTrailLinkSource
+			},
+			translucent: function (material) {
+				return true;
+			}
+		});
 		const polyPosi = Cesium.Cartesian3.fromDegreesArray(result);
 		let worldPosition = Cesium.Cartesian3.fromDegrees(labelPos[0], labelPos[1]);
 		const polygonEntitiy = viewer.entities.add({
@@ -3498,10 +3572,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			polyline : {
 				positions : polyPosi,
 				width: 10.0,
-				material: new Cesium.PolylineGlowMaterialProperty({
-					color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#0080FF'), 0.7),
-					glowPower: 0.25,
-				}),
+				material: new Cesium.PolylineTrailLinkMaterialProperty(Cesium.Color.fromCssColorString('#0080FF'),3000),
 				clampToGround : true
 			}
 		});
@@ -3516,8 +3587,10 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * @param alt 고도도	 * @param color
 	 * @returns {*}
 	 */
-	function drawLabelPoint(labelText, lon, lat, color) {
+	function drawLabelPoint(labelText, lon, lat, color, ellipseSize) {
 		let worldPosition = Cesium.Cartesian3.fromDegrees(lon, lat);
+		let r1 = 0;
+		let r2 = 0;
 		const pointEntitiy = viewer.entities.add({
 			position: worldPosition,
 			point: {
@@ -3529,12 +3602,35 @@ var Simulation = function(magoInstance, viewer, $) {
 				heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
 			},
 			ellipse: {
-				semiMinorAxis: 500.0,
-				semiMajorAxis: 500.0,
+				// semiMinorAxis: ellipseSize,
+				// semiMajorAxis: ellipseSize,
+				// material: color,
+
+
+				semiMinorAxis: new Cesium.CallbackProperty(function () {
+					r1 = r1 + (ellipseSize/100);
+					if (r1 >= ellipseSize) {
+						r1 = ellipseSize;
+					}
+					return r1;
+				}, false),
+				semiMajorAxis: new Cesium.CallbackProperty(function () {
+					r2 = r2 + (ellipseSize/100);
+					if (r2 >= ellipseSize) {
+						r2 = ellipseSize;
+					}
+					return r2;
+				}, false),
+				// height: 10 + 1,
+				material: new Cesium.ImageMaterialProperty({
+					image: "/images/lx/colors2.png",
+					repeat: new Cesium.Cartesian2(1.0, 1.0),
+					transparent: true,
+					color: Cesium.Color.WHITE.withAlpha(1),
+				}),
 				extrudedHeight: 10,
-				// extrudedHeightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-				material: color,
 				show: false,
+				// extrudedHeightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
 				heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
 			},
 			label: {
@@ -3572,7 +3668,6 @@ var Simulation = function(magoInstance, viewer, $) {
 		drawLabelPolygon('부산광역시 강서구 명지 1동 125-1', pos, labelPos, Cesium.Color.YELLOW);
 	})
 
-
 	/**
 	 *	1. 줌 아웃
 	 *  2. 문화재 표시
@@ -3589,19 +3684,19 @@ var Simulation = function(magoInstance, viewer, $) {
 		}
 		let str = '대웅전';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#FFC000'), 0.5)));
+			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#FFC000'), 0.5), 1000));
 		str = '가달고분군';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#6699FF'), 0.5)));
+			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#6699FF'), 0.5), 700));
 		str = '운수사대웅전석조여래삼존좌상';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#92D050'), 0.5)));
+			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#92D050'), 0.5), 350));
 		str = '마하사대웅전석조석가여래삼존상';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#FFC000'), 0.5)));
+			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#FFC000'), 0.5), 1000));
 		str = '범방동삼층석탑';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#92D050'), 0.5)));
+			Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString('#92D050'), 0.5), 350));
 	});
 
 	/**
@@ -3628,6 +3723,8 @@ var Simulation = function(magoInstance, viewer, $) {
 			128.92287391259066, 35.09795239578484,
 			128.9227984830998,  35.09789943173056,
 			128.92227070282547, 35.09794082699364]
+		hideBuild(54, '04_105');
+		hideBuild(54, '04_007');
 		// const buildings = shadowSystem.getPickLayerBuilding(lonlats);
 		// buildings.forEach(p => p.attributes.isVisible = false);
 	});
@@ -3832,12 +3929,163 @@ var Simulation = function(magoInstance, viewer, $) {
 			$('#buildOldAnalsDialogNO').empty();
 			$('#buildOldAnalsDialogNO').append('<img src="/images/lx/buildOldAnalsABC_NO.png"/>');
 			buildOldAnalsDialogNO.dialog('open');
-		} else if(code === 'BCD') {
+		} else if(code === 'ABD') {
 			$('#buildOldAnalsDialogOK').empty();
 			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsBCD_YES.png"/>');
 			buildOldAnalsDialogOK.dialog('open');
+		} else if(code === 'A') {
+			$('#buildOldAnalsDialogOK').empty();
+			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsA.png"/>');
+			buildOldAnalsDialogOK.dialog('open');
+		} else if(code === 'B') {
+			$('#buildOldAnalsDialogOK').empty();
+			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsB.png"/>');
+			buildOldAnalsDialogOK.dialog('open');
+		} else if(code === 'C') {
+			$('#buildOldAnalsDialogOK').empty();
+			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsC.png"/>');
+			buildOldAnalsDialogOK.dialog('open');
+		} else if(code === 'C') {
+			$('#buildOldAnalsDialogOK').empty();
+			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsD.png"/>');
+			buildOldAnalsDialogOK.dialog('open');
 		}
 	});
+
+
+	/**
+	 * 소음 지도
+	 */
+	$('#noiseSimulation').click(function() {
+
+		/**
+		 * Material
+		 */
+		function PolylineTrailLinkMaterialProperty(color, duration) {
+			this._definitionChanged = new Cesium.Event();
+			this._color = undefined;
+			this._colorSubscription = undefined;
+			this.color = color;
+			this.duration = duration;
+			this._time = (new Date()).getTime();
+		}
+
+		Object.defineProperties(PolylineTrailLinkMaterialProperty.prototype, {
+			isConstant: {
+				get: function () {
+					return false;
+				}
+			},
+			definitionChanged: {
+				get: function () {
+					return this._definitionChanged;
+				}
+			},
+			color: Cesium.createPropertyDescriptor('color')
+		});
+
+		PolylineTrailLinkMaterialProperty.prototype.getType = function (time) {
+			return 'PolylineTrailLink';
+		}
+		PolylineTrailLinkMaterialProperty.prototype.getValue = function (time, result) {
+			if (!Cesium.defined(result)) {
+				result = {};
+			}
+			result.color = Cesium.Property.getValueOrClonedDefault(this._color, time, Cesium.Color.WHITE, result.color);
+			result.image = Cesium.Material.PolylineTrailLinkImage;
+			result.time = (((new Date()).getTime() - this._time) % this.duration) / this.duration;
+			return result;
+		}
+		PolylineTrailLinkMaterialProperty.prototype.equals = function (other) {
+			return this === other || (other instanceof PolylineTrailLinkMaterialProperty && Property.equals(this._color, other._color))
+		};
+
+		Cesium.PolylineTrailLinkMaterialProperty = PolylineTrailLinkMaterialProperty;
+		Cesium.Material.PolylineTrailLinkType = 'PolylineTrailLink';
+		Cesium.Material.PolylineTrailLinkImage = "/images/lx/colors1.png";
+		Cesium.Material.PolylineTrailLinkSource = "czm_material czm_getMaterial(czm_materialInput materialInput)\n\
+{\n\
+    czm_material material = czm_getDefaultMaterial(materialInput);\n\
+    vec2 st = materialInput.st;\n\
+    vec4 colorImage = texture2D(image, vec2(fract(st.s - time), st.t));\n\
+    material.alpha = colorImage.a * color.a;\n\
+    material.diffuse = (colorImage.rgb+color.rgb)/2.0;\n\
+    return material;\n\
+}"
+
+		Cesium.Material._materialCache.addMaterial(Cesium.Material.PolylineTrailLinkType, {
+			fabric: {
+				type: Cesium.Material.PolylineTrailLinkType,
+				uniforms: {
+					color: new Cesium.Color(1.0, 0.0, 0.0, 0.5),
+					image: Cesium.Material.PolylineTrailLinkImage,
+					time: 0
+				},
+				source: Cesium.Material.PolylineTrailLinkSource
+			},
+			translucent: function (material) {
+				return true;
+			}
+		})
+
+		const polyPosi = new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray([
+			118.286419,31.864436,
+			119.386419,31.864436,
+			119.386419,32.864436,
+			118.286419,32.864436,
+		]));
+
+		// let three = viewer.entities.add({
+		// 	name: 'yscNoNeedEntity',
+		// 	polygon: {
+		// 		hierarchy : polyPosi,
+		// 		material: new Cesium.PolylineTrailLinkMaterialProperty(Cesium.Color.BLUE,3000),
+		// 	}
+		// })
+
+		let three = viewer.entities.add({
+			name: 'Red wall at height',
+			corridor: {
+				positions: Cesium.Cartesian3.fromDegreesArray([
+					-100.0,
+					40.0,
+					-105.0,
+					40.0,
+					-105.0,
+					35.0,
+				]),
+				width: 5000.0,
+				material: getColorRamp([0.0, 0.54, 0.37, 1.0, 0.37, 0.54, 0.0], true)
+			}
+		});
+
+
+		function getColorRamp(elevationRamp, isVertical = true) {
+			var ramp = document.createElement('canvas');
+			ramp.width = isVertical ? 1 : 100;
+			ramp.height = isVertical ? 100 : 1;
+			var ctx = ramp.getContext('2d');
+
+			var values = elevationRamp;
+			var grd = isVertical ? ctx.createLinearGradient(0, 0, 0, 100) : ctx.createLinearGradient(0, 0, 100, 0);
+			grd.addColorStop(values[0], '#000000'); //black
+			grd.addColorStop(values[1], '#2747E0'); //blue
+			grd.addColorStop(values[2], '#D33B7D'); //pink
+			grd.addColorStop(values[3], '#D33038'); //red
+			grd.addColorStop(values[4], '#D33B7D'); //pink
+			grd.addColorStop(values[5], '#2747E0'); //blue
+			grd.addColorStop(values[6], '#000000'); //black
+
+			ctx.fillStyle = grd;
+			if (isVertical)
+				ctx.fillRect(0, 0, 1, 100);
+			else
+				ctx.fillRect(0, 0, 100, 1);
+			return ramp;
+		}
+		viewer.flyTo(three)
+
+	})
 
 	/**
 	 * 1. 건축 규제 사항 가시화
