@@ -437,8 +437,8 @@
 					<button type="button" id="addBuildBtn" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
 				</li>
 				<li style="display:block;">
-					<label for="permitAreaSim" style="width:150px;">현상 변경 시뮬레이션 </label>
-					<button type="button" id="permitAreaSim" class="btnTextF" style="float: right; margin-top: 5px;">실행</button>
+					<label for="permitAreaSim" style="width:150px;">허가 대상 여부</label>
+					<button type="button" id="permitAreaSim" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
 				</li>
 			</ul>
 		</div>

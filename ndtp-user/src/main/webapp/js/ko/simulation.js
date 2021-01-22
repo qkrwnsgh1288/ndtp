@@ -2194,26 +2194,26 @@ var Simulation = function(magoInstance, viewer, $) {
 				const primitiveObj = _viewer.scene.pick(event.position).primitive;
 				if(primitiveObj) {
 					if(primitiveObj._text.includes('문화제')) {
-						$('#CHStdDialog').empty();
-						$('#CHStdDialog').append('<img src="/images/lx/CHStdDialog_img.png" />');
+						$('#CHInfoDialog').empty();
+						$('#CHInfoDialog').append('<img src="/images/lx/CHStdDialog_img.png" />');
 						CHInfoDialog.dialog('open');
 					} else {
-						$('#buildOldInfo').empty();
+						$('#CHInfoDialog').empty();
 						if(primitiveObj._text.includes('대웅전')) {
-							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_A.png" />');
-							buildOldInfoDialog.dialog('open');
+							$('#CHInfoDialog').append('<img src="/images/lx/buildOldAnalsDialog_A.png" />');
+							CHInfoDialog.dialog('open');
 						} else if(primitiveObj._text.includes('가달고분군')) {
-							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_B.png" />');
-							buildOldInfoDialog.dialog('open');
+							$('#CHInfoDialog').append('<img src="/images/lx/buildOldAnalsDialog_B.png" />');
+							CHInfoDialog.dialog('open');
 						}  else if(primitiveObj._text.includes('범방동삼층석탑')) {
-							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_C.png" />');
-							buildOldInfoDialog.dialog('open');
+							$('#CHInfoDialog').append('<img src="/images/lx/buildOldAnalsDialog_C.png" />');
+							CHInfoDialog.dialog('open');
 						}  else if(primitiveObj._text.includes('운수사대웅전석조여래삼존좌상')) {
-							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_D.png" />');
-							buildOldInfoDialog.dialog('open');
+							$('#CHInfoDialog').append('<img src="/images/lx/buildOldAnalsDialog_D.png" />');
+							CHInfoDialog.dialog('open');
 						} else if(primitiveObj._text.includes('마하사대웅전석조석가여래삼존상')) {
-							$('#buildOldInfo').append('<img src="/images/lx/buildOldAnalsDialog_E.png" />');
-							buildOldInfoDialog.dialog('open');
+							$('#CHInfoDialog').append('<img src="/images/lx/buildOldAnalsDialog_E.png" />');
+							CHInfoDialog.dialog('open');
 						}
 					}
 				}
@@ -3674,13 +3674,13 @@ var Simulation = function(magoInstance, viewer, $) {
 	 */
 	$('#addrSearchBtnCH').click(function() {
 		// 1.
-		flyTo(128.91106729407082,  35.09558962505989, 4000);
+		flyTo(128.92259566952185,  35.09812653787251, 200);
 
 		//2. 3.
 		const pos = [128.92232988571374, 35.09836372908023, 128.92284805327168, 35.098306244647, 128.92291915684004, 35.09822089796658,
 		128.92287391259066, 35.09795239578484, 128.9227984830998,  35.09789943173056, 128.92227070282547, 35.09794082699364]
 		const labelPos = [128.922595970782, 35.098132184531316];
-		drawLabelPolygon('부산광역시 강서구 명지 1동 125-1', pos, labelPos, Cesium.Color.YELLOW);
+		drawLabelPolygon('부산시 강서구 명지1동 1-15', pos, labelPos, Cesium.Color.YELLOW);
 	})
 
 	/**
@@ -3788,7 +3788,7 @@ var Simulation = function(magoInstance, viewer, $) {
 	const CHInfoDialog = $('#CHInfoDialog').dialog({
 		autoOpen: false,
 		modal: false,
-		width: 'auto',
+		width: '270px',
 		position: {
 			my: 'right top',
 			at: 'right top',
