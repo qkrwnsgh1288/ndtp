@@ -3762,9 +3762,9 @@ var Simulation = function(magoInstance, viewer, $) {
 	 *   -> 확인 누를 시 형상변경 신청 모달 슝
 	 */
 	$('#permitAreaSim').click(function() {
-		const flag = 1;
-		if(flag === 0) {
-			alert('현상변경 허가 대상이 아님');
+		STATICFLAG = 1;
+		if(STATICFLAG === 0) {
+			alert('허가 대상이 아닙니다.');
 		} else {
 			const confirmQ = confirm("허가 대상입니다. 허가 신청 하시겠습니까?");
 			if(confirmQ) {
