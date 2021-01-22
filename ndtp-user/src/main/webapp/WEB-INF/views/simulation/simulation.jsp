@@ -597,7 +597,7 @@
 </div>
 
 <!-- 지자체 재개발 지원 건물 노후도 분석 -->
-<div id="buildOldInfo" title="건축물 노후도 분석 결과" style="display: none;">
+<div id="buildOldInfoDialog" title="건축물 노후도" style="display: none;">
 
 </div>
 

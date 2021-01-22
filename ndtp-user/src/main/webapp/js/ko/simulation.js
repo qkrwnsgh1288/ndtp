@@ -3949,21 +3949,21 @@ var Simulation = function(magoInstance, viewer, $) {
 			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsBCD_YES.png"/>');
 			buildOldAnalsDialogOK.dialog('open');
 		} else if(code === 'A') {
-			$('#buildOldAnalsDialogOK').empty();
-			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsA.png"/>');
-			buildOldAnalsDialogOK.dialog('open');
+			$('#buildOldInfoDialog').empty();
+			$('#buildOldInfoDialog').append('<img src="/images/lx/buildOldAnalsA.png"/>');
+			buildOldInfoDialog.dialog('open');
 		} else if(code === 'B') {
-			$('#buildOldAnalsDialogOK').empty();
-			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsB.png"/>');
-			buildOldAnalsDialogOK.dialog('open');
+			$('#buildOldInfoDialog').empty();
+			$('#buildOldInfoDialog').append('<img src="/images/lx/buildOldAnalsB.png"/>');
+			buildOldInfoDialog.dialog('open');
 		} else if(code === 'C') {
-			$('#buildOldAnalsDialogOK').empty();
-			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsC.png"/>');
-			buildOldAnalsDialogOK.dialog('open');
-		} else if(code === 'C') {
-			$('#buildOldAnalsDialogOK').empty();
-			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsD.png"/>');
-			buildOldAnalsDialogOK.dialog('open');
+			$('#buildOldInfoDialog').empty();
+			$('#buildOldInfoDialog').append('<img src="/images/lx/buildOldAnalsC.png"/>');
+			buildOldInfoDialog.dialog('open');
+		} else if(code === 'D') {
+			$('#buildOldInfoDialog').empty();
+			$('#buildOldInfoDialog').append('<img src="/images/lx/buildOldAnalsD.png"/>');
+			buildOldInfoDialog.dialog('open');
 		}
 	});
 
@@ -4113,7 +4113,7 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * 건물 노후도 분석
 	 * @type {Window.jQuery|*}
 	 */
-	const buildOldInfoDialog = $('#buildOldInfo').dialog({
+	const buildOldInfoDialog = $('#buildOldInfoDialog').dialog({
 		autoOpen: false,
 		modal: false,
 		overflow : "auto",
