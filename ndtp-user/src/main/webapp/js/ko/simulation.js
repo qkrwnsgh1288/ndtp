@@ -3776,8 +3776,8 @@ var Simulation = function(magoInstance, viewer, $) {
 	});
 
 	function hideBuild(dataGroupId, dataName) {
-		setNodeAttributeAPI(MAGO3D_INSTANCE, 54, 'F4D_'+dataName, {
-			isVisible : true
+		setNodeAttributeAPI(MAGO3D_INSTANCE, dataGroupId, 'F4D_'+dataName, {
+			isVisible : false
 		});
 	}
 
@@ -3870,7 +3870,7 @@ var Simulation = function(magoInstance, viewer, $) {
 	 * 명지 1동 영역 가시화(shp 있는지 확인)
 	 */
 	$('#addrSearchBtnRD').click(function() {
-		flyTo(128.92358061334286,  35.09658421283378, 400);
+		flyTo(128.92358061334286,  35.09658421283378, 100);
 
 		$('#RDBlockTableWrap').css('display','block');
 		const arr = ['A', 'B', 'C', 'D'];
@@ -3944,7 +3944,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			$('#buildOldAnalsDialogNO').empty();
 			$('#buildOldAnalsDialogNO').append('<img src="/images/lx/buildOldAnalsABC_NO.png"/>');
 			buildOldAnalsDialogNO.dialog('open');
-		} else if(code === 'ABD') {
+		} else if(code === 'BCD') {
 			$('#buildOldAnalsDialogOK').empty();
 			$('#buildOldAnalsDialogOK').append('<img src="/images/lx/buildOldAnalsBCD_YES.png"/>');
 			buildOldAnalsDialogOK.dialog('open');
