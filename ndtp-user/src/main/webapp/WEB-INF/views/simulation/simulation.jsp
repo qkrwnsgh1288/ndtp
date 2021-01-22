@@ -503,10 +503,10 @@
 					<label for="regulationsChkBtn" style="width:150px;">건물 규제 사항 확인: </label>
 					<button type="button" id="regulationsChkBtn" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
 				</li>
-				<li style="display:block;">
-					<label for="noiseSimulation" style="width:150px;">소음 지도: </label>
-					<button type="button" id="noiseSimulation" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>
-				</li>
+<%--				<li style="display:block;">--%>
+<%--					<label for="noiseSimulation" style="width:150px;">소음 지도: </label>--%>
+<%--					<button type="button" id="noiseSimulation" class="btnTextF" style="float: right; margin-top: 5px;">확인</button>--%>
+<%--				</li>--%>
 			</ul>
 		</div>
 	</li>
@@ -597,7 +597,7 @@
 </div>
 
 <!-- 지자체 재개발 지원 건물 노후도 분석 -->
-<div id="buildOldInfo" title="건축물 노후도 분석 결과" style="display: none;">
+<div id="buildOldInfoDialog" title="건축물 노후도" style="display: none;">
 
 </div>
 
