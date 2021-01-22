@@ -3593,18 +3593,21 @@ var Simulation = function(magoInstance, viewer, $) {
 		let r2 = 0;
 		// 노 파 빨
 		let img = "/images/lx/Red-XL.png";
-		if(color === '#FFC000') {
+		if(color === '#FF0B0B') {
 			img = "/images/lx/Red-XL.png";
 		} else if(color === '#6699FF') {
 			img = "/images/lx/Blue-XL.png";
+
+
 		} else if(color === '#92D050') {
 			img = "/images/lx/Green-XL.png";
 		}
 		let cesiumColor = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(color), 0.5);
+		let pointColor = Cesium.Color.fromCssColorString(color);
 		const pointEntitiy = viewer.entities.add({
 			position: worldPosition,
 			point: {
-				color: Cesium.Color.RED,
+				color: pointColor,
 				pixelSize: 10,
 				outlineColor: Cesium.Color.YELLOW,
 				outlineWidth: 2,
@@ -3696,7 +3699,7 @@ var Simulation = function(magoInstance, viewer, $) {
 		}
 		let str = '대웅전';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			'#FFC000', 1000));
+			'#FF0B0B', 1000));
 		str = '가달고분군';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
 			'#6699FF', 700));
@@ -3705,7 +3708,7 @@ var Simulation = function(magoInstance, viewer, $) {
 			'#92D050', 350));
 		str = '마하사대웅전석조석가여래삼존상';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
-			'#FFC000', 1000));
+			'#FF0B0B', 1000));
 		str = '범방동삼층석탑';
 		CHArr.push(drawLabelPoint(str, CH[str][0], CH[str][1],
 			'#92D050', 350));
